@@ -8,7 +8,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://3.25.80.224:8080',
+        // https://ftask-api.azurewebsites.net
+        // http://3.25.80.224:8080
+        target: 'https://ftask-api.azurewebsites.net',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
