@@ -4,7 +4,7 @@
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Lecturer..."
+        placeholder="Search User..."
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>
@@ -14,7 +14,7 @@
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
       >
         <i class="block fa-solid fa-plus"></i>
-        <span class="block ml-2">Add Lecturer</span>
+        <span class="block ml-2">Add User</span>
       </button>
     </template>
     <template #main>
@@ -35,14 +35,6 @@
         </template>
 
         <template #cell(phone)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template>
-
-        <template #cell(department)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template>
-
-        <template #cell(subject)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
@@ -87,21 +79,19 @@
   import ManagementBase from '@/component/admin/ManagementBase.vue'
   import BadgeBase from '@/component/admin/BadgeBase.vue'
   import ActionButtonBase from '@/component/admin/ActionButtonBase.vue'
-  import type { LecturerModel } from './manageModel'
-  import lecturerList from './sampleData/lecturerList'
+  import type { UserModel } from './manageModel'
+  import userList from './sampleData/userList'
   import { ref, computed } from 'vue'
 
   const columns = ref([
     { key: 'name' },
     { key: 'email' },
     { key: 'phone' },
-    { key: 'department' },
-    { key: 'subject' },
     { key: 'status' },
     { key: 'actions', label: '' },
   ])
 
-  const items = ref<LecturerModel[]>(lecturerList)
+  const items = ref<UserModel[]>(userList)
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)

@@ -18,10 +18,8 @@
     </div>
 
     <!-- table -->
-    <div class="flex-1 w-full mt-5 row-span-5 max-h-[36.5625rem]">
-      <div class="w-full">
-        <slot name="main" />
-      </div>
+    <div class="flex-1 w-full mt-5 row-span-5 min-h-[36.5625rem]">
+      <slot name="main" />
     </div>
 
     <div class="">

@@ -2,8 +2,9 @@
   <RouterLink
     :to="{ name: path }"
     class="text-[#344767] py-[.75rem] px-[1rem] mx-2 flex items-center rounded-xl"
-    :class="{ 'bg-[#f6f9fc]': active }"
+    :class="{ 'bg-green-200': active }"
   >
+    <!-- bg-[#f6f9fc] -->
     <div class="p-[.625rem]">
       <span :class="icon" />
     </div>

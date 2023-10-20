@@ -25,6 +25,11 @@ const router = createRouter({
             import('../views/admin/management/ManageLecturer.vue'),
         },
         {
+          name: 'manageUser',
+          path: 'user',
+          component: () => import('../views/admin/management/ManageUser.vue'),
+        },
+        {
           name: 'manageSubject',
           path: 'subject',
           component: () =>

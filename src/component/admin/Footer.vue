@@ -11,11 +11,11 @@
               href="https://www.creative-tim.com"
               class="font-bold"
               target="_blank"
-              >Creative Tim</a
+              >Creative RaeKyo</a
             >
             and
             <a href="https://updivision.com" class="font-bold" target="_blank"
-              >UPDIVISION</a
+              >RaeKyo2</a
             >
             for a better web.
           </div>

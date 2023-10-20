@@ -41,7 +41,7 @@
                 class="fa-solid fa-caret-up block text-end absolute -top-2 right-1"
               ></i>
               <li
-                class="bg-white text-slate-600 w-[9.375rem] h-[2.5rem] flex items-center justify-center font-semibold hover:bg-[#f6f9fc]"
+                class="bg-white text-slate-600 w-[11.375rem] h-[2.5rem] flex items-center justify-center font-semibold hover:bg-[#f6f9fc]"
               >
                 Logout
               </li>

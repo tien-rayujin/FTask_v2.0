@@ -54,7 +54,7 @@ export default {
       },
     },
     {
-      name: 'manageDepartment',
+      name: 'manageUser',
       displayName: 'User',
       meta: {
         icon: 'fa-solid fa-user',
