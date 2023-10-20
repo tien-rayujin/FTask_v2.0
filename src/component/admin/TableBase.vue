@@ -5,7 +5,7 @@
         <th
           v-for="(column, idx) in columns"
           :key="idx"
-          class="p-2 text-left uppercase text-[#8392ab] text-[0.65rem]"
+          class="px-5 py-5 text-left uppercase text-[#8392ab] text-[0.65rem]"
         >
           {{ column.label ? column.label : column.key }}
         </th>
@@ -16,7 +16,7 @@
         <td
           v-for="(column, cellIdx) in columns"
           :key="cellIdx"
-          class="p-2 border-t border-slate-300"
+          class="px-5 py-5 border-t border-slate-300"
         >
           <slot :name="`cell-${column.key}`" :item="item" :column="column">
           </slot>
@@ -30,6 +30,8 @@
   import type {
     ItemModel,
     ColumnModel,
+    // FunctionModel,
+    // LecturerModel,
   } from '@/views/admin/management/ManageLecturer.vue'
   defineProps({
     columns: {

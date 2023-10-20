@@ -36,20 +36,23 @@
           </div>
         </template>
         <template #cell-Phone="{ item }">
-          <h6 class="text-sm">{{ item.phone }}</h6>
+          <h6 class="text-sm">{{ item.lecturer.phone }}</h6>
         </template>
         <template #cell-Department="{ item }">
           <!-- {{ item.function }} -->
-          <h6 class="text-sm">{{ item.department }}</h6>
+          <h6 class="text-sm">{{ item.lecturer.department }}</h6>
         </template>
         <template #cell-Subject="{ item }">
           <!-- {{ item.function }} -->
-          <h6 class="text-sm">{{ item.subject }}</h6>
+          <h6 class="text-sm">{{ item.lecturer.subject }}</h6>
         </template>
         <template #cell-Status="{ item }">
           <!-- {{ item.status }} -->
           <div>
-            <BadgeBase :status="item.status == 'online'" :text="item.status" />
+            <BadgeBase
+              :status="item.lecturer.status == 'online'"
+              :text="item.lecturer.status"
+            />
           </div>
         </template>
         <template #cell-Actions="{}">
@@ -58,10 +61,13 @@
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
-                color="blue-400"
+                color="text-blue-400"
               />
-              <ActionButtonBase icon="fa-solid fa-pen" color="yellow-400" />
-              <ActionButtonBase icon="fa-solid fa-ban" color="red-400" />
+              <ActionButtonBase
+                icon="fa-solid fa-pen"
+                color="text-yellow-400"
+              />
+              <ActionButtonBase icon="fa-solid fa-ban" color="text-red-400" />
             </div>
           </div>
         </template>
@@ -98,14 +104,24 @@
       img: 'http://localhost:8080/img/team-2.de26a134.jpg',
       name: 'RaeKyuoo',
       email: 'raekyo@gmail.com',
+      phone: '090878688',
+      department: 'Computer Science',
+      subject: 'Basic Operating System',
+      status: 'online',
     },
-    phone: '090878688',
-    department: 'Computer Science',
-    subject: 'Basic Operating System',
-    status: 'online',
   }
 
-  const lecturer2: ItemModel = { ...lecturer1, status: 'offline' }
+  const lecturer2: ItemModel = {
+    lecturer: {
+      img: 'http://localhost:8080/img/team-2.de26a134.jpg',
+      name: 'RaeKyuoo',
+      email: 'raekyo@gmail.com',
+      phone: '090878688',
+      department: 'Computer Science',
+      subject: 'Basic Operating System',
+      status: 'offline',
+    },
+  }
 
   items.value = [
     lecturer1,
@@ -127,15 +143,15 @@
   export interface ItemModel {
     [key: string]: any
     lecturer: LecturerModel
-    phone: string
-    department: string
-    subject: string
-    status: string
   }
 
   export interface LecturerModel {
     img: string
     name: string
     email: string
+    phone: string
+    department: string
+    subject: string
+    status: string
   }
 </script>
