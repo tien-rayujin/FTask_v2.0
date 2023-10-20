@@ -19,6 +19,13 @@ export default {
       },
     },
     {
+      name: 'dashboard',
+      displayName: 'Task',
+      meta: {
+        icon: 'fa-solid fa-list-check',
+      },
+    },
+    {
       name: 'manageLecturer',
       displayName: 'Lecturer',
       meta: {
