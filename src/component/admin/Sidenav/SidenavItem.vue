@@ -6,7 +6,7 @@
   >
     <!-- bg-[#f6f9fc] -->
     <div class="p-[.625rem]">
-      <span :class="icon" />
+      <span :class="[icon, color]" />
     </div>
     <span class="">{{ navText }}</span>
   </RouterLink>
@@ -26,6 +26,11 @@
     icon: {
       type: String,
       required: true,
+    },
+    color: {
+      type: String,
+      required: false,
+      default: 'text-[#5e72e4]',
     },
     children: {
       type: Array as () => INavigationRoutes[],

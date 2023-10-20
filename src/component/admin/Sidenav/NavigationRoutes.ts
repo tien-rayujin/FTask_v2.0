@@ -1,7 +1,7 @@
 export interface INavigationRoutes {
   name: string
   displayName: string
-  meta: { icon: string }
+  meta: { icon: string; color?: string }
   children?: INavigationRoutes[]
 }
 
@@ -16,6 +16,7 @@ export default {
       displayName: 'Dashboard',
       meta: {
         icon: 'fa-solid fa-house',
+        color: 'text-[#5e72e4]',
       },
     },
     {
@@ -23,6 +24,7 @@ export default {
       displayName: 'Task',
       meta: {
         icon: 'fa-solid fa-list-check',
+        color: 'text-blue-500',
       },
     },
     {
@@ -30,6 +32,7 @@ export default {
       displayName: 'Lecturer',
       meta: {
         icon: 'fa-solid fa-user-tie',
+        color: 'text-black',
       },
     },
     {
@@ -37,6 +40,7 @@ export default {
       displayName: 'Subject',
       meta: {
         icon: 'fa-solid fa-book',
+        color: 'text-red-500',
       },
     },
     {
@@ -44,6 +48,7 @@ export default {
       displayName: 'Semester',
       meta: {
         icon: 'fa-solid fa-calendar-days',
+        color: 'text-green-500',
       },
     },
     {
@@ -51,6 +56,7 @@ export default {
       displayName: 'Department',
       meta: {
         icon: 'fa-solid fa-building',
+        color: 'text-gray-500',
       },
     },
     {
@@ -58,6 +64,7 @@ export default {
       displayName: 'User',
       meta: {
         icon: 'fa-solid fa-user',
+        color: 'text-black',
       },
     },
   ] as INavigationRoutes[],

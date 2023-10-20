@@ -1,4 +1,31 @@
 <template>
+  <va-modal
+    ref="modal"
+    v-model="showModal"
+    ok-text="Apply"
+    stateful
+    close-button
+  >
+    <h3 class="text-xl font-bold">Lecturer Detail Information</h3>
+    <div class="mt-5 flex items-center justify-between">
+      <img
+        src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-businessman-user-avatar-wearing-suit-with-red-tie-png-image_5809521.png"
+        alt=""
+        class="w-[250px] h-[300px] object-cover"
+      />
+      <div>
+        <table class="">
+          <tr v-for="(prop, idx) in itemSelected" :key="idx">
+            <td>{{}}</td>
+            <td>{{ prop }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- {{ itemSelectedId }}
+    {{ itemSelected }} -->
+  </va-modal>
   <ManagementBase>
     <template #header>
       <input
@@ -50,12 +77,13 @@
           <BadgeBase :status="value == 'online'" :text="value" />
         </template>
 
-        <template #cell(actions)="{}">
+        <template #cell(actions)="{ rowIndex }">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
+                @click="openModalToEditItemById(rowIndex)"
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
@@ -106,10 +134,20 @@
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
+  const showModal = ref(false)
+  const itemSelectedId = ref(null)
+  const itemSelected = ref<LecturerModel>()
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
       ? Math.ceil(items.value.length / perPage.value)
       : items.value.length
   })
+
+  function openModalToEditItemById(id: any) {
+    itemSelectedId.value = id
+    itemSelected.value = { ...items.value[id] }
+    //show model.value based on id
+    showModal.value = !showModal.value
+  }
 </script>

@@ -9,6 +9,7 @@
           :icon="route.meta.icon"
           :children="route.children"
           :active="isRouteActive(route)"
+          :color="route.meta.color"
           active-color="#f6f9fc"
         />
       </li>
