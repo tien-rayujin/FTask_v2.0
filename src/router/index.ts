@@ -1,12 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AdminLayout from '@/layout/AdminLayout.vue'
+import AuthLayout from '@/layout/AuthLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/:catchAll(.*)',
-      redirect: { name: 'dashboard' },
+      redirect: { name: 'signin' },
+    },
+    {
+      path: '/auth',
+      component: AuthLayout,
+      children: [
+        {
+          name: 'signin',
+          path: 'signin',
+          component: () => import('../views/auth/Signin.vue'),
+        },
+        {
+          name: 'signup',
+          path: 'signup',
+          component: () => import('../views/auth/Signup.vue'),
+        },
+        {
+          path: '',
+          redirect: { name: 'login' },
+        },
+      ],
     },
     {
       name: 'admin',
