@@ -1,5 +1,5 @@
 <template>
-<div class="flex p-4 flex-col">
+  <div class="flex p-4 flex-col">
     <div class="text-left mb-3">
       <!-- car header -->
       <h1 class="font-black text-2xl text-[#344767]">Sign up</h1>
