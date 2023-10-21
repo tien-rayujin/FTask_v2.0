@@ -36,6 +36,7 @@
       </div>
       <div class="mt-4">
         <button
+          @click="signInWithGoogle"
           class="border border-slate-300 flex items-center justify-center text-sm text-white font-black bg-[#2dce89] py-3 px-4 rounded-xl transition-all hover:scale-110 duration-300 w-full"
         >
           Sign in
@@ -57,7 +58,28 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    type UserCredential,
+  } from 'firebase/auth'
 
   const remember = ref(false)
   const isPasswordVisible = ref(false)
+  const router = useRouter()
+
+  function signInWithGoogle() {
+    const provider = new GoogleAuthProvider()
+    const auth = getAuth()
+    signInWithPopup(auth, provider).then((result: UserCredential) => {
+      console.log(result)
+
+      const user = result.user
+      console.log(user)
+
+      router.push({ name: 'dashboard' })
+    })
+  }
 </script>
