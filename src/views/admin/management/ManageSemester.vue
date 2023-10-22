@@ -18,6 +18,21 @@
       </button>
     </template>
     <template #main>
+      <va-modal v-model="showModal" close-button class="">
+        <div class="va-h3 text-3xl text-center">
+          Detail of {{ editedItem?.name }}
+        </div>
+        <div>
+          <ul class="list-disc">
+            <li><b>Semester ID: </b>{{ editedItem?.Id }}</li>
+            <li><b>Semester Name: </b>{{ editedItem?.name }}</li>
+            <li><b>Semester Code: </b>{{ editedItem?.code }}</li>
+            <li><b>Semester Start Date: </b>{{ editedItem?.startDate }}</li>
+            <li><b>Semester End Date: </b>{{ editedItem?.endDate }}</li>
+          </ul>
+        </div>
+      </va-modal>
+
       <va-data-table
         :items="items"
         :columns="columns"
@@ -26,7 +41,7 @@
         :current-page="currentPage"
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(name)="{ value }">
+        <template #cell(id)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
@@ -46,12 +61,13 @@
           <BadgeBase :status="value == 'online'" :text="value" />
         </template>
 
-        <template #cell(actions)="{}">
+        <template #cell(actions)="{ rowIndex }">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
+                @click.prevent="openModalToEditItemById(rowIndex)"
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
@@ -88,7 +104,7 @@
   import { ref, computed } from 'vue'
 
   const columns = ref([
-    { key: 'name' },
+    { key: 'id' },
     { key: 'code' },
     { key: 'startDate' },
     { key: 'endDate' },
@@ -101,9 +117,21 @@
   const currentPage = ref(1)
   const visualPage = ref(2)
 
+  const semesters = ref(semesterList)
+  const showModal = ref(false)
+  const editedItemId = ref(null)
+  const editedItem = ref<SemesterModel>()
+
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
       ? Math.ceil(items.value.length / perPage.value)
       : items.value.length
   })
+
+  function openModalToEditItemById(id: any) {
+    editedItemId.value = id
+    editedItem.value = { ...semesters.value[id] }
+    //show model.value based on id
+    showModal.value = !showModal.value
+  }
 </script>
