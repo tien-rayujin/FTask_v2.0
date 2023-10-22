@@ -1,6 +1,6 @@
 <template>
   <span
-    class="inline-block text-white items-center rounded-md text-[.625rem] py-[0.45em] px-[0.775em] uppercase bg-gradient-to-tr from-emerald-500 to-cyan-500"
+    class="inline-block text-white items-center rounded-md text-[.625rem] py-[0.45em] px-[0.775em] uppercase bg-gradient-to-tr"
     :class="{
       'from-emerald-500 to-cyan-500': status,
       'from-gray-700 to-gray-500': !status,

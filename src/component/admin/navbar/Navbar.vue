@@ -28,10 +28,10 @@
         <li class="">
           <img
             class="inline-block w-8 h-8 object-cover rounded-full border border-slate-100 border-opacity-20"
-            src="https://online.hitpaw.com/images/topics/face-animator/who-is-gigachad.jpg"
+            :src="user.img"
             alt=""
           />
-          <span class="inline-block px-3">Nguyen Van Tien</span>
+          <span class="inline-block px-3">{{ user.name }}</span>
         </li>
         <li class="drop-item">
           <a href="" class="relative" @click.prevent="toggleSettingDropdown">
@@ -59,11 +59,22 @@
 </template>
 <script setup lang="ts">
   import Breadcumbs from './Breadcumbs.vue'
+  import { useUserStore } from '@/stores/user-store'
   import { useRoute } from 'vue-router'
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
 
   const currentPage = ref<string>(useRoute().name as string)
   const settingShow = ref(false)
+  const userStore = useUserStore()
+
+  const user = ref({ name: '', img: '' })
+
+  onMounted(() => {
+    user.value = {
+      name: userStore.user.displayName as string,
+      img: userStore.user.photoURL as string,
+    }
+  })
 
   function toggleSettingDropdown() {
     settingShow.value = !settingShow.value
