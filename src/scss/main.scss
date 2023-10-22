@@ -2,48 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-@import 'vuestic-sass/index';
 @import 'icon-fonts/index';
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700');
+// @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
+// reset css
 * {
-  font-family: 'Popins', sans-serif;
+  // font-family: 'Popins', sans-serif;
+  font-family: 'Open Sans';
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-}
-
-html {
-  line-height: 1.15;
-}
-
-body {
-  line-height: 1;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-strong,
-b {
-  line-height: 1.2;
-  font-weight: 600;
-}
-
-code,
-kbd,
-samp,
-pre {
-  font-family: monospace;
-  font-size: 1em;
-}
-
-.ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
