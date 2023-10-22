@@ -99,9 +99,10 @@ const getCurrentUser = () => {
 }
 
 import { useUserStore } from '@/stores/user-store'
+let userStore = null
 
 router.beforeEach(async (to, from, next) => {
-  const userStore = useUserStore()
+  userStore = useUserStore()
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if ((await getCurrentUser()) && userStore.isAuthenticated) {
