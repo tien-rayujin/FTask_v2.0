@@ -2,12 +2,12 @@ import { getStorage } from 'firebase/storage'
 import { type FirebaseApp } from 'firebase/app'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyA5Qp42cpSqa8tSUPmI_nTmHWwz7GsR37o',
-  authDomain: 'ftask-3db0d.firebaseapp.com',
-  projectId: 'ftask-3db0d',
-  storageBucket: 'ftask-3db0d.appspot.com',
-  messagingSenderId: '713040780244',
-  appId: '1:713040780244:web:b5564dba0d4553e55fd441',
+  apiKey: 'AIzaSyB0cXX9CeGCnyxCjf2kN1QGxm5wqTxWF3I',
+  authDomain: 'ftask-bec4b.firebaseapp.com',
+  projectId: 'ftask-bec4b',
+  storageBucket: 'ftask-bec4b.appspot.com',
+  messagingSenderId: '1000581992738',
+  appId: '1:1000581992738:web:c658d945c72838528ed57b',
 }
 
 function initializeStorage(firebaseApp: FirebaseApp) {
