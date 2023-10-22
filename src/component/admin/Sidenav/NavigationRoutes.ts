@@ -20,7 +20,7 @@ export default {
       },
     },
     {
-      name: 'dashboard',
+      name: 'task',
       displayName: 'Task',
       meta: {
         icon: 'fa-solid fa-list-check',

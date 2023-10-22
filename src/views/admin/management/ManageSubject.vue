@@ -1,4 +1,14 @@
 <template>
+  <va-modal v-model="showModal" close-button>
+    <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
+    <ul class="list-disc">
+      <li><b>Subject ID: </b>{{ editedItem?.Id }}</li>
+      <li><b>Subject Name: </b>{{ editedItem?.name }}</li>
+      <li><b>Subject Code: </b>{{ editedItem?.code }}</li>
+      <li><b>Subject Department: </b>{{ editedItem?.department }}</li>
+      <li><b>Subject Status: </b>{{ editedItem?.status }}</li>
+    </ul>
+  </va-modal>
   <ManagementBase>
     <template #header>
       <input
@@ -18,23 +28,13 @@
       </button>
     </template>
     <template #main>
-      <va-modal v-model="showModal" close-button>
-        <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
-        <ul class="list-disc">
-          <li><b>Subject ID: </b>{{ editedItem?.Id }}</li>
-          <li><b>Subject Name: </b>{{ editedItem?.name }}</li>
-          <li><b>Subject Code: </b>{{ editedItem?.code }}</li>
-          <li><b>Subject Department: </b>{{ editedItem?.department }}</li>
-          <li><b>Subject Status: </b>{{ editedItem?.status }}</li>
-        </ul>
-      </va-modal>
-
       <va-data-table
         :items="items"
         :columns="columns"
         :filter="searchValue"
         :per-page="perPage"
         :current-page="currentPage"
+        striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
         <template #cell(name)="{ value }">

@@ -1,4 +1,19 @@
 <template>
+  <va-modal v-model="showModal" close-button class="">
+    <div class="va-h3 text-3xl text-center">
+      Detail of {{ editedItem?.name }}
+    </div>
+    <div>
+      <ul class="list-disc">
+        <li><b>Semester ID: </b>{{ editedItem?.Id }}</li>
+        <li><b>Semester Name: </b>{{ editedItem?.name }}</li>
+        <li><b>Semester Code: </b>{{ editedItem?.code }}</li>
+        <li><b>Semester Start Date: </b>{{ editedItem?.startDate }}</li>
+        <li><b>Semester End Date: </b>{{ editedItem?.endDate }}</li>
+      </ul>
+    </div>
+  </va-modal>
+
   <ManagementBase>
     <template #header>
       <input
@@ -18,27 +33,13 @@
       </button>
     </template>
     <template #main>
-      <va-modal v-model="showModal" close-button class="">
-        <div class="va-h3 text-3xl text-center">
-          Detail of {{ editedItem?.name }}
-        </div>
-        <div>
-          <ul class="list-disc">
-            <li><b>Semester ID: </b>{{ editedItem?.Id }}</li>
-            <li><b>Semester Name: </b>{{ editedItem?.name }}</li>
-            <li><b>Semester Code: </b>{{ editedItem?.code }}</li>
-            <li><b>Semester Start Date: </b>{{ editedItem?.startDate }}</li>
-            <li><b>Semester End Date: </b>{{ editedItem?.endDate }}</li>
-          </ul>
-        </div>
-      </va-modal>
-
       <va-data-table
         :items="items"
         :columns="columns"
         :filter="searchValue"
         :per-page="perPage"
         :current-page="currentPage"
+        striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
         <template #cell(id)="{ value }">
@@ -104,7 +105,6 @@
   import { ref, computed } from 'vue'
 
   const columns = ref([
-    { key: 'id' },
     { key: 'code' },
     { key: 'startDate' },
     { key: 'endDate' },

@@ -6,7 +6,7 @@ import AuthLayout from '@/layout/AuthLayout.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: 'signin' },
+    redirect: { name: 'dashboard' },
   },
   {
     path: '/auth',
@@ -38,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'dashboard',
         path: 'dashboard',
         component: () => import('../views/Test.vue'),
+      },
+      {
+        name: 'task',
+        path: 'task',
+        component: () => import('../views/admin/management/ManageTask.vue'),
       },
       {
         name: 'manageLecturer',
@@ -98,14 +103,14 @@ const getCurrentUser = () => {
   })
 }
 
-import { useUserStore } from '@/stores/user-store'
-let userStore = null
+// import { useUserStore } from '@/stores/user-store'
+// let userStore = null
 
 router.beforeEach(async (to, from, next) => {
-  userStore = useUserStore()
+  // userStore = useUserStore()
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if ((await getCurrentUser()) && userStore.isAuthenticated) {
+    if (await getCurrentUser()) {
       //  && userStore.isAuthenticated
       // user already signIn
       if (

@@ -15,7 +15,7 @@
       />
       <div>
         <table class="">
-          <tr v-for="(prop, idx) in itemSelected" :key="idx">
+          <tr v-for="(prop, idx) in editedItem" :key="idx">
             <td>{{}}</td>
             <td>{{ prop }}</td>
           </tr>
@@ -51,6 +51,7 @@
         :filter="searchValue"
         :per-page="perPage"
         :current-page="currentPage"
+        striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
         <template #cell(name)="{ value }">
@@ -135,8 +136,8 @@
   const currentPage = ref(1)
   const visualPage = ref(2)
   const showModal = ref(false)
-  const itemSelectedId = ref(null)
-  const itemSelected = ref<LecturerModel>()
+  const editedItemId = ref(null)
+  const editedItem = ref<LecturerModel>()
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
@@ -145,8 +146,8 @@
   })
 
   function openModalToEditItemById(id: any) {
-    itemSelectedId.value = id
-    itemSelected.value = { ...items.value[id] }
+    editedItemId.value = id
+    editedItem.value = { ...items.value[id] }
     //show model.value based on id
     showModal.value = !showModal.value
   }
