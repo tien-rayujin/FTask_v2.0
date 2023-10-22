@@ -18,6 +18,16 @@
       </button>
     </template>
     <template #main>
+      <va-modal v-model="showModal" close-button>
+        <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
+        <ul class="list-disc">
+          <li><b>User Email: </b>{{ editedItem?.email }}</li>
+          <li><b>Username: </b>{{ editedItem?.name }}</li>
+          <li><b>User Phone: </b>{{ editedItem?.phone }}</li>
+          <li><b>User Status: </b>{{ editedItem?.status }}</li>
+        </ul>
+      </va-modal>
+
       <va-data-table
         :items="items"
         :columns="columns"
@@ -42,12 +52,13 @@
           <BadgeBase :status="value == 'online'" :text="value" />
         </template>
 
-        <template #cell(actions)="{}">
+        <template #cell(actions)="{ rowIndex }">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
+                @click.prevent="openModalToEditItemById(rowIndex)"
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
@@ -97,9 +108,21 @@
   const currentPage = ref(1)
   const visualPage = ref(2)
 
+  const users = ref(userList)
+  const showModal = ref(false)
+  const editedItemName = ref(null)
+  const editedItem = ref<UserModel>()
+
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
       ? Math.ceil(items.value.length / perPage.value)
       : items.value.length
   })
+
+  function openModalToEditItemById(name: any) {
+    editedItemName.value = name
+    editedItem.value = { ...users.value[name] }
+    //show model.value based on id
+    showModal.value = !showModal.value
+  }
 </script>
