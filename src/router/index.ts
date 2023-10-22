@@ -98,10 +98,14 @@ const getCurrentUser = () => {
   })
 }
 
+import { useUserStore } from '@/stores/user-store'
+
 router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (await getCurrentUser()) {
-      //  && UserStore.user
+    if ((await getCurrentUser()) && userStore.isAuthenticated) {
+      //  && userStore.isAuthenticated
       // user already signIn
       if (
         to.matched.some((record) => record.meta.isAdmin)
@@ -115,7 +119,7 @@ router.beforeEach(async (to, from, next) => {
       }
     } else {
       alert('You dont have access to this page')
-      next({ name: 'login' })
+      next({ name: 'signin' })
     }
   } else {
     next()

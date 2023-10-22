@@ -71,8 +71,8 @@
 
   onMounted(() => {
     user.value = {
-      name: userStore.user.displayName as string,
-      img: userStore.user.photoURL as string,
+      name: userStore.user?.displayName as string,
+      img: userStore.user?.photoURL as string,
     }
   })
 
