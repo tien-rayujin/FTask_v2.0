@@ -140,7 +140,7 @@
 <script setup lang="ts">
   import ManagementBase from '@/component/admin/ManagementBase.vue'
   import ActionButtonBase from '@/component/admin/ActionButtonBase.vue'
-  import type { DepartmentModel, TaskModel } from './manageModel'
+  import type { TaskModel } from './manageModel'
   import taskList from './sampleData/taskList'
   import departmentList from './sampleData/departmentList'
   import { ref, computed } from 'vue'
