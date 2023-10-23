@@ -1,13 +1,13 @@
 <template>
   <va-modal v-model="showModal" close-button>
-    <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
+    <!-- <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
     <ul class="list-disc">
       <li><b>Subject ID: </b>{{ editedItem?.Id }}</li>
       <li><b>Subject Name: </b>{{ editedItem?.name }}</li>
       <li><b>Subject Code: </b>{{ editedItem?.code }}</li>
       <li><b>Subject Department: </b>{{ editedItem?.department }}</li>
       <li><b>Subject Status: </b>{{ editedItem?.status }}</li>
-    </ul>
+    </ul> -->
   </va-modal>
   <ManagementBase>
     <template #header>
@@ -37,20 +37,24 @@
         striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(name)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template>
-
-        <template #cell(code)="{ value }">
+        <template #cell(subjectName)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
         <template #cell(department)="{ value }">
-          <span class="text-sm">{{ value }}</span>
+          <span class="text-sm">{{ value.departmentName }}</span>
         </template>
 
         <template #cell(status)="{ value }">
           <BadgeBase :status="value == 'active'" :text="value" />
+        </template>
+
+        <template #cell(createdBy)="{ value }">
+          <span class="text-sm">{{ value }}</span>
+        </template>
+
+        <template #cell(createdAt)="{ value }">
+          <span class="text-sm">{{ value }}</span>
         </template>
 
         <template #cell(actions)="{ rowIndex }">
@@ -92,27 +96,30 @@
   import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { SubjectModel } from './manageModel'
-  import subjectList from './sampleData/subjectList'
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
 
   const columns = ref([
-    { key: 'name' },
-    { key: 'code' },
-    { key: 'department' },
-    { key: 'status' },
+    { key: 'subjectName', label: 'Subject Name' },
+    { key: 'department', label: 'Department' },
+    { key: 'status', label: 'Status' },
+    { key: 'createdBy', label: 'Created By' },
+    { key: 'createdAt', label: 'Created At' },
     { key: 'actions', label: '' },
   ])
 
-  const items = ref<SubjectModel[]>(subjectList)
+  const items = ref<SubjectModel[]>([])
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
 
-  const subjects = ref(subjectList)
   const showModal = ref(false)
   const editedItemId = ref(null)
   const editedItem = ref<SubjectModel>()
+
+  onMounted(() => {
+    fetchSubjects()
+  })
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
@@ -120,9 +127,16 @@
       : items.value.length
   })
 
+  async function fetchSubjects() {
+    const response = await fetch('/api/subjects?page=1&amount=50')
+    const json = await response.json()
+    items.value = json
+    console.log(json)
+  }
+
   function openModalToEditItemById(id: any) {
     editedItemId.value = id
-    editedItem.value = { ...subjects.value[id] }
+    editedItem.value = { ...items.value[id] }
     //show model.value based on id
     showModal.value = !showModal.value
   }

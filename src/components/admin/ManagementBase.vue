@@ -18,7 +18,7 @@
     </div>
 
     <!-- table -->
-    <div class="flex-1 w-full mt-5 row-span-5 min-h-[36.5625rem]">
+    <div class="flex-1 w-full mt-5 row-span-5 min-h-[36.5625rem] px-5">
       <slot name="main" />
     </div>
 
