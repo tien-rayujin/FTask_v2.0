@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-[750px] bg-white rounded-2xl flex flex-col">
     <!-- searching and filtering -->
-    <div class="grid grid-cols-12 pt-6 px-5">
+    <div class="grid gap-5 grid-cols-12 pt-6 px-5">
       <!-- search -->
       <div class="col-span-4">
         <slot name="header" />
