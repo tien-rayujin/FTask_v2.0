@@ -1,10 +1,19 @@
 export interface LecturerModel {
-  name: string
+  id: string
   email: string
-  phone: string
-  department: string
-  subject: string
-  status: string
+  normalizedEmail: string
+  emailConfirmed: boolean
+  phoneNumber: string
+  phoneNumberConfirmed: boolean
+  twoFactorEnabled: boolean
+  lockoutEnd: Date
+  lockoutEnabled: boolean
+  filePath: string
+  displayName: string
+  department: DepartmentModel
+  departmentHead: LecturerModel
+  createdBy: string
+  createdAt: Date
 }
 
 export interface UserModel {
@@ -34,17 +43,19 @@ export interface SubjectModel {
 }
 
 export interface SemesterModel {
-  Id: string
-  name: string
-  code: string
+  semesterId: string
+  semesterCode: string
   startDate: string
   endDate: string
+  createdBy: string
+  createdAt: Date
 }
 
 export interface DepartmentModel {
-  Id: string
-  name: string
-  code: string
-  lecturerHead_Id: string
-  lecturerHead_name: string
+  departmentId: string
+  departmentName: string
+  departmentCode: string
+  departmentHead: LecturerModel
+  createdBy: string
+  createdAt: Date
 }
