@@ -8,29 +8,48 @@ export interface LecturerModel {
 }
 
 export interface UserModel {
-  name: string
+  id: string
   email: string
-  phone: string
-  status: string
+  normalizedEmail: string
+  emailConfirmed: boolean
+  phoneNumber: string
+  phoneNumberConfirmed: boolean
+  twoFactorEnabled: boolean
+  lockoutEnd: Date
+  lockoutEnabled: boolean
+  filePath: string
+  displayName: string
+  roles: Array<string>
+  createdBy: string
+  createdAt: Date
 }
 
 export interface TaskModel {
-  title: string
-  description: string
-  due_date: string
-  priority: string
-  type: string
-  created_at: string
-  created_by: string
-  status: string
+  taskId: number
+  taskTitle: string
+  taskContent: string
+  startDate: Date
+  endDate: Date
+  taskLevel: number
+  taskStatus: number
+  location: string
+  semester: SemesterModel
+  department: DepartmentModel
+  subject: SubjectModel
+  // taskLecturers: Array<LecturerModel>
+  // attachments: Array<string>
+  createdBy: LecturerModel
+  createdAt: Date
 }
 
 export interface SubjectModel {
-  Id: string
-  name: string
-  code: string
-  department: string
+  subjectId: number
+  subjectName: string
+  subjectCode: string
+  department: DepartmentModel
   status: string
+  createdBy: string
+  createdAt: string
 }
 
 export interface SemesterModel {
