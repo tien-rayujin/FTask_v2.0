@@ -128,6 +128,13 @@
       : items.value.length
   })
 
+  async function fetchLecturers() {
+    const response = await fetch('/api/lecturers')
+    const json = await response.json()
+    semesters.value = json
+    console.log(json)
+  }
+
   function openModalToEditItemById(id: any) {
     editedItemId.value = id
     editedItem.value = { ...semesters.value[id] }
