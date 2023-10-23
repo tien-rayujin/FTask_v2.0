@@ -138,8 +138,8 @@
 </template>
 
 <script setup lang="ts">
-  import ManagementBase from '@/component/admin/ManagementBase.vue'
-  import ActionButtonBase from '@/component/admin/ActionButtonBase.vue'
+  import ManagementBase from '@/components/admin/ManagementBase.vue'
+  import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { TaskModel } from './manageModel'
   import taskList from './sampleData/taskList'
   import departmentList from './sampleData/departmentList'

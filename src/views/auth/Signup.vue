@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-  import SigninGoogleButton from '@/component/admin/SigninGoogleButton.vue'
+  import SigninGoogleButton from '@/components/admin/SigninGoogleButton.vue'
   import { ref } from 'vue'
   const isPasswordVisible = ref(false)
   const isPasswordConfirmVisible = ref(false)

@@ -45,8 +45,6 @@ export interface TaskModel {
   semester: SemesterModel
   department: DepartmentModel
   subject: SubjectModel
-  // taskLecturers: Array<LecturerModel>
-  // attachments: Array<string>
   createdBy: LecturerModel
   createdAt: Date
 }

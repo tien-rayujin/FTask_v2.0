@@ -9,9 +9,9 @@
   </main>
 </template>
 <script setup lang="ts">
-  import Sidenav from '@/component/admin/Sidenav/Sidenav.vue'
-  import Navbar from '@/component/admin/navbar/Navbar.vue'
-  import Footer from '@/component/admin/Footer.vue'
+  import Sidenav from '@/components/admin/Sidenav/Sidenav.vue'
+  import Navbar from '@/components/admin/navbar/Navbar.vue'
+  import Footer from '@/components/admin/Footer.vue'
 </script>
 
 <style scoped lang="scss">

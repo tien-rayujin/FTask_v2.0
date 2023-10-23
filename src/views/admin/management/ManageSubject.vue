@@ -88,9 +88,9 @@
 </template>
 
 <script setup lang="ts">
-  import ManagementBase from '@/component/admin/ManagementBase.vue'
-  import BadgeBase from '@/component/admin/BadgeBase.vue'
-  import ActionButtonBase from '@/component/admin/ActionButtonBase.vue'
+  import ManagementBase from '@/components/admin/ManagementBase.vue'
+  import BadgeBase from '@/components/admin/BadgeBase.vue'
+  import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { SubjectModel } from './manageModel'
   import subjectList from './sampleData/subjectList'
   import { ref, computed } from 'vue'
