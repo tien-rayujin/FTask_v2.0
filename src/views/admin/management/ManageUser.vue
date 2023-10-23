@@ -1,14 +1,4 @@
 <template>
-  <va-modal v-model="showModal" close-button>
-    <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
-    <ul class="list-disc">
-      <li><b>User Email: </b>{{ editedItem?.email }}</li>
-      <li><b>Username: </b>{{ editedItem?.name }}</li>
-      <li><b>User Phone: </b>{{ editedItem?.phone }}</li>
-      <li><b>User Status: </b>{{ editedItem?.status }}</li>
-    </ul>
-  </va-modal>
-
   <ManagementBase>
     <template #header>
       <input
@@ -37,29 +27,36 @@
         striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(name)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template>
-
         <template #cell(email)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(phone)="{ value }">
+        <template #cell(normalizedEmail)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(status)="{ value }">
-          <BadgeBase :status="value == 'online'" :text="value" />
+        <template #cell(phoneNumber)="{ value }">
+          <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(actions)="{ rowIndex }">
+        <template #cell(lockoutEnabled)="{ value }">
+          <BadgeBase :status="value == 'true'" :text="value" />
+        </template>
+
+        <template #cell(twoFactorEnabled)="{ value }">
+          <BadgeBase :status="value == 'true'" :text="value" />
+        </template>
+
+        <template #cell(displayName)="{ value }">
+          <span class="text-sm">{{ value }}</span>
+        </template>
+
+        <template #cell(actions)="">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
-                @click.prevent="openModalToEditItemById(rowIndex)"
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
@@ -92,27 +89,27 @@
   import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { UserModel } from './manageModel'
-  import userList from './sampleData/userList'
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
 
   const columns = ref([
-    { key: 'name' },
-    { key: 'email' },
-    { key: 'phone' },
-    { key: 'status' },
+    { key: 'email', label: 'Email' },
+    { key: 'normalizedEmail', label: 'Normalized Email' },
+    { key: 'phoneNumber', label: 'Phone Number' },
+    { key: 'twoFactorEnabled', label: 'Two Factor Enabled' },
+    { key: 'lockoutEnabled', label: 'Ban' },
+    { key: 'displayName', label: 'Display Name' },
     { key: 'actions', label: '' },
   ])
 
-  const items = ref<UserModel[]>(userList)
+  const items = ref<UserModel[]>([])
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
 
-  const users = ref(userList)
-  const showModal = ref(false)
-  const editedItemName = ref(null)
-  const editedItem = ref<UserModel>()
+  onMounted(() => {
+    fetchUsers()
+  })
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
@@ -120,10 +117,10 @@
       : items.value.length
   })
 
-  function openModalToEditItemById(name: any) {
-    editedItemName.value = name
-    editedItem.value = { ...users.value[name] }
-    //show model.value based on id
-    showModal.value = !showModal.value
+  async function fetchUsers() {
+    const response = await fetch('/api/users?page=1&quantity=10')
+    const json = await response.json()
+    items.value = json
+    console.log(json)
   }
 </script>

@@ -1,10 +1,37 @@
 <template>
+  <va-modal
+    ref="modal"
+    v-model="showModal"
+    ok-text="Apply"
+    stateful
+    close-button
+  >
+    <h3 class="text-xl font-bold">Lecturer Detail Information</h3>
+    <div class="mt-5 flex items-center justify-between">
+      <img
+        src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-businessman-user-avatar-wearing-suit-with-red-tie-png-image_5809521.png"
+        alt=""
+        class="w-[250px] h-[300px] object-cover"
+      />
+      <div>
+        <table class="">
+          <tr v-for="(prop, idx) in editedItem" :key="idx">
+            <td>{{}}</td>
+            <td>{{ prop }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- {{ itemSelectedId }}
+    {{ itemSelected }} -->
+  </va-modal>
   <ManagementBase>
     <template #header>
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Department..."
+        placeholder="Search Lecturer..."
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>
@@ -14,7 +41,7 @@
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
       >
         <i class="block fa-solid fa-plus"></i>
-        <span class="block ml-2">Add Department</span>
+        <span class="block ml-2">Add Lecturer</span>
       </button>
     </template>
     <template #main>
@@ -27,37 +54,38 @@
         striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(departmentName)="{ value }">
+        <template #cell(name)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(departmentCode)="{ value }">
+        <template #cell(email)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(departmentHead)="{ rowData }">
-          <span class="text-sm">{{ rowData.departmentHead?.displayName }}</span>
-        </template>
-
-        <template #cell(createdBy)="{ value }">
+        <template #cell(phone)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(createdAt)="{ value }">
+        <template #cell(department)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <!-- <template #cell(status)="{ value }">
+        <template #cell(subject)="{ value }">
+          <span class="text-sm">{{ value }}</span>
+        </template>
+
+        <template #cell(status)="{ value }">
           <BadgeBase :status="value == 'online'" :text="value" />
-        </template> -->
+        </template>
 
-        <template #cell(actions)="">
+        <template #cell(actions)="{ rowIndex }">
           <div class="w-[60px]">
-            <div class="flex items-center justify-center">
-              <!-- <ActionButtonBase
+            <div class="flex items-center justify-start">
+              <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
-              /> -->
+                @click="openModalToEditItemById(rowIndex)"
+              />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
@@ -86,40 +114,41 @@
 
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
-  // import BadgeBase from '@/components/admin/BadgeBase.vue'
+  import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
-  import type { DepartmentModel } from './manageModel'
-  import departmentList from './sampleData/departmentList'
-  import { ref, computed, onMounted } from 'vue'
+  import type { LecturerModel } from './manageModel'
+  import lecturerList from './sampleData/lecturerList'
+  import { ref, computed } from 'vue'
 
   const columns = ref([
-    { key: 'departmentName', label: 'Department Name' },
-    { key: 'departmentCode', label: 'Department Code' },
-    { key: 'departmentHead', label: 'Department Head' },
-    { key: 'createdBy', label: 'Create By' },
-    { key: 'createdAt', label: 'Create Date' },
+    { key: 'name' },
+    { key: 'email' },
+    { key: 'phone' },
+    { key: 'department' },
+    { key: 'subject' },
+    { key: 'status' },
     { key: 'actions', label: '' },
   ])
 
-  const items = ref<DepartmentModel[]>(departmentList)
+  const items = ref<LecturerModel[]>(lecturerList)
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
-
-  onMounted(() => {
-    fetchDepartments()
-  })
+  const showModal = ref(false)
+  const editedItemId = ref(null)
+  const editedItem = ref<LecturerModel>()
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
       ? Math.ceil(items.value.length / perPage.value)
       : items.value.length
   })
-  async function fetchDepartments() {
-    const response = await fetch('/api/departments?page=1&quantity=10')
-    const json = await response.json()
-    items.value = json
-    console.log(json)
+
+  function openModalToEditItemById(id: any) {
+    editedItemId.value = id
+    editedItem.value = { ...items.value[id] }
+    //show model.value based on id
+    showModal.value = !showModal.value
   }
 </script>

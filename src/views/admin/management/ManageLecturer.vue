@@ -1,5 +1,5 @@
 <template>
-  <va-modal
+  <!-- <va-modal
     ref="modal"
     v-model="showModal"
     ok-text="Apply"
@@ -23,9 +23,9 @@
       </div>
     </div>
 
-    <!-- {{ itemSelectedId }}
-    {{ itemSelected }} -->
-  </va-modal>
+    {{ itemSelectedId }}
+    {{ itemSelected }}
+  </va-modal> -->
   <ManagementBase>
     <template #header>
       <input
@@ -54,37 +54,40 @@
         striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(name)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template>
-
         <template #cell(email)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(phone)="{ value }">
+        <template #cell(normalizedEmail)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(department)="{ value }">
+        <template #cell(phoneNumber)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(subject)="{ value }">
+        <template #cell(twoFactorEnabled)="{ value }">
+          <BadgeBase :status="value == 'true'" :text="value" />
+        </template>
+
+        <template #cell(lockoutEnabled)="{ value }">
+          <BadgeBase :status="value == 'true'" :text="value" />
+        </template>
+
+        <template #cell(displayName)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(status)="{ value }">
-          <BadgeBase :status="value == 'online'" :text="value" />
+        <template #cell(createdAt)="{ value }">
+          <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(actions)="{ rowIndex }">
+        <template #cell(actions)="">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
-                @click="openModalToEditItemById(rowIndex)"
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
@@ -117,27 +120,31 @@
   import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { LecturerModel } from './manageModel'
-  import lecturerList from './sampleData/lecturerList'
-  import { ref, computed } from 'vue'
+  // import lecturerList from './sampleData/lecturerList'
+  import { ref, computed, onMounted } from 'vue'
 
   const columns = ref([
-    { key: 'name' },
-    { key: 'email' },
-    { key: 'phone' },
-    { key: 'department' },
-    { key: 'subject' },
-    { key: 'status' },
+    { key: 'email', label: 'Email' },
+    { key: 'normalizedEmail', label: 'Normalized Email' },
+    { key: 'phoneNumber', label: 'Phone Number' },
+    { key: 'twoFactorEnabled', label: 'Two Factor Enabled' },
+    { key: 'lockoutEnabled', label: 'Lockout' },
+    { key: 'displayName', label: 'Display Name' },
+    { key: 'createdAt', label: 'Create Date' },
     { key: 'actions', label: '' },
   ])
 
-  const items = ref<LecturerModel[]>(lecturerList)
+  const items = ref<LecturerModel[]>([])
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
-  const showModal = ref(false)
-  const editedItemId = ref(null)
-  const editedItem = ref<LecturerModel>()
+  // const showModal = ref(false)
+  // const editedItemId = ref(null)
+  // const editedItem = ref<LecturerModel>()
+  onMounted(() => {
+    fetchLecturers()
+  })
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
@@ -145,10 +152,17 @@
       : items.value.length
   })
 
-  function openModalToEditItemById(id: any) {
-    editedItemId.value = id
-    editedItem.value = { ...items.value[id] }
-    //show model.value based on id
-    showModal.value = !showModal.value
+  async function fetchLecturers() {
+    const response = await fetch('/api/lecturers?page=1&quantity=20')
+    const json = await response.json()
+    items.value = json
+    console.log(json)
   }
+
+  // function openModalToEditItemById(id: any) {
+  //   editedItemId.value = id
+  //   editedItem.value = { ...items.value[id] }
+  //   //show model.value based on id
+  //   showModal.value = !showModal.value
+  // }
 </script>

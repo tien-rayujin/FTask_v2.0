@@ -1,14 +1,4 @@
 <template>
-  <va-modal v-model="showModal" close-button>
-    <!-- <h3 class="va-h3 text-center">Detail of {{ editedItem?.name }}</h3>
-    <ul class="list-disc">
-      <li><b>Subject ID: </b>{{ editedItem?.Id }}</li>
-      <li><b>Subject Name: </b>{{ editedItem?.name }}</li>
-      <li><b>Subject Code: </b>{{ editedItem?.code }}</li>
-      <li><b>Subject Department: </b>{{ editedItem?.department }}</li>
-      <li><b>Subject Status: </b>{{ editedItem?.status }}</li>
-    </ul> -->
-  </va-modal>
   <ManagementBase>
     <template #header>
       <input
@@ -41,13 +31,17 @@
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(department)="{ value }">
-          <span class="text-sm">{{ value.departmentName }}</span>
+        <template #cell(subjectCode)="{ value }">
+          <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(status)="{ value }">
-          <BadgeBase :status="value == 'active'" :text="value" />
+        <template #cell(department)="{ rowData }">
+          <span class="text-sm">{{ rowData.department.departmentName }}</span>
         </template>
+
+        <!-- <template #cell(status)="{ value }">
+          <BadgeBase :status="value" :text="value" />
+        </template> -->
 
         <template #cell(createdBy)="{ value }">
           <span class="text-sm">{{ value }}</span>
@@ -57,14 +51,9 @@
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(actions)="{ rowIndex }">
+        <template #cell(actions)="">
           <div class="w-[60px]">
-            <div class="flex items-center justify-start">
-              <ActionButtonBase
-                icon="fa-solid fa-circle-info"
-                color="text-blue-400"
-                @click.prevent="openModalToEditItemById(rowIndex)"
-              />
+            <div class="flex items-center justify-center">
               <ActionButtonBase
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
@@ -93,15 +82,16 @@
 
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
-  import BadgeBase from '@/components/admin/BadgeBase.vue'
+  // import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { SubjectModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
 
   const columns = ref([
     { key: 'subjectName', label: 'Subject Name' },
-    { key: 'department', label: 'Department' },
-    { key: 'status', label: 'Status' },
+    { key: 'subjectCode', label: 'Subject Code' },
+    { key: 'department', label: 'Department Name' },
+    // { key: 'status', label: 'Status' },
     { key: 'createdBy', label: 'Created By' },
     { key: 'createdAt', label: 'Created At' },
     { key: 'actions', label: '' },
@@ -112,10 +102,6 @@
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
-
-  const showModal = ref(false)
-  const editedItemId = ref(null)
-  const editedItem = ref<SubjectModel>()
 
   onMounted(() => {
     fetchSubjects()
@@ -132,12 +118,5 @@
     const json = await response.json()
     items.value = json
     console.log(json)
-  }
-
-  function openModalToEditItemById(id: any) {
-    editedItemId.value = id
-    editedItem.value = { ...items.value[id] }
-    //show model.value based on id
-    showModal.value = !showModal.value
   }
 </script>
