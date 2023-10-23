@@ -128,8 +128,8 @@
       : items.value.length
   })
 
-  async function fetchLecturers() {
-    const response = await fetch('/api/lecturers')
+  async function fetchSemesters() {
+    const response = await fetch('/api/semesters?page=1&quantity=10')
     const json = await response.json()
     semesters.value = json
     console.log(json)
