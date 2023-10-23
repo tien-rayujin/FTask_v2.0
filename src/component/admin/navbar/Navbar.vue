@@ -2,7 +2,7 @@
   <div class="py-2 mx-6">
     <div class="px-4 py-1 flex items-center">
       <!-- Breadcumbs -->
-      <Breadcumbs :current-page="currentPage" />
+      <Breadcumbs />
 
       <!-- Searchbar -->
       <div
@@ -60,10 +60,8 @@
 <script setup lang="ts">
   import Breadcumbs from './Breadcumbs.vue'
   import { useUserStore } from '@/stores/user-store'
-  import { useRoute } from 'vue-router'
   import { ref, onMounted } from 'vue'
 
-  const currentPage = ref<string>(useRoute().name as string)
   const settingShow = ref(false)
   const userStore = useUserStore()
 
