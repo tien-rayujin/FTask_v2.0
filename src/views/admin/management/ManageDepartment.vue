@@ -1,5 +1,149 @@
 <template>
   <!-- {{ items }} -->
+  <p>Create Item{{ createItem }}</p>
+  <p>Selected Item{{ selectedItem?.departmentId }}</p>
+  <p>Editted Item{{ edittedItem }}</p>
+  <!-- <p>{{ lecturerOptions }}</p> -->
+  <va-modal v-model="showEditModal" hide-default-actions overlay-opacity="0.2">
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Department Detail</h2>
+        <div class="text-right w-fit">
+          <span class="text-sm text-slate-400 inline-block -translate-y-1/3"
+            >View / Edit mode</span
+          >
+          <va-switch
+            v-model="toggleEditMode"
+            class="mx-3 inline-block"
+            size="small"
+            color="#2dce89"
+            :style="{
+              '--va-switch-checker-background-color': '#FFF',
+            }"
+          />
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[600px] h-fit relative flex items-center justify-center overflow-hidden"
+      >
+        <div class="h-full w-full flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Name</span>
+            <input
+              v-model="edittedItem.departmentName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: Computer Science Introduction 101"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Code</span>
+            <input
+              v-model="edittedItem.departmentCode"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: CSI101"
+            />
+            <span class="block text-sm text-slate-400 mt-3"
+              >Department Head</span
+            >
+            <va-select
+              v-model="edittedItem.departmentHeadId"
+              :options="lecturerOptions"
+              class="w-full"
+              text-by="displayName"
+              value-by="id"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showEditModal = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleUpdateClick()"
+      >
+        Update
+      </va-button>
+    </template>
+  </va-modal>
+
+  <va-modal
+    v-model="showCreateModal"
+    hide-default-actions
+    overlay-opacity="0.2"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Department Create</h2>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[600px] h-fit relative flex items-center justify-center overflow-hidden"
+      >
+        <div class="h-full w-full flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Name</span>
+            <input
+              v-model="createItem.departmentName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: Computer Science Introduction 101"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Code</span>
+            <input
+              v-model="createItem.departmentCode"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: CSI101"
+            />
+            <span class="block text-sm text-slate-400 mt-3"
+              >Department Head</span
+            >
+            <va-select
+              v-model="createItem.departmentHeadId"
+              :options="lecturerOptions"
+              class="w-full"
+              text-by="displayName"
+              value-by="id"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showCreateModal = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleCreateClick()"
+      >
+        Create
+      </va-button>
+    </template>
+  </va-modal>
+
   <ManagementBase>
     <template #header>
       <input
@@ -13,6 +157,7 @@
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
+        @click.prevent="showCreateModal = !showCreateModal"
       >
         <i class="block fa-solid fa-plus"></i>
         <span class="block ml-2">Add Department</span>
@@ -52,18 +197,31 @@
           <BadgeBase :status="value == 'online'" :text="value" />
         </template> -->
 
-        <template #cell(actions)="">
+        <template #cell(actions)="{ rowData }">
           <div class="w-[60px]">
             <div class="flex items-center justify-center">
-              <!-- <ActionButtonBase
-                icon="fa-solid fa-circle-info"
-                color="text-blue-400"
-              /> -->
               <ActionButtonBase
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
+                @click="
+                  () => {
+                    showEditModal = true
+                    toggleEditMode = true
+                    selectedItem = rowData as DepartmentModel
+                    mapEdditedItem(rowData)
+                  }
+                "
               />
-              <ActionButtonBase icon="fa-solid fa-ban" color="text-red-400" />
+              <ActionButtonBase
+                icon="fa-solid fa-ban"
+                color="text-red-400"
+                @click="
+                  () => {
+                    selectedItem = rowData as DepartmentModel
+                    handleDeletelick()
+                  }
+                "
+              />
             </div>
           </div>
         </template>
@@ -88,9 +246,11 @@
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
-  import type { DepartmentModel } from './manageModel'
+  import type { LecturerModel, DepartmentModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
   import axios from 'axios'
+
+  import { useModal, useToast } from 'vuestic-ui'
 
   const columns = ref([
     { key: 'departmentName', label: 'Department Name' },
@@ -102,13 +262,31 @@
   ])
 
   const items = ref<DepartmentModel[]>([])
+  const lecturerOptions = ref<LecturerModel[]>([])
+  const selectedItem = ref<DepartmentModel>()
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
+  const showEditModal = ref(false)
+  const showCreateModal = ref(false)
+  const toggleEditMode = ref(false)
+
+  const edittedItem = ref<DepartmentRequestModel>({
+    departmentName: '',
+    departmentCode: '',
+    departmentHeadId: '',
+  })
+
+  const createItem = ref<DepartmentRequestModel>({
+    departmentName: '',
+    departmentCode: '',
+    departmentHeadId: '',
+  })
 
   onMounted(() => {
     fetchDepartments()
+    fetchLecturers()
   })
 
   const pages = computed(() => {
@@ -129,5 +307,157 @@
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async function fetchLecturers() {
+    try {
+      const response = await axios.get('/api/lecturers?page=1&amount=50')
+      const json = response.data
+      lecturerOptions.value = json as Array<LecturerModel>
+
+      // map initial data
+      edittedItem.value.departmentHeadId = lecturerOptions.value[0].id
+      createItem.value.departmentHeadId = lecturerOptions.value[0].id
+
+      console.log('From Department get options Lecturer:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const { confirm } = useModal()
+  const { init } = useToast()
+
+  async function handleCreateClick() {
+    try {
+      const response = await axios.post(
+        `/api/departments`,
+        JSON.stringify(createItem.value),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      const responseData = response.data as DepartmentModel
+      // TODO: response data have value of departmentModel as create successfull but not yet handle error occur during request || ErrorModel
+      if (responseData) {
+        // delete successful && load data
+        fetchDepartments()
+
+        // clear input
+        clearInputCreateModel()
+
+        // close modal
+        showCreateModal.value = !showCreateModal.value
+
+        // toast message
+        init({
+          title: 'Department Create Message',
+          message: `Create Department: "${createItem.value.departmentName}" successfully!`,
+          color: '#fff',
+        })
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  async function handleUpdateClick() {
+    try {
+      const response = await axios.put(
+        `/api/departments?id=${selectedItem.value?.departmentId}`,
+        JSON.stringify(edittedItem.value),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      const responseData = response.data as DepartmentModel
+      // TODO: response data have value of departmentModel as create successfull but not yet handle error occur during request || ErrorModel
+      if (responseData) {
+        // delete successful && load data
+        fetchDepartments()
+
+        // close modal
+        showCreateModal.value = !showCreateModal.value
+
+        // toast message
+        init({
+          title: 'Department Update Message',
+          message: `Update Department: "${createItem.value.departmentName}" successfully!`,
+          color: '#fff',
+        })
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  async function handleDeletelick() {
+    const result = await confirm({
+      message: `Are you sure to delete this Department ${selectedItem.value?.departmentCode} - ${selectedItem.value?.departmentName}`,
+      title: 'Department delete confirmation',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      blur: true,
+    })
+
+    if (result) {
+      try {
+        // user confirm delete
+        const response = await axios.delete(
+          `/api/departments?id=${selectedItem.value?.departmentId}`,
+        )
+        const responseData: DepartmentErrorResponseModel = response.data
+        if (responseData.isSuccess) {
+          // delete successful && load data
+          fetchDepartments()
+
+          // toast message
+          init({
+            title: 'Department Delete Message',
+            message: `Delete Department: "${selectedItem.value?.departmentName}" successfully!`,
+            color: '#fff',
+          })
+        } else {
+          console.log(`Error from Response(origin): ${response}`)
+          console.log(
+            `Request to delete Failed with message: ${responseData.message}`,
+          )
+          console.log(`Error Detail: ${responseData.errors}`)
+        }
+      } catch (error) {
+        alert(error)
+      }
+    }
+  }
+
+  function mapEdditedItem(data: DepartmentModel) {
+    const item = edittedItem.value
+    item.departmentCode = data.departmentCode
+    item.departmentHeadId = data.departmentHead?.id as string
+    item.departmentName = data.departmentName
+  }
+
+  function clearInputCreateModel() {
+    const item = createItem.value
+    item.departmentCode = ''
+    item.departmentHeadId = ''
+    item.departmentName = ''
+  }
+
+  interface DepartmentErrorResponseModel {
+    isSuccess: boolean
+    message: string
+    errors: Array<string>
+  }
+
+  interface DepartmentRequestModel {
+    departmentName: string
+    departmentCode: string
+    departmentHeadId: string
   }
 </script>

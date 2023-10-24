@@ -1,5 +1,158 @@
 <template>
   <!-- {{ items }} -->
+  <p>Create Item{{ createItem }}</p>
+  <p>Selected Item{{ selectedItem?.subjectId }}</p>
+  <p>Editted Item{{ edittedItem }}</p>
+  <!-- <p>{{ departmentOptions }}</p> -->
+
+  <va-modal v-model="showEditModal" hide-default-actions overlay-opacity="0.2">
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Lecturer Detail</h2>
+        <div class="text-right w-fit">
+          <span class="text-sm text-slate-400 inline-block -translate-y-1/3"
+            >View / Edit mode</span
+          >
+          <va-switch
+            v-model="toggleEditMode"
+            class="mx-3 inline-block"
+            size="small"
+            color="#2dce89"
+            :style="{
+              '--va-switch-checker-background-color': '#FFF',
+            }"
+          />
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[600px] h-fit relative flex items-center justify-center overflow-hidden"
+      >
+        <div class="h-full w-full flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Name</span>
+            <input
+              v-model="edittedItem.subjectName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: Computer Science Introduction 101"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Code</span>
+            <input
+              v-model="edittedItem.subjectCode"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: CSI101"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Status</span>
+            <va-select
+              v-model="edittedItem.status"
+              :options="statusOptions"
+              class="w-full"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Department</span>
+            <va-select
+              v-model="edittedItem.departmentId"
+              :options="departmentOptions"
+              class="w-full"
+              text-by="departmentCode"
+              value-by="departmentId"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showEditModal = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleUpdateClick()"
+      >
+        Update
+      </va-button>
+    </template>
+  </va-modal>
+
+  <va-modal
+    v-model="showCreateModal"
+    hide-default-actions
+    overlay-opacity="0.2"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Lecturer Create</h2>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[600px] h-fit relative flex items-center justify-center overflow-hidden"
+      >
+        <div class="h-full w-full flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Name</span>
+            <input
+              v-model="createItem.subjectName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: Computer Science Introduction 101"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Code</span>
+            <input
+              v-model="createItem.subjectCode"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              placeholder="Ex: CSI101"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Status</span>
+            <va-select
+              v-model="createItem.status"
+              :options="statusOptions"
+              class="w-full"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Department</span>
+            <va-select
+              v-model="createItem.departmentId"
+              :options="departmentOptions"
+              class="w-full"
+              text-by="departmentCode"
+              value-by="departmentId"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showCreateModal = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleCreateClick()"
+      >
+        Create
+      </va-button>
+    </template>
+  </va-modal>
+
   <ManagementBase>
     <template #header>
       <input
@@ -13,6 +166,7 @@
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
+        @click.prevent="showCreateModal = !showCreateModal"
       >
         <i class="block fa-solid fa-plus"></i>
         <span class="block ml-2">Add Subject</span>
@@ -48,14 +202,35 @@
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(actions)="">
+        <template #cell(status)="{ value }">
+          <BadgeBase :status="value == 'true'" :text="value" />
+        </template>
+
+        <template #cell(actions)="{ rowData }">
           <div class="w-[60px]">
             <div class="flex items-center justify-center">
               <ActionButtonBase
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
+                @click="
+                  () => {
+                    showEditModal = true
+                    toggleEditMode = true
+                    selectedItem = rowData as SubjectModel
+                    mapEdditedItem(rowData)
+                  }
+                "
               />
-              <ActionButtonBase icon="fa-solid fa-ban" color="text-red-400" />
+              <ActionButtonBase
+                icon="fa-solid fa-ban"
+                color="text-red-400"
+                @click="
+                  () => {
+                    selectedItem = rowData as SubjectModel
+                    handleDeleteClick()
+                  }
+                "
+              />
             </div>
           </div>
         </template>
@@ -80,28 +255,52 @@
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
-  import type { SubjectModel } from './manageModel'
+  import type { DepartmentModel, SubjectModel } from './manageModel'
+  import BadgeBase from '@/components/admin/BadgeBase.vue'
   import { ref, computed, onMounted } from 'vue'
   import axios from 'axios'
+
+  import { useModal, useToast } from 'vuestic-ui'
 
   const columns = ref([
     { key: 'subjectName', label: 'Subject Name' },
     { key: 'subjectCode', label: 'Subject Code' },
     { key: 'department', label: 'Department Name' },
-    // { key: 'status', label: 'Status' },
     { key: 'createdBy', label: 'Created By' },
     { key: 'createdAt', label: 'Created At' },
+    { key: 'status', label: 'Status' },
     { key: 'actions', label: '' },
   ])
 
   const items = ref<SubjectModel[]>([])
+  const departmentOptions = ref<DepartmentModel[]>([])
+  const statusOptions = ref<Array<boolean>>([true, false])
+  const selectedItem = ref<SubjectModel>()
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
+  const showEditModal = ref(false)
+  const showCreateModal = ref(false)
+  const toggleEditMode = ref(false)
+
+  const edittedItem = ref<SubjectRequestModel>({
+    departmentId: 0,
+    subjectName: '',
+    subjectCode: '',
+    status: true,
+  })
+
+  const createItem = ref<SubjectRequestModel>({
+    departmentId: 0,
+    subjectName: '',
+    subjectCode: '',
+    status: true,
+  })
 
   onMounted(() => {
     fetchSubjects()
+    fetchDepartment()
   })
 
   const pages = computed(() => {
@@ -123,5 +322,162 @@
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async function fetchDepartment() {
+    try {
+      const response = await axios.get('/api/departments?page=1&amount=50')
+      const json = response.data
+      departmentOptions.value = json as Array<DepartmentModel>
+
+      // map initial data
+      edittedItem.value.departmentId = departmentOptions.value[0].departmentId
+      createItem.value.departmentId = departmentOptions.value[0].departmentId
+
+      console.log('From Subject get options Department:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const { confirm } = useModal()
+  const { init } = useToast()
+
+  async function handleCreateClick() {
+    try {
+      const response = await axios.post(
+        `/api/subjects`,
+        JSON.stringify(createItem.value),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      const responseData = response.data as SubjectModel
+      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+      if (responseData) {
+        // delete successful && load data
+        fetchSubjects()
+
+        // close modal
+        showCreateModal.value = !showCreateModal.value
+
+        // toast message
+        init({
+          title: 'Subject Create Message',
+          message: `Create Subject: "${createItem.value.subjectName}" successfully!`,
+          color: '#fff',
+        })
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  async function handleUpdateClick() {
+    // currently error
+    try {
+      const response = await axios.put(
+        `/api/subjects?id=${selectedItem.value?.subjectId}`,
+        JSON.stringify(edittedItem.value),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+
+      const responseData = response.data as SubjectModel
+      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+      if (responseData) {
+        // delete successful && load data
+        fetchSubjects()
+
+        // clear input
+        clearInputCreateModel()
+
+        // close modal
+        showCreateModal.value = !showCreateModal.value
+
+        // toast message
+        init({
+          title: 'Subject Update Message',
+          message: `Update Subject: "${edittedItem.value.subjectName}" successfully!`,
+          color: '#fff',
+        })
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  async function handleDeleteClick() {
+    const result = await confirm({
+      message: `Are you sure to delete this Subject ${selectedItem.value?.subjectCode} - ${selectedItem.value?.subjectName}`,
+      title: 'Subject delete confirmation',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      blur: true,
+    })
+
+    if (result) {
+      try {
+        // user confirm delete
+        const response = await axios.delete(
+          `/api/subjects?id=${selectedItem.value?.subjectId}`,
+        )
+        const responseData: SubjectErrorResponseModel = response.data
+        if (responseData.isSuccess) {
+          // delete successful && load data
+          fetchSubjects()
+
+          // toast message
+          init({
+            title: 'Subject Delete Message',
+            message: `Delete Subject: "${selectedItem.value?.subjectName}" successfully!`,
+            color: '#fff',
+          })
+        } else {
+          console.log(`Error from Response(origin): ${response}`)
+          console.log(
+            `Request to delete Failed with message: ${responseData.message}`,
+          )
+          console.log(`Error Detail: ${responseData.errors}`)
+        }
+      } catch (error) {
+        alert(error)
+      }
+    }
+  }
+
+  function mapEdditedItem(data: SubjectModel) {
+    const item = edittedItem.value
+    item.subjectName = data.subjectName
+    item.subjectCode = data.subjectCode
+    item.status = data.status
+    item.departmentId = data.department.departmentId
+  }
+
+  function clearInputCreateModel() {
+    const item = createItem.value
+    item.subjectName = ''
+    item.subjectCode = ''
+    item.status = true
+    item.departmentId = departmentOptions.value[0].departmentId
+  }
+
+  interface SubjectErrorResponseModel {
+    isSuccess: boolean
+    message: string
+    errors: Array<string>
+  }
+
+  interface SubjectRequestModel {
+    departmentId: number
+    subjectName: string
+    subjectCode: string
+    status: boolean
   }
 </script>
