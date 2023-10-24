@@ -54,7 +54,7 @@ export interface SubjectModel {
   subjectName: string
   subjectCode: string
   department: DepartmentModel
-  status: string
+  status: boolean
   createdBy: string
   createdAt: Date | string
 }
@@ -62,8 +62,8 @@ export interface SubjectModel {
 export interface SemesterModel {
   semesterId: number
   semesterCode: string
-  startDate: string
-  endDate: string
+  startDate: Date | string
+  endDate: Date | string
   createdBy: string
   createdAt: Date | string
 }
