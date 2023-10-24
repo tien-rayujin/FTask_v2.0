@@ -82,10 +82,10 @@
 
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
-  // import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { SubjectModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
+  import axios from 'axios'
 
   const columns = ref([
     { key: 'subjectName', label: 'Subject Name' },
@@ -114,9 +114,14 @@
   })
 
   async function fetchSubjects() {
-    const response = await fetch('/api/subjects?page=1&amount=50')
-    const json = await response.json()
-    items.value = json
-    console.log(json)
+    try {
+      const response = await axios.get('/api/subjects?page=1&amount=50')
+      const json = response.data
+      items.value = json as Array<SubjectModel>
+      console.log('API Subject:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
   }
 </script>

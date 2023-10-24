@@ -85,6 +85,7 @@
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { SemesterModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
+  import axios from 'axios'
 
   const columns = ref([
     { key: 'semesterCode', label: 'Semester Code' },
@@ -112,9 +113,14 @@
   })
 
   async function fetchSemesters() {
-    const response = await fetch('/api/semesters?page=1&quantity=10')
-    const json = await response.json()
-    items.value = json
-    console.log(json)
+    try {
+      const response = await axios.get('/api/semesters?page=1&quantity=10')
+      const json = response.data
+      items.value = json as Array<SemesterModel>
+      console.log('API Semester:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
   }
 </script>

@@ -90,6 +90,7 @@
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { UserModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
+  import axios from 'axios'
 
   const columns = ref([
     { key: 'email', label: 'Email' },
@@ -118,9 +119,15 @@
   })
 
   async function fetchUsers() {
-    const response = await fetch('/api/users?page=1&quantity=10')
-    const json = await response.json()
-    items.value = json
-    console.log(json)
+    try {
+      const response = await axios.get('/api/users?page=1&quantity=10')
+      const json = response.data
+      items.value = json as Array<UserModel>
+      console.log('API User:')
+      console.log(response)
+    } catch (error) {
+      console.log('Erorr: ')
+      console.log(error)
+    }
   }
 </script>

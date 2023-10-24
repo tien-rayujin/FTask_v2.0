@@ -94,6 +94,7 @@
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { LecturerModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
+  import axios from 'axios'
 
   const columns = ref([
     { key: 'email', label: 'Email' },
@@ -122,16 +123,14 @@
   })
 
   async function fetchLecturers() {
-    const response = await fetch('/api/lecturers?page=1&quantity=20')
-    const json = await response.json()
-    items.value = json
-    console.log(json)
+    try {
+      const response = await axios.get('/api/lecturers?page=1&quantity=20')
+      const json = response.data
+      items.value = json as Array<LecturerModel>
+      console.log('API Lecturer:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
   }
-
-  // function openModalToEditItemById(id: any) {
-  //   editedItemId.value = id
-  //   editedItem.value = { ...items.value[id] }
-  //   //show model.value based on id
-  //   showModal.value = !showModal.value
-  // }
 </script>
