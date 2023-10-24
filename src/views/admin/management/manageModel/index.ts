@@ -1,36 +1,36 @@
 export interface LecturerModel {
   id: string
-  email: string
-  normalizedEmail: string
+  email: string | null
+  normalizedEmail: string | null
   emailConfirmed: boolean
-  phoneNumber: string
+  phoneNumber: string | null
   phoneNumberConfirmed: boolean
   twoFactorEnabled: boolean
-  lockoutEnd: Date
+  lockoutEnd: Date | null
   lockoutEnabled: boolean
-  filePath: string
-  displayName: string
-  department: DepartmentModel
-  departmentHead: LecturerModel
+  filePath: string | null
+  displayName: string | null
+  department?: DepartmentModel | null
+  departmentHead?: LecturerModel | null
   createdBy: string
-  createdAt: Date
+  createdAt: Date | string
 }
 
 export interface UserModel {
   id: string
-  email: string
-  normalizedEmail: string
+  email: string | null
+  normalizedEmail: string | null
   emailConfirmed: boolean
-  phoneNumber: string
+  phoneNumber: string | null
   phoneNumberConfirmed: boolean
   twoFactorEnabled: boolean
-  lockoutEnd: Date
+  lockoutEnd: Date | null
   lockoutEnabled: boolean
-  filePath: string
-  displayName: string
+  filePath: string | null
+  displayName: string | null
   roles: Array<string>
   createdBy: string
-  createdAt: Date
+  createdAt: Date | string
 }
 
 export interface TaskModel {
@@ -56,23 +56,23 @@ export interface SubjectModel {
   department: DepartmentModel
   status: string
   createdBy: string
-  createdAt: string
+  createdAt: Date | string
 }
 
 export interface SemesterModel {
-  semesterId: string
+  semesterId: number
   semesterCode: string
   startDate: string
   endDate: string
   createdBy: string
-  createdAt: Date
+  createdAt: Date | string
 }
 
 export interface DepartmentModel {
-  departmentId: string
+  departmentId: number
   departmentName: string
   departmentCode: string
-  departmentHead: LecturerModel
+  departmentHead: LecturerModel | null
   createdBy: string
-  createdAt: Date
+  createdAt: Date | string
 }

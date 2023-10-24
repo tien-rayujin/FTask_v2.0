@@ -1,4 +1,5 @@
 <template>
+  {{ items }}
   <ManagementBase>
     <template #header>
       <input

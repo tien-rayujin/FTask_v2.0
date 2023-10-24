@@ -1,4 +1,5 @@
 <template>
+  {{ items }}
   <va-modal
     v-model="showDetailModal"
     hide-default-actions
