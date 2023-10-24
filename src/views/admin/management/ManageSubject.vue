@@ -39,10 +39,6 @@
           <span class="text-sm">{{ rowData.department.departmentName }}</span>
         </template>
 
-        <!-- <template #cell(status)="{ value }">
-          <BadgeBase :status="value" :text="value" />
-        </template> -->
-
         <template #cell(createdBy)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>

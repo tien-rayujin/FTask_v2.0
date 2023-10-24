@@ -70,7 +70,7 @@
         </template>
 
         <template #cell(description)="{ value }">
-          <span class="text-sm">{{ value }}</span>
+          <span class="text-sm w-[25rem] block overflow-clip">{{ value }}</span>
         </template>
 
         <template #cell(due_date)="{ value }">
