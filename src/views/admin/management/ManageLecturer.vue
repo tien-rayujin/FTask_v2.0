@@ -30,7 +30,7 @@
           <div class="w-full h-full p-5">
             <img
               class="w-full h-full object-cover rounded-xl shadow-sm shadow-slate-500"
-              :src="selectedItem.filePath"
+              :src="selectedItem?.filePath"
               alt="user profile image"
             />
           </div>
@@ -95,6 +95,7 @@
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
+        @click.prevent=""
       >
         <i class="block fa-solid fa-plus"></i>
         <span class="block ml-2">Add Lecturer</span>
@@ -114,17 +115,17 @@
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(normalizedEmail)="{ value }">
+        <!-- <template #cell(normalizedEmail)="{ value }">
           <span class="text-sm">{{ value }}</span>
-        </template>
+        </template> -->
 
         <template #cell(phoneNumber)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(twoFactorEnabled)="{ value }">
+        <!-- <template #cell(twoFactorEnabled)="{ value }">
           <BadgeBase :status="value == 'true'" :text="value" />
-        </template>
+        </template> -->
 
         <template #cell(lockoutEnabled)="{ value }">
           <BadgeBase :status="value == 'true'" :text="value" />
@@ -189,8 +190,8 @@
 
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
-  import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
+  import BadgeBase from '@/components/admin/BadgeBase.vue'
   import type { LecturerModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
   import axios from 'axios'
@@ -209,24 +210,7 @@
   ])
 
   const items = ref<LecturerModel[]>([])
-  const selectedItem = ref<LecturerModel>({
-    id: '422a6948-9868-4a69-e375-08dbc25fd71b',
-    email: null,
-    normalizedEmail: null,
-    emailConfirmed: false,
-    phoneNumber: '00009992211',
-    phoneNumberConfirmed: false,
-    twoFactorEnabled: false,
-    lockoutEnd: null,
-    lockoutEnabled: false,
-    filePath:
-      'https://img.freepik.com/premium-photo/young-caucasian-military-man-wearing-army-uniform-depressed-worry-distress_2221-10191.jpg',
-    displayName: 'teredew',
-    department: null,
-    departmentHead: null,
-    createdBy: 'Undefined',
-    createdAt: '0001-01-01T00:00:00',
-  })
+  const selectedItem = ref<LecturerModel>()
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
@@ -275,9 +259,6 @@
     }
   }
 
-  const { confirm } = useModal()
-  const { init } = useToast()
-
   async function handleEditClick(rowData: LecturerModel) {
     selectedItem.value = rowData
     mapEdditedItem(selectedItem.value)
@@ -286,6 +267,8 @@
     showEditModel.value = !showEditModel.value
   }
 
+  const { confirm } = useModal()
+  const { init } = useToast()
   async function handleDeleteClick(rowData: LecturerModel) {
     selectedItem.value = rowData
     const result = await confirm({
@@ -321,21 +304,21 @@
     }
   }
 
-  function mapEdditedItem(rowData: LecturerModel) {
+  function mapEdditedItem(data: LecturerModel) {
     const item = edittedItem.value
-    item.email = rowData.email as string
-    item.displayName = rowData.displayName as string
-    item.createdAt = rowData.createdAt.toLocaleString()
-    item.createdBy = rowData.createdBy
-    item.department = rowData.department as null
-    item.departmentHead = rowData.departmentHead as null
-    item.emailConfirmed = rowData.emailConfirmed
-    item.lockoutEnabled = rowData.lockoutEnabled
-    item.lockoutEnd = new Date(rowData.lockoutEnd as Date)
+    item.email = data.email as string
+    item.displayName = data.displayName as string
+    item.createdAt = data.createdAt.toLocaleString()
+    item.createdBy = data.createdBy
+    item.department = data.department as null
+    item.departmentHead = data.departmentHead as null
+    item.emailConfirmed = data.emailConfirmed
+    item.lockoutEnabled = data.lockoutEnabled
+    item.lockoutEnd = new Date(data.lockoutEnd as Date)
       .toISOString()
       .slice(0, 10)
-    item.filePath = rowData.filePath as string
-    item.phoneNumber = rowData.phoneNumber as string
+    item.filePath = data.filePath as string
+    item.phoneNumber = data.phoneNumber as string
   }
 
   interface DeleteLecturerResponseModel {
