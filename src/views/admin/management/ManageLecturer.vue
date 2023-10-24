@@ -263,7 +263,11 @@
     try {
       const response = await axios.get('/api/lecturers?page=1&quantity=20')
       const json = response.data
-      items.value = json as Array<LecturerModel>
+      items.value = (json as Array<LecturerModel>).map((item) => {
+        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        return item
+      })
+
       console.log('API Lecturer:')
       console.log(json)
     } catch (error) {
@@ -321,7 +325,7 @@
     const item = edittedItem.value
     item.email = rowData.email as string
     item.displayName = rowData.displayName as string
-    item.createdAt = rowData.createdAt.toLocaleString().slice(0, 10)
+    item.createdAt = rowData.createdAt.toLocaleString()
     item.createdBy = rowData.createdBy
     item.department = rowData.department as null
     item.departmentHead = rowData.departmentHead as null

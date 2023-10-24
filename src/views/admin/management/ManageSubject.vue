@@ -114,7 +114,10 @@
     try {
       const response = await axios.get('/api/subjects?page=1&amount=50')
       const json = response.data
-      items.value = json as Array<SubjectModel>
+      items.value = (json as Array<SubjectModel>).map((item) => {
+        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        return item
+      })
       console.log('API Subject:')
       console.log(json)
     } catch (error) {

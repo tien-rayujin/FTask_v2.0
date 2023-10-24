@@ -117,7 +117,10 @@
     try {
       const response = await axios.get('/api/semesters?page=1&quantity=10')
       const json = response.data
-      items.value = json as Array<SemesterModel>
+      items.value = (json as Array<SemesterModel>).map((item) => {
+        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        return item
+      })
       console.log('API Semester:')
       console.log(json)
     } catch (error) {
