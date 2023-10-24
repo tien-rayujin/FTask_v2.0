@@ -1,15 +1,85 @@
 <template>
-  {{ items }}
-  <va-modal
-    v-model="showDetailModal"
-    hide-default-actions
-    overlay-opacity="0.2"
-  >
+  <!-- {{ items }} -->
+  <va-modal v-model="showEditModel" hide-default-actions overlay-opacity="0.2">
     <template #header>
-      <h3>Custom header</h3>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Lecturer Detail</h2>
+        <div class="text-right w-fit">
+          <span class="text-sm text-slate-400 inline-block -translate-y-1/3"
+            >View / Edit mode</span
+          >
+          <va-switch
+            v-model="toggleEditMode"
+            class="mx-3 inline-block"
+            size="small"
+            color="#2dce89"
+            :style="{
+              '--va-switch-checker-background-color': '#FFF',
+            }"
+          />
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[600px] h-[450px] relative flex items-center justify-center overflow-hidden"
+      >
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-full p-5">
+            <img
+              class="w-full h-full object-cover rounded-xl shadow-sm shadow-slate-500"
+              :src="selectedItem.filePath"
+              alt="user profile image"
+            />
+          </div>
+        </div>
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Email</span>
+            <input
+              v-model="edittedItem.email"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Name</span>
+            <input
+              v-model="edittedItem.displayName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Phone</span>
+            <input
+              v-model="edittedItem.phoneNumber"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="tel"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Department</span>
+            <input
+              v-model="edittedItem.department"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Created At</span>
+            <input
+              v-model="edittedItem.createdAt"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="date"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Created By</span>
+            <input
+              v-model="edittedItem.createdBy"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
     </template>
     <template #footer>
-      <va-button> Custom action </va-button>
+      <!-- <va-button> Custom action </va-button> -->
     </template>
   </va-modal>
   <ManagementBase>
@@ -74,11 +144,22 @@
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
-                @click.prevent="showDetailModal != showDetailModal"
+                @click="
+                  () => {
+                    toggleEditMode = false
+                    handleEditClick(rowData)
+                  }
+                "
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
+                @click="
+                  () => {
+                    toggleEditMode = true
+                    handleEditClick(rowData)
+                  }
+                "
               />
               <ActionButtonBase
                 icon="fa-solid fa-ban"
@@ -122,18 +203,51 @@
     // { key: 'normalizedEmail', label: 'Normalized Email' },
     { key: 'phoneNumber', label: 'Phone Number' },
     // { key: 'twoFactorEnabled', label: 'Two Factor Enabled' },
-    { key: 'lockoutEnabled', label: 'Status' },
     { key: 'createdAt', label: 'Create Date' },
+    { key: 'lockoutEnabled', label: 'Status' },
     { key: 'actions', label: '' },
   ])
 
   const items = ref<LecturerModel[]>([])
-  const selectedItem = ref<LecturerModel>()
+  const selectedItem = ref<LecturerModel>({
+    id: '422a6948-9868-4a69-e375-08dbc25fd71b',
+    email: null,
+    normalizedEmail: null,
+    emailConfirmed: false,
+    phoneNumber: '00009992211',
+    phoneNumberConfirmed: false,
+    twoFactorEnabled: false,
+    lockoutEnd: null,
+    lockoutEnabled: false,
+    filePath:
+      'https://img.freepik.com/premium-photo/young-caucasian-military-man-wearing-army-uniform-depressed-worry-distress_2221-10191.jpg',
+    displayName: 'teredew',
+    department: null,
+    departmentHead: null,
+    createdBy: 'Undefined',
+    createdAt: '0001-01-01T00:00:00',
+  })
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
-  const showDetailModal = ref(false)
+  const showEditModel = ref(false)
+  const toggleEditMode = ref(false)
+
+  const edittedItem = ref({
+    email: 'jeffery@gmail.com',
+    emailConfirmed: true,
+    phoneNumber: '0909898888',
+    lockoutEnd: '04-30-2022',
+    lockoutEnabled: false,
+    filePath:
+      'https://img.freepik.com/premium-photo/young-caucasian-military-man-wearing-army-uniform-depressed-worry-distress_2221-10191.jpg',
+    displayName: 'March Jeffery',
+    department: null,
+    departmentHead: null,
+    createdBy: 'RaeKyo',
+    createdAt: new Date(2022, 2, 30).toISOString().slice(0, 10),
+  })
 
   onMounted(() => {
     fetchLecturers()
@@ -160,6 +274,14 @@
   const { confirm } = useModal()
   const { init } = useToast()
 
+  async function handleEditClick(rowData: LecturerModel) {
+    selectedItem.value = rowData
+    mapEdditedItem(selectedItem.value)
+
+    // show modal
+    showEditModel.value = !showEditModel.value
+  }
+
   async function handleDeleteClick(rowData: LecturerModel) {
     selectedItem.value = rowData
     const result = await confirm({
@@ -173,17 +295,17 @@
     if (result) {
       // user confirm delete
       const response = await axios.delete(
-        `/api/lecturer/${selectedItem.value.id}`,
+        `/api/lecturers?id=${selectedItem.value.id}`,
       )
       const responseData: DeleteLecturerResponseModel = response.data
       if (responseData.isSuccess) {
-        // delete successful && load fetching
+        // delete successful && load data
         fetchLecturers()
 
         // toast message
         init({
           title: 'Lecturer Delete Message',
-          message: `Delete Lecturer: "${rowData.displayName} successfully!`,
+          message: `Delete Lecturer: "${rowData.displayName}" successfully!`,
           color: '#fff',
         })
       } else {
@@ -195,9 +317,36 @@
     }
   }
 
+  function mapEdditedItem(rowData: LecturerModel) {
+    const item = edittedItem.value
+    item.email = rowData.email as string
+    item.displayName = rowData.displayName as string
+    item.createdAt = rowData.createdAt.toLocaleString().slice(0, 10)
+    item.createdBy = rowData.createdBy
+    item.department = rowData.department as null
+    item.departmentHead = rowData.departmentHead as null
+    item.emailConfirmed = rowData.emailConfirmed
+    item.lockoutEnabled = rowData.lockoutEnabled
+    item.lockoutEnd = new Date(rowData.lockoutEnd as Date)
+      .toISOString()
+      .slice(0, 10)
+    item.filePath = rowData.filePath as string
+    item.phoneNumber = rowData.phoneNumber as string
+  }
+
   interface DeleteLecturerResponseModel {
     isSuccess: boolean
     message: string
     errors: Array<string>
   }
+
+  // interface UpdateLecturerRequestModel {
+  //   displayName: string
+  //   phoneNumber: string
+  //   lockoutEnabled: boolean
+  //   lockoutEnd: Date
+  //   email: string
+  //   departmentId: number
+  //   subjectIds: Array<string>
+  // }
 </script>

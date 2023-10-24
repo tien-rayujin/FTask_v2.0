@@ -8,7 +8,7 @@ export interface LecturerModel {
   twoFactorEnabled: boolean
   lockoutEnd: Date | null
   lockoutEnabled: boolean
-  filePath: string | null
+  filePath?: string
   displayName: string | null
   department?: DepartmentModel | null
   departmentHead?: LecturerModel | null
