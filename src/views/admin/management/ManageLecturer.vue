@@ -1,31 +1,4 @@
 <template>
-  <!-- <va-modal
-    ref="modal"
-    v-model="showModal"
-    ok-text="Apply"
-    stateful
-    close-button
-  >
-    <h3 class="text-xl font-bold">Lecturer Detail Information</h3>
-    <div class="mt-5 flex items-center justify-between">
-      <img
-        src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-businessman-user-avatar-wearing-suit-with-red-tie-png-image_5809521.png"
-        alt=""
-        class="w-[250px] h-[300px] object-cover"
-      />
-      <div>
-        <table class="">
-          <tr v-for="(prop, idx) in editedItem" :key="idx">
-            <td>{{}}</td>
-            <td>{{ prop }}</td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    {{ itemSelectedId }}
-    {{ itemSelected }}
-  </va-modal> -->
   <ManagementBase>
     <template #header>
       <input
@@ -120,7 +93,6 @@
   import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { LecturerModel } from './manageModel'
-  // import lecturerList from './sampleData/lecturerList'
   import { ref, computed, onMounted } from 'vue'
 
   const columns = ref([
@@ -139,9 +111,6 @@
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
-  // const showModal = ref(false)
-  // const editedItemId = ref(null)
-  // const editedItem = ref<LecturerModel>()
   onMounted(() => {
     fetchLecturers()
   })

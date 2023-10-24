@@ -171,7 +171,7 @@
   const statusFilter = ref()
   const statusOptions = ref(['Todo', 'In Progress', 'Done'])
 
-  const departmentListMap = departmentList.map((x) => x.name)
+  const departmentListMap = departmentList.map((x) => x.departmentName)
   const departmentFilter = ref()
   const departmentOptions = ref<Array<string>>(departmentListMap)
 

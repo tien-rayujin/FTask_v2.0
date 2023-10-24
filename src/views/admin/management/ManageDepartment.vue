@@ -86,10 +86,8 @@
 
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
-  // import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import type { DepartmentModel } from './manageModel'
-  import departmentList from './sampleData/departmentList'
   import { ref, computed, onMounted } from 'vue'
 
   const columns = ref([
@@ -101,7 +99,7 @@
     { key: 'actions', label: '' },
   ])
 
-  const items = ref<DepartmentModel[]>(departmentList)
+  const items = ref<DepartmentModel[]>([])
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
