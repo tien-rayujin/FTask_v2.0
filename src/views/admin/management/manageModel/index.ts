@@ -37,8 +37,8 @@ export interface TaskModel {
   taskId: number
   taskTitle: string
   taskContent: string
-  startDate: Date
-  endDate: Date
+  startDate: Date | string
+  endDate: Date | string
   taskLevel: number
   taskStatus: number
   location: string
@@ -46,7 +46,7 @@ export interface TaskModel {
   department: DepartmentModel
   subject: SubjectModel
   createdBy: LecturerModel
-  createdAt: Date
+  createdAt: Date | string
 }
 
 export interface SubjectModel {

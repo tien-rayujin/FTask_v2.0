@@ -1,5 +1,5 @@
 <template>
-  <!-- {{ items }} -->
+  {{ items }}
   <ManagementBase>
     <template #header>
       <input
@@ -55,67 +55,74 @@
         striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(status)="{ value }">
+        <template #cell(taskStatus)="{ value }">
           <i
             class="text-sm fa-solid fa-circle"
             :class="{
-              'text-blue-400': value == 'Todo',
-              'text-yellow-400': value == 'InProgress',
-              'text-green-400': value == 'Done',
+              'text-slate-400': value == 0 || value == 'NONE',
+              'text-blue-400': value == 1 || value == 'Todo',
+              'text-yellow-400': value == 2 || value == 'InProgress',
+              'text-green-400': value == 3 || value == 'Done',
             }"
           ></i>
         </template>
 
-        <template #cell(title)="{ value }">
+        <template #cell(taskTitle)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(description)="{ value }">
+        <template #cell(taskContent)="{ value }">
           <span class="text-sm w-[25rem] block overflow-clip">{{ value }}</span>
         </template>
 
-        <template #cell(due_date)="{ value }">
+        <template #cell(startDate)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(type)="{ value }">
+        <template #cell(endDate)="{ value }">
+          <span class="text-sm">{{ value }}</span>
+        </template>
+
+        <template #cell(taskLevel)="{ value }">
           <div
             class="text-sm flex items-center justify-center py-1 rounded-lg bg-white border"
             :class="{
-              'text-red-500': value == 'subject',
-              'text-green-500': value == 'semester',
-              'text-gray-500': value == 'department',
+              'text-red-500': value == 3 || value == 'subject',
+              'text-green-500': value == 1 || value == 'semester',
+              'text-gray-500': value == 2 || value == 'department',
             }"
           >
             <div class="w-4/5 mx-auto">
               <i
                 class="fa-solid"
                 :class="{
-                  'fa-book': value == 'subject',
-                  'fa-calendar-days': value == 'semester',
-                  'fa-building': value == 'department',
+                  'fa-book': value == 3 || value == 'subject',
+                  'fa-calendar-days': value == 1 || value == 'semester',
+                  'fa-building': value == 2 || value == 'department',
                 }"
               ></i>
-              <span class="ml-3">{{ value }}</span>
+              <span class="ml-3">{{
+                value == 1 ? 'Semester' : value == 2 ? 'Department' : 'Subject'
+              }}</span>
             </div>
           </div>
         </template>
 
-        <template #cell(created_at)="{ value }">
+        <template #cell(location)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(created_by)="{ value }">
+        <!-- <template #cell(createdBy)="{ value }">
           <span class="text-sm">{{ value }}</span>
-        </template>
+        </template> -->
 
-        <template #cell(actions)="{ rowIndex }">
+        <template #cell(actions)="{}">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
-                @click.prevent="openModalToEditItemById(rowIndex)"
+                @click.prevent=""
               />
             </div>
           </div>
@@ -144,30 +151,47 @@
   import type { TaskModel } from './manageModel'
   import taskList from './sampleData/taskList'
   import departmentList from './sampleData/departmentList'
-  import { ref, computed } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
+  import axios from 'axios'
 
   const columns = ref([
-    { key: 'status', label: '' },
-    { key: 'title' },
-    { key: 'description' },
-    { key: 'due_date', label: 'Due' },
-    // { key: 'priority' },
-    { key: 'type', label: '' },
-    { key: 'created_at', label: 'Created At' },
-    { key: 'created_by', label: 'Created By' },
+    { key: 'taskStatus', label: '' },
+    { key: 'taskTitle' },
+    { key: 'taskContent' },
+    { key: 'startDate', label: 'Start' },
+    { key: 'endDate', label: 'Due' },
+    { key: 'taskLevel', label: 'Level' },
+    { key: 'location' },
+    // { key: 'createdBy', label: 'Created By' },
     { key: 'actions', label: '' },
   ])
+
+  onMounted(() => {
+    fetchTasks()
+  })
+
+  async function fetchTasks() {
+    try {
+      const response = await axios.get('/api/tasks?page=1&quantity=10')
+      const json = response.data
+      items.value = (json as Array<TaskModel>).map((item) => {
+        item.startDate = item.startDate.toLocaleString().slice(0, 10)
+        item.endDate = item.endDate.toLocaleString().slice(0, 10)
+        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        return item
+      })
+      console.log('API Department:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const items = ref<TaskModel[]>(taskList)
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
-
-  const users = ref(taskList)
-  const showModal = ref(false)
-  const editedItemName = ref(null)
-  const editedItem = ref<TaskModel>()
 
   const statusFilter = ref()
   const statusOptions = ref(['Todo', 'In Progress', 'Done'])
@@ -184,11 +208,4 @@
       ? Math.ceil(items.value.length / perPage.value)
       : items.value.length
   })
-
-  function openModalToEditItemById(name: any) {
-    editedItemName.value = name
-    editedItem.value = { ...users.value[name] }
-    //show model.value based on id
-    showModal.value = !showModal.value
-  }
 </script>
