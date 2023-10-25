@@ -46,12 +46,15 @@
   const router = useRouter()
   const userStore = useUserStore()
 
-  function signInWithGoogle() {
+  async function signInWithGoogle() {
     const provider = new GoogleAuthProvider()
     const auth = getAuth()
     signInWithPopup(auth, provider)
-      .then((result: UserCredential) => {
+      .then(async (result: UserCredential) => {
         const user: User = result.user
+        const idToken = await user.getIdTokenResult()
+        console.log('Id token from user: ')
+        console.log(idToken.token)
         console.log('SignIn with google account')
         console.log('userAccount:')
         console.log(user)
