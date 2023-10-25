@@ -357,47 +357,56 @@
       )
       const responseData = response.data as SubjectModel
       // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showCreateModal.value = false
+
       if (responseData) {
-        // delete successful && load data
-        fetchSubjects()
-
-        // clear Input
-        clearInputCreateModel()
-
-        // close modal
-        showCreateModal.value = !showCreateModal.value
-
         // toast message
         init({
           title: 'Subject Create Message',
           message: `Create Subject: "${createItem.value.subjectName}" successfully!`,
           color: '#fff',
         })
+
+        // clear Input
+        clearInputCreateModel()
+
+        // delete successful && load data
+        fetchSubjects()
       }
     } catch (error) {
       alert(error)
     }
   }
 
-  async function handleUpdateClick() {
-    const item = edittedItem.value
-    if (item.departmentId == selectedItem.value?.department.departmentId)
-      item.departmentId = undefined
-    if (item.status == selectedItem.value?.status) item.status = undefined
-    if (item.subjectCode == selectedItem.value?.subjectCode)
-      item.subjectCode = undefined
-    if (item.subjectName == selectedItem.value?.subjectName)
-      item.subjectName = undefined
+  function updateEdited(editted: SubjectRequestModel, selected: SubjectModel) {
+    // Loop through each property
+    Object.keys(editted).forEach((key) => {
+      // Check if property value is different from selected
+      if (editted[key] !== selected[key]) {
+        // Property has been updated, keep value
+        return
+      }
 
-    console.log(`currently edditedItem in update:`)
-    console.log(item)
+      // Property is unchanged, set to undefined
+      editted[key] = undefined
+    })
+
+    return editted
+  }
+
+  async function handleUpdateClick() {
+    const eddited = edittedItem.value as SubjectRequestModel
+    const selected = selectedItem.value as SubjectModel
+
+    updateEdited(eddited, selected)
 
     // currently error
     try {
       const response = await axios.put(
         `/api/subjects/${selectedItem.value?.subjectId}`,
         JSON.stringify(edittedItem.value),
-        // JSON.stringify({ status: false }),
         {
           headers: {
             'Content-Type': 'application/json',
@@ -407,19 +416,20 @@
 
       const responseData = response.data as SubjectModel
       // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showEditModal.value = false
+
       if (responseData) {
-        // delete successful && load data
-        fetchSubjects()
-
-        // close modal
-        showEditModal.value = false
-
         // toast message
         init({
           title: 'Subject Update Message',
           message: `Update Subject: "${edittedItem.value.subjectName}" successfully!`,
           color: '#fff',
         })
+
+        // delete successful && load data
+        fetchSubjects()
       }
     } catch (error) {
       alert(error)
@@ -443,15 +453,15 @@
         )
         const responseData: SubjectErrorResponseModel = response.data
         if (responseData.isSuccess) {
-          // delete successful && load data
-          fetchSubjects()
-
           // toast message
           init({
             title: 'Subject Delete Message',
             message: `Delete Subject: "${selectedItem.value?.subjectName}" successfully!`,
             color: '#fff',
           })
+
+          // delete successful && load data
+          fetchSubjects()
         } else {
           console.log(`Error from Response(origin): ${response}`)
           console.log(
@@ -488,9 +498,11 @@
   }
 
   interface SubjectRequestModel {
-    departmentId: number | undefined
-    subjectName: string | undefined
-    subjectCode: string | undefined
-    status: boolean | undefined
+    [key: string]: any
+
+    departmentId?: number
+    subjectName?: string
+    subjectCode?: string
+    status?: boolean
   }
 </script>

@@ -217,26 +217,6 @@
     departmentHead: null,
   })
 
-  // const createItem = ref<LecturerRequestModel>({
-  //   phoneNumber: '0909898888',
-  //   displayName: 'March Jeffery',
-  //   lockoutEnabled: false,
-  //   lockoutEnd: new Date('04-30-2022'),
-  //   email: 'jeffery@gmail.com',
-  //   departmentId: 0,
-  //   subjectIds: [],
-  //   Avatar: '',
-  // })
-
-  // displayName: string
-  //   phoneNumber: string
-  //   lockoutEnabled: boolean
-  //   lockoutEnd: Date
-  //   email: string
-  //   departmentId: number
-  //   subjectIds: Array<string>
-  //   Avatar: Binary
-
   onMounted(() => {
     fetchLecturers()
   })

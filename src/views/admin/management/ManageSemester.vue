@@ -316,33 +316,58 @@
 
       const responseData = response.data as SemesterModel
       // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showCreateModal.value = false
+
       if (responseData) {
-        // delete successful && load data
-        fetchSemesters()
-
-        // clear input
-        clearInputCreateModel()
-
-        // close modal
-        showCreateModal.value = !showCreateModal.value
-
         // toast message
         init({
           title: 'Semester Create Message',
           message: `Create Semester: "${createItem.value.semesterCode}" successfully!`,
           color: '#fff',
         })
+
+        // clear input
+        clearInputCreateModel()
+
+        // delete successful && load data
+        fetchSemesters()
       }
     } catch (error) {
       alert(error)
     }
   }
 
+  function updateEdited(
+    editted: SemesterRequestModel,
+    selected: SemesterModel,
+  ) {
+    // Loop through each property
+    Object.keys(editted).forEach((key) => {
+      // Check if property value is different from selected
+      if (editted[key] !== selected[key]) {
+        // Property has been updated, keep value
+        return
+      }
+
+      // Property is unchanged, set to undefined
+      editted[key] = undefined
+    })
+
+    return editted
+  }
+
   async function handleUpdateClick() {
+    const eddited = edittedItem.value as SemesterRequestModel
+    const selected = selectedItem.value as SemesterModel
+
+    updateEdited(eddited, selected)
+
     try {
       const response = await axios.put(
-        `/api/semesters?id=${selectedItem.value?.semesterId}`,
-        JSON.stringify(createItem.value),
+        `/api/semesters/${selectedItem.value?.semesterId}`,
+        JSON.stringify(edittedItem.value),
         {
           headers: {
             'Content-Type': 'application/json',
@@ -352,22 +377,20 @@
 
       const responseData = response.data as SemesterModel
       // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showEditModal.value = false
+
       if (responseData) {
-        // delete successful && load data
-        fetchSemesters()
-
-        // clear input
-        clearInputCreateModel()
-
-        // close modal
-        showCreateModal.value = !showCreateModal.value
-
         // toast message
         init({
-          title: 'Semester Create Message',
-          message: `Create Semester: "${createItem.value.semesterCode}" successfully!`,
+          title: 'Semester Update Message',
+          message: `Update Semester: "${createItem.value.semesterCode}" successfully!`,
           color: '#fff',
         })
+
+        // delete successful && load data
+        fetchSemesters()
       }
     } catch (error) {
       alert(error)
@@ -391,15 +414,15 @@
         )
         const responseData: SemesterErrorResponseModel = response.data
         if (responseData.isSuccess) {
-          // delete successful && load data
-          fetchSemesters()
-
           // toast message
           init({
             title: 'Semester Delete Message',
             message: `Delete Semester: "${selectedItem.value?.semesterCode}" successfully!`,
             color: '#fff',
           })
+
+          // delete successful && load data
+          fetchSemesters()
         } else {
           console.log(`Error from Response(origin): ${response}`)
           console.log(
@@ -434,6 +457,8 @@
   }
 
   interface SemesterRequestModel {
+    [key: string]: any
+
     semesterCode: string
     startDate: Date | string
     endDate: Date | string

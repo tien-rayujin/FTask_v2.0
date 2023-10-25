@@ -342,32 +342,63 @@
       )
       const responseData = response.data as DepartmentModel
       // TODO: response data have value of departmentModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showCreateModal.value = false
+
       if (responseData) {
-        // delete successful && load data
-        fetchDepartments()
-
-        // clear input
-        clearInputCreateModel()
-
-        // close modal
-        showCreateModal.value = !showCreateModal.value
-
         // toast message
         init({
           title: 'Department Create Message',
           message: `Create Department: "${createItem.value.departmentName}" successfully!`,
           color: '#fff',
         })
+
+        // clear input
+        clearInputCreateModel()
+
+        // delete successful && load data
+        fetchDepartments()
       }
     } catch (error) {
       alert(error)
     }
   }
 
+  function updateEdited(
+    editted: DepartmentRequestModel,
+    selected: DepartmentModel,
+  ) {
+    // Loop through each property
+    Object.keys(editted).forEach((key) => {
+      // Check if property value is different from selected
+      if (editted[key] !== selected[key]) {
+        // Property has been updated, keep value
+        return
+      }
+
+      // Property is unchanged, set to undefined
+      editted[key] = undefined
+    })
+
+    return editted
+  }
+
   async function handleUpdateClick() {
+    const editted = edittedItem.value as DepartmentRequestModel
+    const selected = selectedItem.value as DepartmentModel
+
+    // property
+    updateEdited(editted, selected)
+
+    // nested property
+    if (editted.departmentHeadId == selected.departmentHead?.id) {
+      editted.departmentHeadId = undefined
+    }
+
     try {
       const response = await axios.put(
-        `/api/departments?id=${selectedItem.value?.departmentId}`,
+        `/api/departments/${selectedItem.value?.departmentId}`,
         JSON.stringify(edittedItem.value),
         {
           headers: {
@@ -377,19 +408,20 @@
       )
       const responseData = response.data as DepartmentModel
       // TODO: response data have value of departmentModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showEditModal.value = false
+
       if (responseData) {
-        // delete successful && load data
-        fetchDepartments()
-
-        // close modal
-        showCreateModal.value = !showCreateModal.value
-
         // toast message
         init({
           title: 'Department Update Message',
           message: `Update Department: "${createItem.value.departmentName}" successfully!`,
           color: '#fff',
         })
+
+        // delete successful && load data
+        fetchDepartments()
       }
     } catch (error) {
       alert(error)
@@ -413,15 +445,15 @@
         )
         const responseData: DepartmentErrorResponseModel = response.data
         if (responseData.isSuccess) {
-          // delete successful && load data
-          fetchDepartments()
-
           // toast message
           init({
             title: 'Department Delete Message',
             message: `Delete Department: "${selectedItem.value?.departmentName}" successfully!`,
             color: '#fff',
           })
+
+          // delete successful && load data
+          fetchDepartments()
         } else {
           console.log(`Error from Response(origin): ${response}`)
           console.log(
@@ -456,8 +488,10 @@
   }
 
   interface DepartmentRequestModel {
-    departmentName: string
-    departmentCode: string
-    departmentHeadId: string
+    [key: string]: any
+
+    departmentName?: string
+    departmentCode?: string
+    departmentHeadId?: string
   }
 </script>

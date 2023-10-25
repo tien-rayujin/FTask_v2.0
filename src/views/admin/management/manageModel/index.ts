@@ -1,4 +1,6 @@
 export interface LecturerModel {
+  [key: string]: any
+
   id: string
   email: string | null
   normalizedEmail: string | null
@@ -17,6 +19,8 @@ export interface LecturerModel {
 }
 
 export interface UserModel {
+  [key: string]: any
+
   id: string
   email: string | null
   normalizedEmail: string | null
@@ -34,6 +38,8 @@ export interface UserModel {
 }
 
 export interface TaskModel {
+  [key: string]: any
+
   taskId: number
   taskTitle: string
   taskContent: string
@@ -50,6 +56,8 @@ export interface TaskModel {
 }
 
 export interface SubjectModel {
+  [key: string]: any
+
   subjectId: number
   subjectName: string
   subjectCode: string
@@ -60,6 +68,8 @@ export interface SubjectModel {
 }
 
 export interface SemesterModel {
+  [key: string]: any
+
   semesterId: number
   semesterCode: string
   startDate: Date | string
@@ -69,6 +79,8 @@ export interface SemesterModel {
 }
 
 export interface DepartmentModel {
+  [key: string]: any
+
   departmentId: number
   departmentName: string
   departmentCode: string
