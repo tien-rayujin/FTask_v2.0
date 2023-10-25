@@ -61,19 +61,6 @@
               class="w-full border px-3 py-1 rounded-xl"
               type="text"
             />
-            <span class="block text-sm text-slate-400 mt-3">Created At</span>
-            <input
-              v-model="edittedItem.createdAt"
-              class="w-full border px-3 py-1 rounded-xl"
-              type="date"
-            />
-            <span class="block text-sm text-slate-400 mt-3">Created By</span>
-            <input
-              v-model="edittedItem.createdBy"
-              class="w-full border px-3 py-1 rounded-xl"
-              type="text"
-              disabled
-            />
           </div>
         </div>
       </div>
@@ -197,7 +184,6 @@
   import axios from 'axios'
 
   import { useModal, useToast } from 'vuestic-ui'
-
   const columns = ref([
     { key: 'email', label: 'Email' },
     { key: 'displayName', label: 'Display Name' },
@@ -229,9 +215,27 @@
     displayName: 'March Jeffery',
     department: null,
     departmentHead: null,
-    createdBy: 'RaeKyo',
-    createdAt: new Date(2022, 2, 30).toISOString().slice(0, 10),
   })
+
+  // const createItem = ref<LecturerRequestModel>({
+  //   phoneNumber: '0909898888',
+  //   displayName: 'March Jeffery',
+  //   lockoutEnabled: false,
+  //   lockoutEnd: new Date('04-30-2022'),
+  //   email: 'jeffery@gmail.com',
+  //   departmentId: 0,
+  //   subjectIds: [],
+  //   Avatar: '',
+  // })
+
+  // displayName: string
+  //   phoneNumber: string
+  //   lockoutEnabled: boolean
+  //   lockoutEnd: Date
+  //   email: string
+  //   departmentId: number
+  //   subjectIds: Array<string>
+  //   Avatar: Binary
 
   onMounted(() => {
     fetchLecturers()
@@ -308,11 +312,8 @@
     const item = edittedItem.value
     item.email = data.email as string
     item.displayName = data.displayName as string
-    item.createdAt = data.createdAt.toLocaleString()
-    item.createdBy = data.createdBy
     item.department = data.department as null
     item.departmentHead = data.departmentHead as null
-    item.emailConfirmed = data.emailConfirmed
     item.lockoutEnabled = data.lockoutEnabled
     item.lockoutEnd = new Date(data.lockoutEnd as Date)
       .toISOString()
@@ -327,7 +328,7 @@
     errors: Array<string>
   }
 
-  // interface UpdateLecturerRequestModel {
+  // interface LecturerRequestModel {
   //   displayName: string
   //   phoneNumber: string
   //   lockoutEnabled: boolean
@@ -335,5 +336,6 @@
   //   email: string
   //   departmentId: number
   //   subjectIds: Array<string>
+  //   Avatar: string
   // }
 </script>

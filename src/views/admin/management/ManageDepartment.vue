@@ -1,8 +1,8 @@
 <template>
   <!-- {{ items }} -->
-  <p>Create Item{{ createItem }}</p>
+  <!-- <p>Create Item{{ createItem }}</p>
   <p>Selected Item{{ selectedItem?.departmentId }}</p>
-  <p>Editted Item{{ edittedItem }}</p>
+  <p>Editted Item{{ edittedItem }}</p> -->
   <!-- <p>{{ lecturerOptions }}</p> -->
   <va-modal v-model="showEditModal" hide-default-actions overlay-opacity="0.2">
     <template #header>
