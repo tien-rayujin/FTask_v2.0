@@ -1,7 +1,7 @@
 export interface INavigationRoutes {
   name: string
   displayName: string
-  meta: { icon: string; color?: string }
+  meta: { icon: string; color?: string; scope?: string }
   children?: INavigationRoutes[]
 }
 
@@ -17,6 +17,7 @@ export default {
       meta: {
         icon: 'fa-solid fa-house',
         color: 'text-[#5e72e4]',
+        scope: 'Main function',
       },
     },
     {
@@ -25,6 +26,7 @@ export default {
       meta: {
         icon: 'fa-solid fa-list-check',
         color: 'text-blue-500',
+        scope: 'Management',
       },
     },
     {

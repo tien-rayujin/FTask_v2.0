@@ -380,8 +380,12 @@
     // currently error
     try {
       const response = await axios.put(
-        `/api/subjects?id=${selectedItem.value?.subjectId}`,
-        JSON.stringify(edittedItem.value),
+        `/api/subjects/${selectedItem.value?.subjectId}`,
+        JSON.stringify({
+          subjectName: 'sss123',
+          status: true,
+        }),
+        // JSON.stringify({ status: false }),
         {
           headers: {
             'Content-Type': 'application/json',

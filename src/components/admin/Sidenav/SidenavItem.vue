@@ -1,8 +1,8 @@
 <template>
   <RouterLink
     :to="{ name: path }"
-    class="text-[#344767] py-[.75rem] px-[1rem] mx-2 flex items-center rounded-xl"
-    :class="{ 'bg-green-200': active }"
+    class="text-[#344767] py-[.75rem] px-[1rem] mx-2 flex items-center rounded-tr-xl rounded-br-xl hover:bg-slate-200"
+    :class="{ 'bg-green-200 border-l-[8px] border-green-300': active }"
   >
     <!-- bg-[#f6f9fc] -->
     <div class="p-[.625rem]">

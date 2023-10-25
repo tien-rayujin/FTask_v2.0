@@ -3,6 +3,12 @@
     <!-- sidenav-nav -->
     <ul class="mt-5">
       <li v-for="(route, idx) in routes" :key="idx" class="mt-[0.125rem]">
+        <div
+          v-if="route.meta.scope"
+          class="text-slate-400 mx-5 mt-2 text-xs border-b border-slate-200 uppercase"
+        >
+          {{ route.meta.scope }}
+        </div>
         <SidenavItem
           :path="route.name"
           :nav-text="route.displayName"
