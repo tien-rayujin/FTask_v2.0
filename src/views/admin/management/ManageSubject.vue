@@ -295,7 +295,7 @@
     departmentId: 0,
     subjectName: '',
     subjectCode: '',
-    status: true,
+    status: false,
   })
 
   onMounted(() => {
@@ -361,6 +361,9 @@
         // delete successful && load data
         fetchSubjects()
 
+        // clear Input
+        clearInputCreateModel()
+
         // close modal
         showCreateModal.value = !showCreateModal.value
 
@@ -377,14 +380,23 @@
   }
 
   async function handleUpdateClick() {
+    const item = edittedItem.value
+    if (item.departmentId == selectedItem.value?.department.departmentId)
+      item.departmentId = undefined
+    if (item.status == selectedItem.value?.status) item.status = undefined
+    if (item.subjectCode == selectedItem.value?.subjectCode)
+      item.subjectCode = undefined
+    if (item.subjectName == selectedItem.value?.subjectName)
+      item.subjectName = undefined
+
+    console.log(`currently edditedItem in update:`)
+    console.log(item)
+
     // currently error
     try {
       const response = await axios.put(
         `/api/subjects/${selectedItem.value?.subjectId}`,
-        JSON.stringify({
-          subjectName: 'sss123',
-          status: true,
-        }),
+        JSON.stringify(edittedItem.value),
         // JSON.stringify({ status: false }),
         {
           headers: {
@@ -399,11 +411,8 @@
         // delete successful && load data
         fetchSubjects()
 
-        // clear input
-        clearInputCreateModel()
-
         // close modal
-        showCreateModal.value = !showCreateModal.value
+        showEditModal.value = false
 
         // toast message
         init({
@@ -479,9 +488,9 @@
   }
 
   interface SubjectRequestModel {
-    departmentId: number
-    subjectName: string
-    subjectCode: string
-    status: boolean
+    departmentId: number | undefined
+    subjectName: string | undefined
+    subjectCode: string | undefined
+    status: boolean | undefined
   }
 </script>
