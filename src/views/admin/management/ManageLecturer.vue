@@ -1,5 +1,8 @@
 <template>
   <!-- {{ items }} -->
+  <p>Create Item{{ createItem }}</p>
+  <p>Selected Item{{ selectedItem }}</p>
+  <p>Editted Item{{ edittedItem }}</p>
   <va-modal v-model="showEditModel" hide-default-actions overlay-opacity="0.2">
     <template #header>
       <div
@@ -11,7 +14,7 @@
             >View / Edit mode</span
           >
           <va-switch
-            v-model="toggleEditMode"
+            v-model="isEditMode"
             class="mx-3 inline-block"
             size="small"
             color="#2dce89"
@@ -24,12 +27,23 @@
     </template>
     <template #default>
       <div
-        class="w-[600px] h-[450px] relative flex items-center justify-center overflow-hidden"
+        class="w-[650px] h-[350px] relative flex items-center justify-center overflow-hidden border-b-2 border-slate-200"
       >
         <div class="h-full w-1/2 flex items-center justify-center">
           <div class="w-full h-full p-5">
+            <div v-if="isEditMode">
+              <va-file-upload
+                v-model="edittedItem.Avatar"
+                undo
+                type="gallery"
+                :undo-duration="5000"
+                :undo-button-text="'Cancel'"
+                :deleted-file-message="'File exterminated'"
+              />
+            </div>
             <img
-              class="w-full h-full object-cover rounded-xl shadow-sm shadow-slate-500"
+              v-else
+              class="w-full h-[300px] object-cover rounded-xl shadow-sm shadow-slate-500"
               :src="selectedItem?.filePath"
               alt="user profile image"
             />
@@ -42,33 +56,179 @@
               v-model="edittedItem.email"
               class="w-full border px-3 py-1 rounded-xl"
               type="text"
+              :disabled="!isEditMode"
             />
             <span class="block text-sm text-slate-400 mt-3">Name</span>
             <input
               v-model="edittedItem.displayName"
               class="w-full border px-3 py-1 rounded-xl"
               type="text"
+              :disabled="!isEditMode"
             />
             <span class="block text-sm text-slate-400 mt-3">Phone</span>
             <input
               v-model="edittedItem.phoneNumber"
               class="w-full border px-3 py-1 rounded-xl"
               type="tel"
+              :disabled="!isEditMode"
             />
             <span class="block text-sm text-slate-400 mt-3">Department</span>
             <input
               v-model="edittedItem.department"
               class="w-full border px-3 py-1 rounded-xl"
               type="text"
+              :disabled="!isEditMode"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- filed that blocked to edittion -->
+      <div class="w-[650px] flex items-center justify-center flex-wrap">
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Created At</span>
+          <input
+            :value="selectedItem?.createdAt"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Created By</span>
+          <input
+            :value="selectedItem?.createdBy"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Lockout Enabled</span>
+          <input
+            :value="selectedItem?.lockoutEnabled"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Lockout End</span>
+          <input
+            :value="selectedItem?.lockoutEnd"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showEditModel = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleUpdateClick()"
+      >
+        Create
+      </va-button>
+    </template>
+  </va-modal>
+
+  <va-modal
+    v-model="showCreateModel"
+    hide-default-actions
+    overlay-opacity="0.2"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Lecturer Create</h2>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[650px] h-fit relative flex items-center justify-center overflow-hidden border-b-2 border-slate-200"
+      >
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-full p-5">
+            <va-file-upload v-model="createItem.Avatar" undo type="list" />
+          </div>
+        </div>
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Email</span>
+            <input
+              v-model.trim="createItem.email"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="email"
+              :rules="[(v: any) => !!v || 'Email is required']"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Name</span>
+            <input
+              v-model.trim="createItem.displayName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Phone</span>
+            <input
+              v-model.trim="createItem.phoneNumber"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="tel"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Department</span>
+            <va-select
+              v-model="createItem.departmentId"
+              :options="departmentOptions"
+              class="w-full"
+              text-by="departmentCode"
+              value-by="departmentId"
+            />
+            <span class="block text-sm text-slate-400 mt-3"
+              >Logout Enabled</span
+            >
+            <va-select
+              v-model="createItem.lockoutEnabled"
+              :options="statusOptions"
+              class="w-full"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Logout End</span>
+            <input
+              v-model="createItem.lockoutEnd"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="date"
             />
           </div>
         </div>
       </div>
     </template>
     <template #footer>
-      <!-- <va-button> Custom action </va-button> -->
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showCreateModel = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleCreateClick()"
+      >
+        Create
+      </va-button>
     </template>
   </va-modal>
+
   <ManagementBase>
     <template #header>
       <input
@@ -82,7 +242,7 @@
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
-        @click.prevent=""
+        @click.prevent="showCreateModel = !showCreateModel"
       >
         <i class="block fa-solid fa-plus"></i>
         <span class="block ml-2">Add Lecturer</span>
@@ -126,6 +286,10 @@
           <span class="text-sm">{{ value }}</span>
         </template>
 
+        <template #cell(department)="{ value }">
+          <span class="text-sm">{{ value }}</span>
+        </template>
+
         <template #cell(actions)="{ rowData }">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
@@ -134,7 +298,7 @@
                 color="text-blue-400"
                 @click="
                   () => {
-                    toggleEditMode = false
+                    isEditMode = false
                     handleEditClick(rowData)
                   }
                 "
@@ -144,7 +308,7 @@
                 color="text-yellow-400"
                 @click="
                   () => {
-                    toggleEditMode = true
+                    isEditMode = true
                     handleEditClick(rowData)
                   }
                 "
@@ -179,46 +343,55 @@
   import ManagementBase from '@/components/admin/ManagementBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
   import BadgeBase from '@/components/admin/BadgeBase.vue'
-  import type { LecturerModel } from './manageModel'
+  import type { DepartmentModel, LecturerModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
   import axios from 'axios'
 
-  import { useModal, useToast } from 'vuestic-ui'
+  import { useModal, useToast, type VaFile } from 'vuestic-ui'
   const columns = ref([
     { key: 'email', label: 'Email' },
     { key: 'displayName', label: 'Display Name' },
-    // { key: 'normalizedEmail', label: 'Normalized Email' },
     { key: 'phoneNumber', label: 'Phone Number' },
-    // { key: 'twoFactorEnabled', label: 'Two Factor Enabled' },
     { key: 'createdAt', label: 'Create Date' },
     { key: 'lockoutEnabled', label: 'Status' },
     { key: 'actions', label: '' },
   ])
 
   const items = ref<LecturerModel[]>([])
+  const departmentOptions = ref<DepartmentModel[]>([])
+  const statusOptions = ref<Array<boolean>>([true, false])
   const selectedItem = ref<LecturerModel>()
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
   const showEditModel = ref(false)
-  const toggleEditMode = ref(false)
+  const showCreateModel = ref(false)
+  const isEditMode = ref(false)
 
-  const edittedItem = ref({
-    email: 'jeffery@gmail.com',
-    emailConfirmed: true,
-    phoneNumber: '0909898888',
-    lockoutEnd: '04-30-2022',
-    lockoutEnabled: false,
-    filePath:
-      'https://img.freepik.com/premium-photo/young-caucasian-military-man-wearing-army-uniform-depressed-worry-distress_2221-10191.jpg',
-    displayName: 'March Jeffery',
-    department: null,
-    departmentHead: null,
+  const edittedItem = ref<LecturerRequestModel>({
+    displayName: '',
+    phoneNumber: '',
+    lockoutEnabled: true,
+    lockoutEnd: new Date('10-10,2023'),
+    email: '',
+    departmentId: 0,
+    Avatar: undefined,
+  })
+
+  const createItem = ref<LecturerRequestModel>({
+    displayName: '',
+    phoneNumber: '',
+    lockoutEnabled: true,
+    lockoutEnd: new Date('10-10,2023'),
+    email: '',
+    departmentId: 0,
+    Avatar: undefined,
   })
 
   onMounted(() => {
     fetchLecturers()
+    fetchDepartment()
   })
 
   const pages = computed(() => {
@@ -243,6 +416,25 @@
     }
   }
 
+  async function fetchDepartment() {
+    try {
+      const response = await axios.get('/api/departments?page=1&amount=50')
+      const json = response.data
+      departmentOptions.value = json as Array<DepartmentModel>
+
+      // map initial data
+      edittedItem.value.departmentId = departmentOptions.value[0].departmentId
+      createItem.value.departmentId = departmentOptions.value[0].departmentId
+
+      console.log('From Subject get options Department:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function handleCreateClick() {}
+
   async function handleEditClick(rowData: LecturerModel) {
     selectedItem.value = rowData
     mapEdditedItem(selectedItem.value)
@@ -253,6 +445,11 @@
 
   const { confirm } = useModal()
   const { init } = useToast()
+
+  async function handleUpdateClick() {
+    console.log('yeye')
+  }
+
   async function handleDeleteClick(rowData: LecturerModel) {
     selectedItem.value = rowData
     const result = await confirm({
@@ -292,13 +489,11 @@
     const item = edittedItem.value
     item.email = data.email as string
     item.displayName = data.displayName as string
-    item.department = data.department as null
-    item.departmentHead = data.departmentHead as null
+    item.department = data.department
+    item.departmentHead = data.departmentHead
     item.lockoutEnabled = data.lockoutEnabled
-    item.lockoutEnd = new Date(data.lockoutEnd as Date)
-      .toISOString()
-      .slice(0, 10)
-    item.filePath = data.filePath as string
+    item.lockoutEnd = new Date().toISOString().slice(0, 10)
+    // item.Avatar = data.filePath as string
     item.phoneNumber = data.phoneNumber as string
   }
 
@@ -308,14 +503,15 @@
     errors: Array<string>
   }
 
-  // interface LecturerRequestModel {
-  //   displayName: string
-  //   phoneNumber: string
-  //   lockoutEnabled: boolean
-  //   lockoutEnd: Date
-  //   email: string
-  //   departmentId: number
-  //   subjectIds: Array<string>
-  //   Avatar: string
-  // }
+  interface LecturerRequestModel {
+    [key: string]: any
+
+    displayName?: string
+    phoneNumber?: string
+    lockoutEnabled?: boolean
+    lockoutEnd?: Date | string
+    email?: string
+    departmentId?: number
+    Avatar?: VaFile
+  }
 </script>

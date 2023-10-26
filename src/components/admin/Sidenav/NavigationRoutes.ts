@@ -45,12 +45,14 @@ export default {
         color: 'text-red-500',
       },
     },
+
     {
-      name: 'manageSemester',
-      displayName: 'Semester',
+      name: 'manageUser',
+      displayName: 'User',
       meta: {
-        icon: 'fa-solid fa-calendar-days',
-        color: 'text-green-500',
+        icon: 'fa-solid fa-user',
+        color: 'text-black',
+        scope: 'Configuration',
       },
     },
     {
@@ -62,11 +64,11 @@ export default {
       },
     },
     {
-      name: 'manageUser',
-      displayName: 'User',
+      name: 'manageSemester',
+      displayName: 'Semester',
       meta: {
-        icon: 'fa-solid fa-user',
-        color: 'text-black',
+        icon: 'fa-solid fa-calendar-days',
+        color: 'text-green-500',
       },
     },
   ] as INavigationRoutes[],

@@ -2,18 +2,18 @@ export interface LecturerModel {
   [key: string]: any
 
   id: string
-  email: string | null
-  normalizedEmail: string | null
+  email?: string
+  normalizedEmail?: string
   emailConfirmed: boolean
-  phoneNumber: string | null
+  phoneNumber?: string
   phoneNumberConfirmed: boolean
   twoFactorEnabled: boolean
-  lockoutEnd: Date | null
+  lockoutEnd?: Date
   lockoutEnabled: boolean
   filePath?: string
-  displayName: string | null
-  department?: DepartmentModel | null
-  departmentHead?: LecturerModel | null
+  displayName?: string
+  department?: DepartmentModel
+  departmentHead?: LecturerModel
   createdBy: string
   createdAt: Date | string
 }
@@ -22,16 +22,16 @@ export interface UserModel {
   [key: string]: any
 
   id: string
-  email: string | null
-  normalizedEmail: string | null
+  email?: string
+  normalizedEmail?: string
   emailConfirmed: boolean
-  phoneNumber: string | null
+  phoneNumber?: string
   phoneNumberConfirmed: boolean
   twoFactorEnabled: boolean
-  lockoutEnd: Date | null
+  lockoutEnd?: Date
   lockoutEnabled: boolean
-  filePath: string | null
-  displayName: string | null
+  filePath?: string
+  displayName?: string
   roles: Array<string>
   createdBy: string
   createdAt: Date | string
@@ -84,7 +84,7 @@ export interface DepartmentModel {
   departmentId: number
   departmentName: string
   departmentCode: string
-  departmentHead: LecturerModel | null
+  departmentHead?: LecturerModel
   createdBy: string
   createdAt: Date | string
 }
