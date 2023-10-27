@@ -3,7 +3,7 @@
     <div class="pb-0 card-header mb-0">
       <h6>{{ title }}</h6>
       <p class="text-sm">
-        <i class="fa fa-arrow-up text-success"></i>
+        <i class="fa fa-arrow-up text-green-500"></i>
         <span class="font-weight-bold">{{ detail1 }}</span>
         {{ detail2 }}
       </p>
@@ -25,15 +25,15 @@
     props: {
       title: {
         type: String,
-        default: 'Sales overview',
+        default: 'Task Completion Rate',
       },
       detail1: {
         type: String,
-        default: '4% more',
+        default: '30% from last week',
       },
       detail2: {
         type: String,
-        default: 'in 2021',
+        default: '',
       },
     },
 

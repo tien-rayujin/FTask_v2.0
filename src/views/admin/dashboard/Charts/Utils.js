@@ -159,3 +159,8 @@ export function newDateString(days) {
 export function parseISODate(str) {
   return DateTime.fromISO(str)
 }
+
+export default {
+  numbers,
+  CHART_COLORS,
+}
