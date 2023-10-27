@@ -75,7 +75,7 @@ export default {
       name: 'manageRole',
       displayName: 'Role',
       meta: {
-        icon: 'fa-solid fa-calendar-days',
+        icon: 'fa-solid fa-sitemap',
         color: 'text-orange-500',
       },
     },

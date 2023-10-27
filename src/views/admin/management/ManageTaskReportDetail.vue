@@ -116,13 +116,13 @@
           <span class="text-sm">{{ value }}</span>
         </template> -->
 
-        <template #cell(actions)="{ rowData }">
+        <template #cell(actions)="{}">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
-                @click.prevent="handeDetailClick(rowData)"
+                @click.prevent=""
               />
             </div>
           </div>
@@ -152,7 +152,6 @@
   import taskList from './sampleData/taskList'
   import departmentList from './sampleData/departmentList'
   import { ref, onMounted, computed } from 'vue'
-  import { useRouter } from 'vue-router'
   import axios from 'axios'
 
   const columns = ref([
@@ -188,8 +187,6 @@
     }
   }
 
-  const router = useRouter()
-
   const items = ref<TaskModel[]>(taskList)
   const searchValue = ref('')
   const perPage = ref(10)
@@ -211,13 +208,4 @@
       ? Math.ceil(items.value.length / perPage.value)
       : items.value.length
   })
-
-  function handeDetailClick(rowData: TaskModel) {
-    router.push({
-      name: 'taskDetail',
-      params: {
-        task_id: rowData.taskId,
-      },
-    })
-  }
 </script>

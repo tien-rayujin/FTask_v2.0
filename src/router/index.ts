@@ -45,6 +45,18 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/admin/management/ManageTask.vue'),
       },
       {
+        name: 'taskDetail',
+        path: 'taskDetail/:task_id',
+        component: () =>
+          import('../views/admin/management/ManageTaskDetail.vue'),
+      },
+      {
+        name: 'taskReportDetail',
+        path: 'taskReportDetail',
+        component: () =>
+          import('../views/admin/management/ManageTaskReportDetail.vue'),
+      },
+      {
         name: 'manageLecturer',
         path: 'lecturer',
         component: () => import('../views/admin/management/ManageLecturer.vue'),

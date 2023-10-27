@@ -37,7 +37,61 @@ export interface UserModel {
   createdAt: Date | string
 }
 
+export interface AttachmentModel {
+  [key: string]: any
+
+  attachmentId: number
+  url: string
+  fileName: string
+}
+
 export interface TaskModel {
+  [key: string]: any
+
+  taskId: number
+  taskTitle: string
+  taskContent: string
+  startDate: Date | string
+  endDate: Date | string
+  taskLevel: number
+  taskStatus: number
+  location: string
+  semester?: SemesterModel
+  department?: DepartmentModel
+  subject?: SubjectModel
+  taskLecturers: Array<TaskLecturerModel>
+  attachments: Array<AttachmentModel>
+  createdBy: string
+  createdAt: Date | string
+}
+
+export interface TaskLecturerModel {
+  [key: string]: any
+
+  taskLecturerId: number
+  note: string
+  task: TaskModel
+  lecturer?: LecturerModel
+  taskActivities: Array<TaskActivityModel>
+  createdBy: string
+  createdAt: Date | string
+}
+
+export interface TaskActivityModel {
+  [key: string]: any
+
+  taskActivityId: number
+  activityTitle: string
+  activityDescription: string
+  deadline: Date | string
+  taskActivityStatus: number
+  taskLecturer: TaskLecturerModel
+  taskReport: TaskReportModel
+  createdBy: LecturerModel
+  createdAt: Date | string
+}
+
+export interface TaskReportModel {
   [key: string]: any
 
   taskId: number

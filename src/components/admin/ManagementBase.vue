@@ -1,5 +1,9 @@
 <template>
-  <div class="w-full h-[750px] bg-white rounded-2xl flex flex-col">
+  <div class="w-full h-fit bg-white rounded-2xl flex flex-col">
+    <div class="col-span-full pt-6 px-5">
+      <slot name="detail" />
+    </div>
+
     <!-- searching and filtering -->
     <div class="grid gap-5 grid-cols-12 pt-6 px-5">
       <!-- search -->
@@ -18,7 +22,7 @@
     </div>
 
     <!-- table -->
-    <div class="flex-1 w-full mt-5 row-span-5 min-h-[36.5625rem] px-5">
+    <div class="flex-1 w-full mt-5 row-span-5 min-h-[19.5625rem] px-5">
       <slot name="main" />
     </div>
 

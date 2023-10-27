@@ -366,7 +366,7 @@
         init({
           title: 'Subject Create Message',
           message: `Create Subject: "${createItem.value.subjectName}" successfully!`,
-          color: '#fff',
+          color: '#2dd4bf',
         })
 
         // clear Input
@@ -425,7 +425,7 @@
         init({
           title: 'Subject Update Message',
           message: `Update Subject: "${edittedItem.value.subjectName}" successfully!`,
-          color: '#fff',
+          color: '#facc15',
         })
 
         // delete successful && load data
@@ -457,7 +457,7 @@
           init({
             title: 'Subject Delete Message',
             message: `Delete Subject: "${selectedItem.value?.subjectName}" successfully!`,
-            color: '#fff',
+            color: '#f43f5e',
           })
 
           // delete successful && load data
