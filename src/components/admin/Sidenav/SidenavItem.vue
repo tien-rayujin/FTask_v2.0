@@ -1,10 +1,10 @@
 <template>
   <RouterLink
     :to="{ name: path }"
-    class="text-[#344767] py-[.75rem] px-[1rem] mx-2 flex items-center rounded-tr-xl rounded-br-xl hover:bg-slate-200"
-    :class="{ 'bg-green-200 border-l-[8px] border-green-300': active }"
+    class="text-[#344767] py-[.75rem] px-[1rem] mx-2 flex items-center rounded-tr-xl rounded-br-xl hover:bg-slate-200 font-semibold transition-all ease-in-out duration-400"
+    :class="{ 'active text-white ': active }"
   >
-    <!-- bg-[#f6f9fc] -->
+    <!-- bg-[#f6f9fc] bg-green-200 border-l-[8px] border-green-300-->
     <div class="p-[.625rem]">
       <span :class="[icon, color]" />
     </div>
@@ -49,3 +49,9 @@
     },
   })
 </script>
+
+<style scoped>
+  .active {
+    background-image: linear-gradient(310deg, #66be98 0%, #91f5c9 100%);
+  }
+</style>

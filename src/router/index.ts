@@ -37,7 +37,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'dashboard',
         path: 'dashboard',
-        component: () => import('../views/Test.vue'),
+        component: () => import('../views/admin/dashboard/Dashboard.vue'),
       },
       {
         name: 'task',
@@ -120,11 +120,13 @@ const getCurrentUser = () => {
   })
 }
 
-// import { useUserStore } from '@/stores/user-store'
-// let userStore = null
+import { useUserStore } from '@/stores/user-store'
+let userStore: any = undefined
 
 router.beforeEach(async (to, from, next) => {
-  // userStore = useUserStore()
+  if (userStore == undefined) {
+    userStore = useUserStore()
+  }
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (await getCurrentUser()) {

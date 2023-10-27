@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
       return state.user?.role === 'admin'
     },
     isAuthenticated(state): boolean {
-      return state.user != null
+      return state.user != undefined
     },
   },
 })

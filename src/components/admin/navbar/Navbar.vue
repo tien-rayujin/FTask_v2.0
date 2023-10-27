@@ -29,12 +29,12 @@
           <img
             class="inline-block w-8 h-8 object-cover rounded-full border border-slate-100 border-opacity-20"
             :src="user.img"
-            alt=""
+            alt="user avatar"
           />
           <span class="inline-block px-3">{{ user.name }}</span>
         </li>
         <li class="drop-item">
-          <a href="" class="relative" @click.prevent="toggleSettingDropdown">
+          <a href="#" class="relative" @click.prevent="toggleSettingDropdown()">
             <i class="fa fa-cog"></i>
             <ul v-if="settingShow" class="absolute top-6 -right-1 mt-3">
               <i
@@ -49,7 +49,7 @@
           </a>
         </li>
         <li class="drop-item">
-          <a href="">
+          <a href="#">
             <i class="fa fa-bell"></i>
           </a>
         </li>

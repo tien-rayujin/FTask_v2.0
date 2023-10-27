@@ -5,13 +5,13 @@
 @tailwind utilities;
 
 @import 'icon-fonts/index';
-// @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700');
+// @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 // reset css
 * {
-  font-family: 'Popins', sans-serif;
-  // font-family: 'Open Sans';
+  // font-family: 'Popins', sans-serif;
+  font-family: 'Open Sans';
   margin: 0;
   padding: 0;
   box-sizing: border-box;
