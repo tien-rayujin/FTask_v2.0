@@ -315,7 +315,9 @@
                 @click="
                   () => {
                     isEditMode = false
-                    handleUpdateClick()
+                    showEditModel = !showEditModel
+                    selectedItem = rowData
+                    mapEdditedItem(selectedItem as LecturerModel)
                   }
                 "
               />
@@ -481,7 +483,7 @@
         init({
           title: 'Subject Create Message',
           message: `Create Lecturer: "${createItem.value.username}" successfully!`,
-          color: '#fff',
+          color: '#2dd4bf',
         })
 
         // clear Input
@@ -542,7 +544,7 @@
         init({
           title: 'Lecturer Update Message',
           message: `Update Lecturer: "${edittedItem.value.displayName}" successfully!`,
-          color: '#fff',
+          color: '#facc15',
         })
 
         // delete successful && load data
@@ -577,7 +579,7 @@
         init({
           title: 'Lecturer Delete Message',
           message: `Delete Lecturer: "${rowData.displayName}" successfully!`,
-          color: '#facc15',
+          color: '#f43f5e',
         })
       } else {
         console.log(

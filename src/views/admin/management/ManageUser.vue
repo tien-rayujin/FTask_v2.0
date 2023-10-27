@@ -1,6 +1,6 @@
 <template>
   <!-- {{ items }} -->
-  {{ createItem }}
+  <!-- {{ createItem }} -->
   <va-modal
     v-model="showCreateModel"
     hide-default-actions
@@ -153,9 +153,9 @@
           <BadgeBase :status="value == 'true'" :text="value" />
         </template>
 
-        <template #cell(displayName)="{ value }">
+        <!-- <template #cell(displayName)="{ value }">
           <span class="text-sm">{{ value }}</span>
-        </template>
+        </template> -->
 
         <template #cell(actions)="{ rowData }">
           <div class="w-[60px]">
@@ -295,7 +295,7 @@
         init({
           title: 'Subject Create Message',
           message: `Create Lecturer: "${createItem.value.username}" successfully!`,
-          color: '#fff',
+          color: '#2dd4bf',
         })
 
         // clear Input
@@ -352,7 +352,7 @@
         init({
           title: 'User Delete Message',
           message: `Delete User: "${rowData.email}" successfully!`,
-          color: '#fff',
+          color: '#f43f5e',
         })
       } else {
         console.log(
