@@ -4,9 +4,9 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-slate-600 font-bold uppercase">Todo</p>
-          <h5 class="font-black text-2xl">{{ data.todo?.quantity }}</h5>
+          <h5 class="font-black text-2xl">{{ data.toDo.quantity }}</h5>
           <span class="text-sm text-blue-600 pt-3 font-semibold block"
-            >{{ data.todo?.percent }}%</span
+            >{{ data.toDo?.percent }}%</span
           >
         </div>
         <div
@@ -54,9 +54,9 @@
           <p class="text-sm text-slate-600 font-bold uppercase">
             Total Participant
           </p>
-          <h5 class="font-black text-2xl">129</h5>
+          <h5 class="font-black text-2xl">{{ data.totalParticipant }}</h5>
           <span class="text-sm text-green-600 pt-3 font-semibold block"
-            >From 2022-01-01 To 2022-01-30</span
+            >From {{ from }} To {{ end }}</span
           >
         </div>
         <div
@@ -74,13 +74,26 @@
   import { ref, onMounted } from 'vue'
 
   const data = ref<TaskStatusResponseModel>({
-    todo: { quantity: 25, percent: 32 },
-    inProgress: { quantity: 12, percent: 15.5 },
-    end: { quantity: 40, percent: 52 },
+    toDo: {
+      quantity: 0,
+      percent: 0,
+    },
+
+    inProgress: {
+      quantity: 0,
+      percent: 0,
+    },
+
+    end: {
+      quantity: 0,
+      percent: 0,
+    },
+
+    totalParticipant: 0,
   })
 
-  const from = '%2023-01-01'
-  const end = '%2023-10-27'
+  const from = '2023-01-01'
+  const end = '2023-10-27'
 
   onMounted(() => {
     fetchTaskStatistic()
@@ -100,8 +113,21 @@
   }
 
   interface TaskStatusResponseModel {
-    todo: { quantity: number; percent: number }
-    inProgress: { quantity: number; percent: number }
-    end: { quantity: number; percent: number }
+    toDo: {
+      quantity: number
+      percent: number
+    }
+
+    inProgress: {
+      quantity: number
+      percent: number
+    }
+
+    end: {
+      quantity: number
+      percent: number
+    }
+
+    totalParticipant: number
   }
 </script>
