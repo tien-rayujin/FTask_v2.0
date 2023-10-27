@@ -295,7 +295,7 @@
         init({
           title: 'Role Create Message',
           message: `Create Role: "${createItem.value.RoleName}" successfully!`,
-          color: '#fff',
+          color: '#2dd4bf',
         })
 
         // clear Input
@@ -354,7 +354,7 @@
         init({
           title: 'Role Update Message',
           message: `Update Role: "${edittedItem.value.RoleName}" successfully!`,
-          color: '#fff',
+          color: '#facc15',
         })
 
         // delete successful && load data
@@ -386,7 +386,7 @@
           init({
             title: 'Role Delete Message',
             message: `Delete Role: "${selectedItem.value?.RoleName}" successfully!`,
-            color: '#fff',
+            color: '#f43f5e',
           })
 
           // delete successful && load data

@@ -351,7 +351,7 @@
         init({
           title: 'Department Create Message',
           message: `Create Department: "${createItem.value.departmentName}" successfully!`,
-          color: '#fff',
+          color: '#2dd4bf',
         })
 
         // clear input
@@ -417,7 +417,7 @@
         init({
           title: 'Department Update Message',
           message: `Update Department: "${createItem.value.departmentName}" successfully!`,
-          color: '#fff',
+          color: '#facc15',
         })
 
         // delete successful && load data
@@ -449,7 +449,7 @@
           init({
             title: 'Department Delete Message',
             message: `Delete Department: "${selectedItem.value?.departmentName}" successfully!`,
-            color: '#fff',
+            color: '#f43f5e',
           })
 
           // delete successful && load data

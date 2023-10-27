@@ -577,7 +577,7 @@
         init({
           title: 'Lecturer Delete Message',
           message: `Delete Lecturer: "${rowData.displayName}" successfully!`,
-          color: '#fff',
+          color: '#facc15',
         })
       } else {
         console.log(

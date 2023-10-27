@@ -325,7 +325,7 @@
         init({
           title: 'Semester Create Message',
           message: `Create Semester: "${createItem.value.semesterCode}" successfully!`,
-          color: '#fff',
+          color: '#2dd4bf',
         })
 
         // clear input
@@ -386,7 +386,7 @@
         init({
           title: 'Semester Update Message',
           message: `Update Semester: "${createItem.value.semesterCode}" successfully!`,
-          color: '#fff',
+          color: '#facc15',
         })
 
         // delete successful && load data
@@ -418,7 +418,7 @@
           init({
             title: 'Semester Delete Message',
             message: `Delete Semester: "${selectedItem.value?.semesterCode}" successfully!`,
-            color: '#fff',
+            color: '#f43f5e',
           })
 
           // delete successful && load data
