@@ -88,3 +88,12 @@ export interface DepartmentModel {
   createdBy: string
   createdAt: Date | string
 }
+
+export interface RoleModel {
+  [key: string]: any
+
+  id: string
+  name: string
+  createdBy: string
+  createdAt: Date | string
+}

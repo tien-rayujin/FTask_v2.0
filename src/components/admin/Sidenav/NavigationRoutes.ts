@@ -71,5 +71,13 @@ export default {
         color: 'text-green-500',
       },
     },
+    {
+      name: 'manageRole',
+      displayName: 'Role',
+      meta: {
+        icon: 'fa-solid fa-calendar-days',
+        color: 'text-orange-500',
+      },
+    },
   ] as INavigationRoutes[],
 }

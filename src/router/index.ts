@@ -70,6 +70,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import('../views/admin/management/ManageDepartment.vue'),
       },
+      {
+        name: 'manageRole',
+        path: 'role',
+        component: () => import('../views/admin/management/ManageRole.vue'),
+      },
     ],
   },
 ]
