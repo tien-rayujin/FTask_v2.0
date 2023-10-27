@@ -1,8 +1,8 @@
 <template>
   <!-- {{ items }} -->
-  <p>Create Item{{ createItem }}</p>
+  <!-- <p>Create Item{{ createItem }}</p>
   <p>Selected Item{{ selectedItem }}</p>
-  <p>Editted Item{{ edittedItem }}</p>
+  <p>Editted Item{{ edittedItem }}</p> -->
   <va-modal v-model="showEditModel" hide-default-actions overlay-opacity="0.2">
     <template #header>
       <div
@@ -35,7 +35,7 @@
               <va-file-upload
                 v-model="edittedItem.Avatar"
                 undo
-                type="gallery"
+                type="single"
                 :undo-duration="5000"
                 :undo-button-text="'Cancel'"
                 :deleted-file-message="'File exterminated'"
@@ -49,35 +49,36 @@
             />
           </div>
         </div>
-        <div class="h-full w-1/2 flex items-center justify-center">
+        <div class="h-full w-1/2 flex items-center justify-center pt-3">
           <div class="w-full h-fit p-5">
-            <span class="block text-sm text-slate-400">Email</span>
-            <input
-              v-model="edittedItem.email"
-              class="w-full border px-3 py-1 rounded-xl"
-              type="text"
-              :disabled="!isEditMode"
-            />
-            <span class="block text-sm text-slate-400 mt-3">Name</span>
+            <span class="block text-sm text-slate-400 mt-3">Display Name</span>
             <input
               v-model="edittedItem.displayName"
               class="w-full border px-3 py-1 rounded-xl"
               type="text"
               :disabled="!isEditMode"
             />
-            <span class="block text-sm text-slate-400 mt-3">Phone</span>
+            <span class="block text-sm text-slate-400">Phone Number</span>
             <input
               v-model="edittedItem.phoneNumber"
               class="w-full border px-3 py-1 rounded-xl"
-              type="tel"
+              type="text"
               :disabled="!isEditMode"
             />
-            <span class="block text-sm text-slate-400 mt-3">Department</span>
+            <span class="block text-sm text-slate-400 mt-3">Email</span>
             <input
-              v-model="edittedItem.department"
+              v-model="edittedItem.email"
               class="w-full border px-3 py-1 rounded-xl"
               type="text"
               :disabled="!isEditMode"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Department</span>
+            <va-select
+              v-model="edittedItem.departmentId"
+              :options="departmentOptions"
+              class="w-full"
+              text-by="departmentCode"
+              value-by="departmentId"
             />
           </div>
         </div>
@@ -137,7 +138,7 @@
         color="#2dce89"
         @click="handleUpdateClick()"
       >
-        Create
+        Update
       </va-button>
     </template>
   </va-modal>
@@ -165,7 +166,22 @@
         </div>
         <div class="h-full w-1/2 flex items-center justify-center">
           <div class="w-full h-fit p-5">
-            <span class="block text-sm text-slate-400">Email</span>
+            <span class="block text-sm text-slate-400">Username</span>
+            <input
+              v-model.trim="createItem.username"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="email"
+              :rules="[(v: any) => !!v || 'Email is required']"
+              required
+            />
+            <span class="block text-sm text-slate-400 mt-3">Password</span>
+            <input
+              v-model.trim="createItem.password"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="password"
+              required
+            />
+            <span class="block text-sm text-slate-400 mt-3">Email</span>
             <input
               v-model.trim="createItem.email"
               class="w-full border px-3 py-1 rounded-xl"
@@ -299,7 +315,7 @@
                 @click="
                   () => {
                     isEditMode = false
-                    handleEditClick(rowData)
+                    handleUpdateClick()
                   }
                 "
               />
@@ -309,7 +325,9 @@
                 @click="
                   () => {
                     isEditMode = true
-                    handleEditClick(rowData)
+                    showEditModel = !showEditModel
+                    selectedItem = rowData
+                    mapEdditedItem(selectedItem as LecturerModel)
                   }
                 "
               />
@@ -369,21 +387,25 @@
   const showCreateModel = ref(false)
   const isEditMode = ref(false)
 
-  const edittedItem = ref<LecturerRequestModel>({
+  // const basic = ref<VaFile>()
+
+  const edittedItem = ref<LecturerEditRequestModel>({
     displayName: '',
     phoneNumber: '',
     lockoutEnabled: true,
-    lockoutEnd: new Date('10-10,2023'),
+    lockoutEnd: new Date('10-10-2023'),
     email: '',
     departmentId: 0,
     Avatar: undefined,
   })
 
-  const createItem = ref<LecturerRequestModel>({
+  const createItem = ref<LecturerCreateRequestModel>({
+    username: '',
+    password: '',
     displayName: '',
     phoneNumber: '',
     lockoutEnabled: true,
-    lockoutEnd: new Date('10-10,2023'),
+    lockoutEnd: new Date('10-10-2023'),
     email: '',
     departmentId: 0,
     Avatar: undefined,
@@ -433,21 +455,102 @@
     }
   }
 
-  async function handleCreateClick() {}
-
-  async function handleEditClick(rowData: LecturerModel) {
-    selectedItem.value = rowData
-    mapEdditedItem(selectedItem.value)
-
-    // show modal
-    showEditModel.value = !showEditModel.value
-  }
-
   const { confirm } = useModal()
   const { init } = useToast()
 
+  async function handleCreateClick() {
+    // const ResponseModel = ref<LecturerResponseModel>()
+    try {
+      const response = await axios.post(
+        `/api/lecturers`,
+        handleCreateContentForm(),
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      const responseData = response.data as LecturerResponseModel
+      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showCreateModel.value = false
+
+      if (responseData) {
+        // toast message
+        init({
+          title: 'Subject Create Message',
+          message: `Create Lecturer: "${createItem.value.username}" successfully!`,
+          color: '#fff',
+        })
+
+        // clear Input
+        clearInputCreateModel()
+
+        // delete successful && load data
+        fetchLecturers()
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  // function updateEdited(
+  //   editted: LecturerEditRequestModel,
+  //   selected: LecturerModel,
+  // ) {
+  //   // Loop through each property
+  //   Object.keys(editted).forEach((key) => {
+  //     // Check if property value is different from selected
+  //     if (editted[key] !== selected[key]) {
+  //       // Property has been updated, keep value
+  //       return
+  //     }
+
+  //     // Property is unchanged, set to undefined
+  //     editted[key] = undefined
+  //   })
+
+  //   return editted
+  // }
   async function handleUpdateClick() {
-    console.log('yeye')
+    // const eddited = edittedItem.value as LecturerEditRequestModel
+    // const selected = selectedItem.value as LecturerModel
+
+    // updateEdited(eddited, selected)
+
+    // currently error
+    try {
+      const response = await axios.put(
+        `/api/lecturers/${selectedItem.value?.id}`,
+        handleUpdateContentForm(),
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+
+      const responseData = response.data as LecturerModel
+      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showEditModel.value = false
+
+      if (responseData) {
+        // toast message
+        init({
+          title: 'Lecturer Update Message',
+          message: `Update Lecturer: "${edittedItem.value.displayName}" successfully!`,
+          color: '#fff',
+        })
+
+        // delete successful && load data
+        fetchLecturers()
+      }
+    } catch (error) {
+      alert(error)
+    }
   }
 
   async function handleDeleteClick(rowData: LecturerModel) {
@@ -465,7 +568,7 @@
       const response = await axios.delete(
         `/api/lecturers?id=${selectedItem.value.id}`,
       )
-      const responseData: DeleteLecturerResponseModel = response.data
+      const responseData: LecturerResponseModel = response.data
       if (responseData.isSuccess) {
         // delete successful && load data
         fetchLecturers()
@@ -485,6 +588,42 @@
     }
   }
 
+  function handleCreateContentForm() {
+    const formData = new FormData()
+    formData.append('UserName', createItem.value.username)
+    formData.append('Password', createItem.value.password)
+    formData.append('Email', createItem.value.email as string)
+    formData.append('DisplayName', createItem.value.displayName as string)
+    formData.append(
+      'LockoutEnabled',
+      Boolean(createItem.value.lockoutEnabled).toString(),
+    )
+    formData.append('PhoneNumber', createItem.value.phoneNumber as string)
+    formData.append('DepartmentId', createItem.value.departmentId as string)
+    formData.append('Avatar', createItem.value.Avatar as File)
+    return formData
+  }
+  function handleUpdateContentForm() {
+    const formData = new FormData()
+    const item = edittedItem.value
+    const selected = selectedItem.value
+
+    if (item.displayName != selected?.displayName) {
+      formData.append('DisplayName', edittedItem.value.displayName as string)
+    }
+    if (item.phoneNumber != selected?.phoneNumber) {
+      formData.append('PhoneNumber', edittedItem.value.phoneNumber as string)
+    }
+    if (item.email != selected?.email) {
+      formData.append('Email', edittedItem.value.email as string)
+    }
+    if (item.departmentId != selected?.department) {
+      formData.append('DepartmentId', edittedItem.value.departmentId as string)
+    }
+    formData.append('Avatar', edittedItem.value.Avatar as File)
+    return formData
+  }
+
   function mapEdditedItem(data: LecturerModel) {
     const item = edittedItem.value
     item.email = data.email as string
@@ -497,13 +636,38 @@
     item.phoneNumber = data.phoneNumber as string
   }
 
-  interface DeleteLecturerResponseModel {
+  function clearInputCreateModel() {
+    const item = createItem.value
+    item.password = ''
+    item.displayName = ''
+    item.phoneNumber = ''
+    item.lockoutEnabled = true
+    item.lockoutEnd = new Date('10-10-2023')
+    item.email = ''
+    item.departmentId = 0
+    item.Avatar = undefined
+  }
+
+  interface LecturerResponseModel {
     isSuccess: boolean
     message: string
     errors: Array<string>
   }
 
-  interface LecturerRequestModel {
+  interface LecturerCreateRequestModel {
+    [key: string]: any
+
+    username: string
+    password: string
+    displayName?: string
+    phoneNumber?: string
+    lockoutEnabled?: boolean
+    lockoutEnd?: Date | string
+    email?: string
+    departmentId?: number | string
+    Avatar?: VaFile
+  }
+  interface LecturerEditRequestModel {
     [key: string]: any
 
     displayName?: string
@@ -511,7 +675,7 @@
     lockoutEnabled?: boolean
     lockoutEnd?: Date | string
     email?: string
-    departmentId?: number
+    departmentId?: number | string
     Avatar?: VaFile
   }
 </script>

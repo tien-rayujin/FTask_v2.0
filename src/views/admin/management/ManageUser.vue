@@ -1,5 +1,109 @@
 <template>
   <!-- {{ items }} -->
+  {{ createItem }}
+  <va-modal
+    v-model="showCreateModel"
+    hide-default-actions
+    overlay-opacity="0.2"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Create User</h2>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[650px] h-fit relative flex items-center justify-center overflow-hidden border-b-2 border-slate-200"
+      >
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-full p-5">
+            <va-file-upload
+              v-model="createItem.Avatar"
+              undo
+              type="single"
+              :undo-duration="5000"
+              :undo-button-text="'Cancel'"
+              :deleted-file-message="'File exterminated'"
+            />
+          </div>
+        </div>
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400">Username</span>
+            <input
+              v-model.trim="createItem.username"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="email"
+              :rules="[(v: any) => !!v || 'Email is required']"
+              required
+            />
+            <span class="block text-sm text-slate-400 mt-3">Password</span>
+            <input
+              v-model.trim="createItem.password"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="password"
+              required
+            />
+            <span class="block text-sm text-slate-400 mt-3">Phone Number</span>
+            <input
+              v-model.trim="createItem.phoneNumber"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="tel"
+            />
+            <span class="block text-sm text-slate-400 mt-3"
+              >Lockout Enabled</span
+            >
+            <va-select
+              v-model="createItem.lockoutEnabled"
+              :options="statusOptions"
+              class="w-full"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Lockout End</span>
+            <input
+              v-model="createItem.lockoutEnd"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="date"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Email</span>
+            <input
+              v-model.trim="createItem.email"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="email"
+              :rules="[(v: any) => !!v || 'Email is required']"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Role ID</span>
+            <va-select
+              v-model="createItem.roleId"
+              :options="roleOptions"
+              class="w-full"
+              text-by="name"
+              value-by="id"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showCreateModel = false"
+      >
+        Cancel
+      </va-button>
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="handleCreateClick()"
+      >
+        Create
+      </va-button>
+    </template>
+  </va-modal>
+
   <ManagementBase>
     <template #header>
       <input
@@ -13,6 +117,7 @@
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
+        @click.prevent="showCreateModel = !showCreateModel"
       >
         <i class="block fa-solid fa-plus"></i>
         <span class="block ml-2">Add User</span>
@@ -52,7 +157,7 @@
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <template #cell(actions)="">
+        <template #cell(actions)="{ rowData }">
           <div class="w-[60px]">
             <div class="flex items-center justify-start">
               <ActionButtonBase
@@ -63,7 +168,11 @@
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
               />
-              <ActionButtonBase icon="fa-solid fa-ban" color="text-red-400" />
+              <ActionButtonBase
+                icon="fa-solid fa-ban"
+                color="text-red-400"
+                @click="handleDeleteClick(rowData)"
+              />
             </div>
           </div>
         </template>
@@ -89,9 +198,10 @@
   import ManagementBase from '@/components/admin/ManagementBase.vue'
   import BadgeBase from '@/components/admin/BadgeBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
-  import type { UserModel } from './manageModel'
+  import type { UserModel, RoleModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
   import axios from 'axios'
+  import { useToast, type VaFile, useModal } from 'vuestic-ui/web-components'
 
   const columns = ref([
     { key: 'email', label: 'Email' },
@@ -108,9 +218,28 @@
   const perPage = ref(10)
   const currentPage = ref(1)
   const visualPage = ref(2)
+  const roleOptions = ref<RoleModel[]>()
+  const statusOptions = ref<Array<boolean>>([true, false])
+  const showCreateModel = ref(false)
+  const selectedItem = ref<UserModel>()
+
+  const { confirm } = useModal()
+  const { init } = useToast()
+
+  const createItem = ref<UserCreateRequestModel>({
+    username: '',
+    password: '',
+    phoneNumber: '',
+    lockoutEnabled: true,
+    lockoutEnd: new Date('10-10-2000'),
+    email: '',
+    roleId: 0,
+    Avatar: undefined,
+  })
 
   onMounted(() => {
     fetchUsers()
+    fetchRoles()
   })
 
   const pages = computed(() => {
@@ -119,6 +248,17 @@
       : items.value.length
   })
 
+  async function fetchRoles() {
+    try {
+      const response = await axios.get('/api/roles?page=1&quantity=99')
+      const json = response.data
+      roleOptions.value = json as Array<RoleModel>
+      console.log(json)
+    } catch (error) {
+      console.log('Error: ')
+      console.log(error)
+    }
+  }
   async function fetchUsers() {
     try {
       const response = await axios.get('/api/users?page=1&quantity=10')
@@ -130,5 +270,126 @@
       console.log('Erorr: ')
       console.log(error)
     }
+  }
+
+  async function handleCreateClick() {
+    // const ResponseModel = ref<LecturerResponseModel>()
+    try {
+      const response = await axios.post(
+        `/api/users`,
+        handleCreateContentForm(),
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      const responseData = response.data as UserResponseModel
+      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showCreateModel.value = false
+
+      if (responseData) {
+        // toast message
+        init({
+          title: 'Subject Create Message',
+          message: `Create Lecturer: "${createItem.value.username}" successfully!`,
+          color: '#fff',
+        })
+
+        // clear Input
+        clearInputCreateModel()
+
+        // delete successful && load data
+        fetchUsers()
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  function handleCreateContentForm() {
+    const formData = new FormData()
+    formData.append('UserName', createItem.value.username)
+    formData.append('Password', createItem.value.password)
+    formData.append('PhoneNumber', createItem.value.phoneNumber as string)
+    formData.append('Email', createItem.value.email as string)
+    formData.append(
+      'LockoutEnabled',
+      Boolean(createItem.value.lockoutEnabled).toString(),
+    )
+    // formData.append(
+    //   'LockoutEnd',
+    //   new Date(createItem.value.lockoutEnd).toISOString(),
+    // )
+
+    formData.append('RoleId', createItem.value.roleId as string)
+    formData.append('Avatar', createItem.value.Avatar as File)
+    return formData
+  }
+  async function handleDeleteClick(rowData: UserModel) {
+    selectedItem.value = rowData
+    const result = await confirm({
+      message: `Are you sure to delete this Lecturer ${rowData.email} - ${rowData.displayName}`,
+      title: 'Lecturer delete confirmation',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      blur: true,
+    })
+
+    if (result) {
+      // user confirm delete
+      const response = await axios.delete(
+        `/api/users?id=${selectedItem.value.id}`,
+      )
+      const responseData: UserResponseModel = response.data
+      if (responseData.isSuccess) {
+        // delete successful && load data
+        fetchUsers()
+
+        // toast message
+        init({
+          title: 'User Delete Message',
+          message: `Delete User: "${rowData.email}" successfully!`,
+          color: '#fff',
+        })
+      } else {
+        console.log(
+          `Request to delete Failed with message: ${responseData.message}`,
+        )
+        console.log(`Error Detail: ${responseData.errors}`)
+      }
+    }
+  }
+
+  function clearInputCreateModel() {
+    const item = createItem.value
+    item.username = ''
+    item.password = ''
+    item.phoneNumber = ''
+    item.lockoutEnabled = true
+    item.lockoutEnd = new Date('10-10-2023')
+    item.email = ''
+    item.roleId = 0
+    item.Avatar = undefined
+  }
+
+  interface UserResponseModel {
+    isSuccess: boolean
+    message: string
+    errors: Array<string>
+  }
+  interface UserCreateRequestModel {
+    [key: string]: any
+
+    username: string
+    password: string
+    phoneNumber?: string
+    lockoutEnabled?: boolean
+    lockoutEnd?: Date | string
+    email?: string
+    roleId?: number | string
+    Avatar?: VaFile
   }
 </script>
