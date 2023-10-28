@@ -15,7 +15,9 @@
     <div class="col-span-4">
       <div
         class="bg-white w-full h-full rounded-xl flex items-center justify-center"
-      ></div>
+      >
+        <DoughnutTaskStatus />
+      </div>
     </div>
   </div>
 </template>
@@ -23,4 +25,5 @@
 <script setup lang="ts">
   import TaskStatusStatistic from './Charts/TaskStatusStatistic.vue'
   import GradientLineChart from './Charts/GradientLineChart.vue'
+  import DoughnutTaskStatus from './Charts/DoughnutTaskStatus.vue'
 </script>
