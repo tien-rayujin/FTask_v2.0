@@ -32,14 +32,16 @@
         <div class="h-full w-1/2 flex items-center justify-center">
           <div class="w-full h-full p-5">
             <div v-if="isEditMode">
-              <va-file-upload
+              <!-- <va-file-upload
                 v-model="edittedItem.Avatar"
                 undo
                 type="single"
+                :on-file-added="uploadImgFireBase()"
                 :undo-duration="5000"
                 :undo-button-text="'Cancel'"
                 :deleted-file-message="'File exterminated'"
-              />
+              /> -->
+              <input type="file" @change="uploadImgFireBase" />
             </div>
             <img
               v-else
@@ -76,6 +78,7 @@
             <va-select
               v-model="edittedItem.departmentId"
               :options="departmentOptions"
+              :disabled="!isEditMode"
               class="w-full"
               text-by="departmentCode"
               value-by="departmentId"
@@ -125,21 +128,23 @@
       </div>
     </template>
     <template #footer>
-      <va-button
-        color="#fcfcfc"
-        text-color="#797f8a"
-        @click="showEditModel = false"
-      >
-        Cancel
-      </va-button>
-      <va-button
-        class="ml-5"
-        text-color="#fff"
-        color="#2dce89"
-        @click="handleUpdateClick()"
-      >
-        Update
-      </va-button>
+      <div v-if="isEditMode">
+        <va-button
+          color="#fcfcfc"
+          text-color="#797f8a"
+          @click="showEditModel = false"
+        >
+          Cancel
+        </va-button>
+        <va-button
+          class="ml-5"
+          text-color="#fff"
+          color="#2dce89"
+          @click="handleUpdateClick()"
+        >
+          Update
+        </va-button>
+      </div>
     </template>
   </va-modal>
 
@@ -161,7 +166,8 @@
       >
         <div class="h-full w-1/2 flex items-center justify-center">
           <div class="w-full h-full p-5">
-            <va-file-upload v-model="createItem.Avatar" undo type="list" />
+            <!-- <va-file-upload v-model="createItem.Avatar" undo type="list" /> -->
+            <input type="file" @change="uploadImgFireBase" />
           </div>
         </div>
         <div class="h-full w-1/2 flex items-center justify-center">
@@ -365,9 +371,13 @@
   import BadgeBase from '@/components/admin/BadgeBase.vue'
   import type { DepartmentModel, LecturerModel } from './manageModel'
   import { ref, computed, onMounted } from 'vue'
+  import { getDownloadURL } from 'firebase/storage'
   import axios from 'axios'
 
   import { useModal, useToast, type VaFile } from 'vuestic-ui'
+  import { ref as fref, uploadBytes } from 'firebase/storage'
+  import { storage as fireStorage } from '@/firebase'
+
   const columns = ref([
     { key: 'email', label: 'Email' },
     { key: 'displayName', label: 'Display Name' },
@@ -389,8 +399,6 @@
   const showCreateModel = ref(false)
   const isEditMode = ref(false)
 
-  // const basic = ref<VaFile>()
-
   const edittedItem = ref<LecturerEditRequestModel>({
     displayName: '',
     phoneNumber: '',
@@ -399,6 +407,7 @@
     email: '',
     departmentId: 0,
     Avatar: undefined,
+    filePath: '',
   })
 
   const createItem = ref<LecturerCreateRequestModel>({
@@ -411,6 +420,7 @@
     email: '',
     departmentId: 0,
     Avatar: undefined,
+    filePath: '',
   })
 
   onMounted(() => {
@@ -426,7 +436,7 @@
 
   async function fetchLecturers() {
     try {
-      const response = await axios.get('/api/lecturers?page=1&quantity=20')
+      const response = await axios.get('/api/lecturers?page=1&quantity=50')
       const json = response.data
       items.value = (json as Array<LecturerModel>).map((item) => {
         item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
@@ -459,6 +469,18 @@
 
   const { confirm } = useModal()
   const { init } = useToast()
+
+  function uploadImgFireBase(event: any) {
+    const fileUpload = event.target.files[0]
+
+    const storageRef = fref(fireStorage, `user_assets/${fileUpload?.name}`)
+    uploadBytes(storageRef, fileUpload).then(async (snapshot) => {
+      // console.log(snapshot)
+      // alert(snapshot.ref.fullPath)
+      // alert(await getDownloadURL(snapshot.ref))
+      createItem.value.filePath = await getDownloadURL(snapshot.ref)
+    })
+  }
 
   async function handleCreateClick() {
     // const ResponseModel = ref<LecturerResponseModel>()
@@ -602,7 +624,8 @@
     )
     formData.append('PhoneNumber', createItem.value.phoneNumber as string)
     formData.append('DepartmentId', createItem.value.departmentId as string)
-    formData.append('Avatar', createItem.value.Avatar as File)
+    // formData.append('Avatar', createItem.value.Avatar as File)
+    formData.append('filePath', createItem.value.filePath as string)
     return formData
   }
   function handleUpdateContentForm() {
@@ -668,6 +691,7 @@
     email?: string
     departmentId?: number | string
     Avatar?: VaFile
+    filePath?: string
   }
   interface LecturerEditRequestModel {
     [key: string]: any
@@ -679,5 +703,6 @@
     email?: string
     departmentId?: number | string
     Avatar?: VaFile
+    filePath?: string
   }
 </script>

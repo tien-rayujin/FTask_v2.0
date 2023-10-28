@@ -1,4 +1,4 @@
-import { getStorage } from 'firebase/storage'
+import { getStorage, type FirebaseStorage } from 'firebase/storage'
 import { type FirebaseApp } from 'firebase/app'
 
 const firebaseConfig = {
@@ -10,8 +10,10 @@ const firebaseConfig = {
   appId: '1:1000581992738:web:c658d945c72838528ed57b',
 }
 
+let storage: FirebaseStorage
+
 function initializeStorage(firebaseApp: FirebaseApp) {
-  getStorage(firebaseApp)
+  storage = getStorage(firebaseApp)
 }
 
-export { firebaseConfig, initializeStorage }
+export { firebaseConfig, initializeStorage, storage }
