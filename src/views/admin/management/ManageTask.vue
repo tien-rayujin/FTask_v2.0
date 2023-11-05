@@ -1,4 +1,5 @@
 <template>
+  <!-- <p>Semester filter {{ semesterFilter }}</p> -->
   <!-- {{ items }} -->
   <ManagementBase>
     <template #header>
@@ -11,32 +12,22 @@
     </template>
     <template #header_filter>
       <div class="w-full grid grid-cols-12 gap-6">
-        <va-select
-          v-model="statusFilter"
-          :options="statusOptions"
-          placeholder="Status"
-          preset="bordered"
-          class="w-37 col-span-3"
-        />
-
-        <va-select
-          v-model="departmentFilter"
-          :options="departmentOptions"
-          placeholder="Department"
-          preset="bordered"
-          class="w-37 col-span-3"
-          value-by="name"
-        />
-
-        <va-select
-          v-model="typeFilter"
-          :options="typeOptions"
-          placeholder="Type"
-          preset="bordered"
-          class="w-37 col-span-3"
-        />
+        <select
+          v-model="semesterFilter"
+          class="border rounded-lg py-1.5 px-2 w-fit cursor-pointer border-slate-300"
+        >
+          <option disabled value="">Semester</option>
+          <option
+            v-for="semester in semesterOptions"
+            :key="semester.semesterId"
+            :value="semester.semesterId"
+          >
+            {{ semester.semesterCode }}
+          </option>
+        </select>
       </div>
     </template>
+
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
@@ -62,10 +53,6 @@
         <template #cell(taskContent)="{ value }">
           <span class="text-sm w-[25rem] block overflow-clip">{{ value }}</span>
         </template>
-
-        <!-- <template #cell(startDate)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template> -->
 
         <template #cell(endDate)="{ value }">
           <span class="text-sm">{{ value }}</span>
@@ -154,20 +141,17 @@
 <script setup lang="ts">
   import ManagementBase from '@/components/admin/ManagementBase.vue'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
-  import type { TaskModel } from './manageModel'
+  import type { SemesterModel, TaskModel } from './manageModel'
   import taskList from './sampleData/taskList'
-  import departmentList from './sampleData/departmentList'
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted, computed, watch } from 'vue'
   import { useRouter } from 'vue-router'
   import axios from 'axios'
 
   const columns = ref([
     { key: 'taskTitle' },
-    { key: 'taskContent' },
-    // { key: 'startDate', label: 'Start' },
+    { key: 'taskContent', label: 'Brief Description' },
     { key: 'endDate', label: 'Due' },
     { key: 'taskLevel', label: 'Level' },
-    { key: 'location' },
     { key: 'createdBy', label: 'Created By' },
     { key: 'taskStatus', label: '' },
     { key: 'actions', label: '' },
@@ -175,13 +159,31 @@
 
   onMounted(() => {
     fetchTasks()
+    fetchSemester()
   })
 
   async function fetchTasks() {
     try {
-      const response = await axios.get('/api/tasks?page=1&quantity=10')
+      const response = await axios.get('/api/tasks?page=1&quantity=50')
       const json = response.data
       items.value = (json as Array<TaskModel>).map((item) => {
+        item.startDate = item.startDate.toLocaleString().slice(0, 10)
+        item.endDate = item.endDate.toLocaleString().slice(0, 10)
+        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        return item
+      })
+      console.log('API Department:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function fetchSemester() {
+    try {
+      const response = await axios.get('/api/semesters?page=1&quantity=50')
+      const json = response.data
+      semesterOptions.value = (json as Array<SemesterModel>).map((item) => {
         item.startDate = item.startDate.toLocaleString().slice(0, 10)
         item.endDate = item.endDate.toLocaleString().slice(0, 10)
         item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
@@ -202,15 +204,9 @@
   const currentPage = ref(1)
   const visualPage = ref(2)
 
-  const statusFilter = ref()
-  const statusOptions = ref(['Todo', 'In Progress', 'Done'])
+  const semesterOptions = ref<Array<SemesterModel>>([])
 
-  const departmentListMap = departmentList.map((x) => x.departmentName)
-  const departmentFilter = ref()
-  const departmentOptions = ref<Array<string>>(departmentListMap)
-
-  const typeFilter = ref()
-  const typeOptions = ref(['Semester', 'Department', 'Subject'])
+  const semesterFilter = ref('')
 
   const pages = computed(() => {
     return perPage.value && perPage.value !== 0
@@ -225,5 +221,29 @@
         task_id: rowData.taskId,
       },
     })
+  }
+
+  watch(semesterFilter, function () {
+    onSemesterSelected()
+  })
+
+  async function onSemesterSelected() {
+    console.log('Called')
+    try {
+      const response = await axios.get(
+        `/api/tasks?semsesterId=${semesterFilter.value}&page=1&quantity=50`,
+      )
+      const json = response.data
+      items.value = (json as Array<TaskModel>).map((item) => {
+        item.startDate = item.startDate.toLocaleString().slice(0, 10)
+        item.endDate = item.endDate.toLocaleString().slice(0, 10)
+        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        return item
+      })
+      console.log('API Department:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
   }
 </script>
