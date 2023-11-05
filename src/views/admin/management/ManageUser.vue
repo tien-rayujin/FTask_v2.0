@@ -231,7 +231,7 @@
     password: '',
     phoneNumber: '',
     lockoutEnabled: true,
-    lockoutEnd: new Date('10-10-2000'),
+    lockoutEnd: new Date().toISOString().slice(0, 10),
     email: '',
     roleId: 0,
     Avatar: undefined,
@@ -369,7 +369,7 @@
     item.password = ''
     item.phoneNumber = ''
     item.lockoutEnabled = true
-    item.lockoutEnd = new Date('10-10-2023')
+    item.lockoutEnd = new Date().toISOString().slice(0, 10)
     item.email = ''
     item.roleId = 0
     item.Avatar = undefined

@@ -160,10 +160,10 @@
         >
           <h2 class="text-3xl font-bold">
             <i
-              class="fa-solid fa-arrow-right-to-bracket cursor-pointer text-teal-400 transition-all hover:scale-x-105 ease-in-out hover:-translate-x-2"
+              class="fa-solid fa-arrow-right-to-bracket cursor-pointer text-[#2dce89] transition-all hover:scale-x-105 ease-in-out hover:-translate-x-2"
               @click="router.back()"
             ></i>
-            <span class="ml-5">Task Detail</span>
+            <span class="ml-5 text-[#2dce89]">Task Detail</span>
             <span class="ml-2 text-sm text-slate-400 uppercase"
               >id: {{ item?.taskId }}</span
             >
@@ -347,7 +347,7 @@
         >
           <h2 class="text-2xl font-bold text-center text-rose-500">
             <i class="fa-solid fa-file"></i>
-            <span class="ml-3 underline">Attachment</span>
+            <span class="ml-3">Attachment</span>
           </h2>
 
           <div class="flex items-center justify-center flex-col mt-3">
@@ -394,15 +394,25 @@
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
         <template #cell(taskActivityStatus)="{ value }">
-          <i
-            class="text-sm fa-solid fa-circle"
+          <span
+            class="text-sm border px-3 py-1 w-24 rounded-lg bg-white text-center inline-block"
             :class="{
-              'text-slate-400': value == 0 || value == 'NONE',
-              'text-yellow-400': value == 1 || value == 'InProgress',
-              'text-green-400': value == 2 || value == 'Done',
-              'text-red-400': value == 3 || value == 'Overdue',
+              'text-slate-400 border-slate-400': value == 0 || value == 'None',
+              'text-blue-400 border-blue-400': value == 1 || value == 'Todo',
+              'text-yellow-400 border-yellow-400':
+                value == 2 || value == 'InProgress',
+              'text-green-400 border-green-400': value == 3 || value == 'Done',
             }"
-          ></i>
+            >{{
+              value == 0
+                ? 'None'
+                : value == 1
+                ? 'Todo'
+                : value == 2
+                ? 'InProgress'
+                : 'Done'
+            }}
+          </span>
         </template>
 
         <template #cell(activityTitle)="{ value }">
@@ -504,11 +514,11 @@
   import { useModal, useToast } from 'vuestic-ui'
 
   const columns = ref([
-    { key: 'taskActivityStatus', label: 'Status' },
     { key: 'activityTitle', label: 'Title' },
     { key: 'activityDescription', label: 'Description' },
     { key: 'deadline', label: 'Due' },
     { key: 'taskLecturer', label: 'Lecturer' },
+    { key: 'taskActivityStatus', label: 'Status' },
     { key: 'actions', label: '' },
   ])
 
@@ -524,8 +534,8 @@
     taskId: 0,
     taskTitle: '',
     taskContent: '',
-    startDate: new Date('2020-01-01'),
-    endDate: new Date('2020-01-01'),
+    startDate: new Date().toISOString().slice(0, 10),
+    endDate: new Date().toISOString().slice(0, 10),
     taskLevel: 0,
     taskStatus: 0,
     location: '',
@@ -535,7 +545,7 @@
     taskLecturers: [],
     attachments: [],
     createdBy: '',
-    createdAt: new Date('2020-01-01'),
+    createdAt: new Date().toISOString().slice(0, 10),
   })
   const selectedItem = ref<TaskActivityModel>()
   const perPage = ref(10)
@@ -547,14 +557,14 @@
   const createItem = ref<TaskActivityRequestmodel>({
     ActivityTitle: '',
     activityDescription: '',
-    deadline: new Date('2020-01-01').toISOString().slice(0, 10),
+    deadline: new Date().toISOString().slice(0, 10),
     taskLecturerId: 0,
   })
 
   const edittedItem = ref<TaskActivityRequestmodel>({
     ActivityTitle: '',
     activityDescription: '',
-    deadline: new Date('2020-01-01').toISOString().slice(0, 10),
+    deadline: new Date().toISOString().slice(0, 10),
     taskLecturerId: 0,
   })
 

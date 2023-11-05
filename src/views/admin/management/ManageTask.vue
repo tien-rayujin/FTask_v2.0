@@ -55,18 +55,6 @@
         striped
         :style="{ '--va-data-table-thead-color': '#8392ab' }"
       >
-        <template #cell(taskStatus)="{ value }">
-          <i
-            class="text-sm fa-solid fa-circle"
-            :class="{
-              'text-slate-400': value == 0 || value == 'NONE',
-              'text-blue-400': value == 1 || value == 'Todo',
-              'text-yellow-400': value == 2 || value == 'InProgress',
-              'text-green-400': value == 3 || value == 'Done',
-            }"
-          ></i>
-        </template>
-
         <template #cell(taskTitle)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
@@ -75,9 +63,9 @@
           <span class="text-sm w-[25rem] block overflow-clip">{{ value }}</span>
         </template>
 
-        <template #cell(startDate)="{ value }">
+        <!-- <template #cell(startDate)="{ value }">
           <span class="text-sm">{{ value }}</span>
-        </template>
+        </template> -->
 
         <template #cell(endDate)="{ value }">
           <span class="text-sm">{{ value }}</span>
@@ -85,7 +73,7 @@
 
         <template #cell(taskLevel)="{ value }">
           <div
-            class="text-sm flex items-center justify-center py-1 rounded-lg bg-white border"
+            class="text-sm flex items-center justify-center py-1 px-3 rounded-lg bg-white border"
             :class="{
               'text-red-500': value == 3 || value == 'subject',
               'text-green-500': value == 1 || value == 'semester',
@@ -108,13 +96,31 @@
           </div>
         </template>
 
-        <template #cell(location)="{ value }">
+        <template #cell(createdBy)="{ value }">
           <span class="text-sm">{{ value }}</span>
         </template>
 
-        <!-- <template #cell(createdBy)="{ value }">
-          <span class="text-sm">{{ value }}</span>
-        </template> -->
+        <template #cell(taskStatus)="{ value }">
+          <span
+            class="text-sm border px-3 py-1 w-24 rounded-lg bg-white text-center inline-block"
+            :class="{
+              'text-slate-400 border-slate-400': value == 0 || value == 'None',
+              'text-blue-400 border-blue-400': value == 1 || value == 'Todo',
+              'text-yellow-400 border-yellow-400':
+                value == 2 || value == 'InProgress',
+              'text-green-400 border-green-400': value == 3 || value == 'Done',
+            }"
+            >{{
+              value == 0
+                ? 'None'
+                : value == 1
+                ? 'Todo'
+                : value == 2
+                ? 'InProgress'
+                : 'Done'
+            }}
+          </span>
+        </template>
 
         <template #cell(actions)="{ rowData }">
           <div class="w-[60px]">
@@ -156,14 +162,14 @@
   import axios from 'axios'
 
   const columns = ref([
-    { key: 'taskStatus', label: '' },
     { key: 'taskTitle' },
     { key: 'taskContent' },
-    { key: 'startDate', label: 'Start' },
+    // { key: 'startDate', label: 'Start' },
     { key: 'endDate', label: 'Due' },
     { key: 'taskLevel', label: 'Level' },
     { key: 'location' },
-    // { key: 'createdBy', label: 'Created By' },
+    { key: 'createdBy', label: 'Created By' },
+    { key: 'taskStatus', label: '' },
     { key: 'actions', label: '' },
   ])
 

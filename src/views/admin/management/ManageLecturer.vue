@@ -403,7 +403,7 @@
     displayName: '',
     phoneNumber: '',
     lockoutEnabled: true,
-    lockoutEnd: new Date('10-10-2023'),
+    lockoutEnd: new Date().toISOString().slice(0, 10),
     email: '',
     departmentId: 0,
     Avatar: undefined,
@@ -416,7 +416,7 @@
     displayName: '',
     phoneNumber: '',
     lockoutEnabled: true,
-    lockoutEnd: new Date('10-10-2023'),
+    lockoutEnd: new Date().toISOString().slice(0, 10),
     email: '',
     departmentId: 0,
     Avatar: undefined,
@@ -667,7 +667,7 @@
     item.displayName = ''
     item.phoneNumber = ''
     item.lockoutEnabled = true
-    item.lockoutEnd = new Date('10-10-2023')
+    item.lockoutEnd = new Date().toISOString().slice(0, 10)
     item.email = ''
     item.departmentId = 0
     item.Avatar = undefined
