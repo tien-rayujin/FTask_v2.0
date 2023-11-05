@@ -20,7 +20,7 @@
   import Chart from 'chart.js/auto'
 
   export default {
-    name: 'gradient-line-chart',
+    name: 'GradientLineChart',
 
     props: {
       title: {

@@ -1,8 +1,8 @@
 <template>
   <!-- {{ items }} -->
-  <!-- <p>Create Item{{ createItem }}</p>
-  <p>Selected Item{{ selectedItem }}</p>
-  <p>Editted Item{{ edittedItem }}</p> -->
+  <!-- <p>Create Item{{ createItem }}</p> -->
+  <!-- <p>Selected Item{{ selectedItem }}</p> -->
+  <!-- <p>Editted Item{{ edittedItem }}</p> -->
   <va-modal v-model="showEditModel" hide-default-actions overlay-opacity="0.2">
     <template #header>
       <div
@@ -479,6 +479,7 @@
       // alert(snapshot.ref.fullPath)
       // alert(await getDownloadURL(snapshot.ref))
       createItem.value.filePath = await getDownloadURL(snapshot.ref)
+      edittedItem.value.filePath = await getDownloadURL(snapshot.ref)
     })
   }
 
@@ -519,59 +520,45 @@
     }
   }
 
-  // function updateEdited(
-  //   editted: LecturerEditRequestModel,
-  //   selected: LecturerModel,
-  // ) {
-  //   // Loop through each property
-  //   Object.keys(editted).forEach((key) => {
-  //     // Check if property value is different from selected
-  //     if (editted[key] !== selected[key]) {
-  //       // Property has been updated, keep value
-  //       return
-  //     }
-
-  //     // Property is unchanged, set to undefined
-  //     editted[key] = undefined
-  //   })
-
-  //   return editted
-  // }
   async function handleUpdateClick() {
-    // const eddited = edittedItem.value as LecturerEditRequestModel
-    // const selected = selectedItem.value as LecturerModel
-
-    // updateEdited(eddited, selected)
-
-    // currently error
+    showEditModel.value = false
+    edittedItem.value.filePath = ''
     try {
-      const response = await axios.put(
-        `/api/lecturers/${selectedItem.value?.id}`,
-        handleUpdateContentForm(),
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+      axios
+        .put(
+          `/api/lecturers/${selectedItem.value?.id}`,
+          handleUpdateContentForm(),
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           },
-        },
-      )
+        )
+        .then((res) => {
+          const response = res.data as LecturerModel
 
-      const responseData = response.data as LecturerModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+          if (response) {
+            // toast message
+            init({
+              title: 'Lecturer Update Message',
+              message: `Update Lecturer: "${edittedItem.value.displayName}" successfully!`,
+              color: '#facc15',
+            })
 
-      // close modal
-      showEditModel.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Lecturer Update Message',
-          message: `Update Lecturer: "${edittedItem.value.displayName}" successfully!`,
-          color: '#facc15',
+            // delete successful && load data
+            fetchLecturers()
+          }
         })
-
-        // delete successful && load data
-        fetchLecturers()
-      }
+        .catch((reason) => {
+          const errorResponse = reason.response.data as LecturerResponseModel
+          init({
+            title: 'Lecturer Update Message',
+            message: `Update Lecturer: "${edittedItem.value.displayName}" Failed! \n
+            ${errorResponse.errors}`,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -645,7 +632,7 @@
     if (item.departmentId != selected?.department) {
       formData.append('DepartmentId', edittedItem.value.departmentId as string)
     }
-    formData.append('Avatar', edittedItem.value.Avatar as File)
+    formData.append('filePath', edittedItem.value.filePath as string)
     return formData
   }
 
