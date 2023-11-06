@@ -45,14 +45,12 @@ export default {
         color: 'text-red-500',
       },
     },
-
     {
-      name: 'manageUser',
-      displayName: 'User',
+      name: 'manageSemester',
+      displayName: 'Semester',
       meta: {
-        icon: 'fa-solid fa-user',
-        color: 'text-black',
-        scope: 'Configuration',
+        icon: 'fa-solid fa-calendar-days',
+        color: 'text-green-500',
       },
     },
     {
@@ -61,14 +59,15 @@ export default {
       meta: {
         icon: 'fa-solid fa-building',
         color: 'text-gray-500',
+        scope: 'Configuration',
       },
     },
     {
-      name: 'manageSemester',
-      displayName: 'Semester',
+      name: 'manageUser',
+      displayName: 'User',
       meta: {
-        icon: 'fa-solid fa-calendar-days',
-        color: 'text-green-500',
+        icon: 'fa-solid fa-user',
+        color: 'text-black',
       },
     },
     {

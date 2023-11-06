@@ -48,21 +48,6 @@
           <span class="inline-block px-3">{{ user.name }}</span>
         </li>
         <li class="drop-item">
-          <a href="#" class="relative" @click.prevent="toggleSettingDropdown()">
-            <i class="fa fa-cog"></i>
-            <ul v-if="settingShow" class="absolute top-6 -right-1 mt-3">
-              <i
-                class="fa-solid fa-caret-up block text-end absolute -top-2 right-1"
-              ></i>
-              <li
-                class="bg-white text-slate-600 w-[11.375rem] h-[2.5rem] flex items-center justify-center font-semibold hover:bg-[#f6f9fc]"
-              >
-                Logout
-              </li>
-            </ul>
-          </a>
-        </li>
-        <li class="drop-item">
           <a href="#">
             <i class="fa fa-bell"></i>
           </a>
@@ -78,7 +63,6 @@
   import axios from 'axios'
   import { ref, onMounted, watch } from 'vue'
 
-  const settingShow = ref(false)
   const userStore = useUserStore()
 
   const user = ref({ name: '', img: '' })
@@ -117,10 +101,6 @@
     } catch (error) {
       console.log(error)
     }
-  }
-
-  function toggleSettingDropdown() {
-    settingShow.value = !settingShow.value
   }
 </script>
 
