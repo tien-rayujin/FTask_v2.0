@@ -3,28 +3,36 @@
   <!-- {{ items }} -->
   <ManagementBase>
     <template #header>
+      <p class="uppercase text-sm pb-1 text-slate-400 font-semibold">
+        Search Task
+      </p>
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Task..."
+        placeholder="Ex: Gác thi FE SWD392"
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>
     <template #header_filter>
       <div class="w-full grid grid-cols-12 gap-6">
-        <select
-          v-model="semesterFilter"
-          class="border rounded-lg py-1.5 px-2 w-fit cursor-pointer border-slate-300"
-        >
-          <option disabled value="">Semester</option>
-          <option
-            v-for="semester in semesterOptions"
-            :key="semester.semesterId"
-            :value="semester.semesterId"
+        <div class="col-span-3">
+          <p class="uppercase text-sm pb-1 text-slate-400 font-semibold">
+            Select Semester
+          </p>
+          <select
+            v-model="semesterFilter"
+            class="border rounded-lg py-1.5 px-2 w-full cursor-pointer border-slate-300"
           >
-            {{ semester.semesterCode }}
-          </option>
-        </select>
+            <option disabled value="">Semester</option>
+            <option
+              v-for="semester in semesterOptions"
+              :key="semester.semesterId"
+              :value="semester.semesterId"
+            >
+              {{ semester.semesterCode }}
+            </option>
+          </select>
+        </div>
       </div>
     </template>
 

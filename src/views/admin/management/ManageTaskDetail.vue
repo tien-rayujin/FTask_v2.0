@@ -153,11 +153,9 @@
   <ManagementBase>
     <template #detail>
       <!-- Task Detail ans Attachment section -->
-      <section class="grid grid-cols-12 gap-5 pt-2 px-5 min-h-[25vh]">
+      <section class="grid grid-cols-12 gap-7 min-h-[25vh]">
         <!-- detail Task information -->
-        <div
-          class="col-span-8 border border-slate-300 rounded-xl px-3 py-3 shadow-sm"
-        >
+        <div class="col-span-8 rounded-xl p-7 shadow-sm bg-white">
           <h2 class="text-3xl font-bold">
             <i
               class="fa-solid fa-arrow-right-to-bracket cursor-pointer text-[#2dce89] transition-all hover:scale-x-105 ease-in-out hover:-translate-x-2"
@@ -342,9 +340,7 @@
         </div>
 
         <!-- attachemnts -->
-        <div
-          class="col-span-4 border border-slate-300 rounded-xl px-3 py-3 shadow-sm"
-        >
+        <div class="col-span-4 rounded-xl p-7 shadow-sm bg-white">
           <h2 class="text-2xl font-bold text-center text-rose-500">
             <i class="fa-solid fa-file"></i>
             <span class="ml-3">Attachment</span>
@@ -377,7 +373,7 @@
     </template>
     <template #header_add>
       <button
-        class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
+        class="w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
         @click.prevent="showCreateModal = !showCreateModal"
       >
         <i class="block fa-solid fa-plus"></i>

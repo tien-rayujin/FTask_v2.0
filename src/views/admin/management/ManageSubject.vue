@@ -155,10 +155,13 @@
 
   <ManagementBase>
     <template #header>
+      <p class="uppercase text-sm pb-1 text-slate-400 font-semibold">
+        Select Subject
+      </p>
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Subject..."
+        placeholder="Ex: Software Architect"
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>

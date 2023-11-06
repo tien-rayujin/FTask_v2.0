@@ -253,10 +253,13 @@
 
   <ManagementBase>
     <template #header>
+      <p class="uppercase text-sm pb-1 text-slate-400 font-semibold">
+        Select Lecturer
+      </p>
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Lecturer..."
+        placeholder="Ex: tiennvse161622@fpt.edu.vn"
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>

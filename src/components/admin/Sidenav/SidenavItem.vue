@@ -52,6 +52,6 @@
 
 <style scoped>
   .active {
-    background-image: linear-gradient(310deg, #66be98 0%, #91f5c9 100%);
+    background-color: #57e0a5;
   }
 </style>

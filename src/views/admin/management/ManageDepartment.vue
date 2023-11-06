@@ -146,10 +146,13 @@
 
   <ManagementBase>
     <template #header>
+      <p class="uppercase text-sm pb-1 text-slate-400 font-semibold">
+        Select Department
+      </p>
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Department..."
+        placeholder="Ex: Thiết kế Mỹ thuật số"
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>
@@ -228,7 +231,7 @@
       </va-data-table>
     </template>
     <template #footer>
-      <div class="flex justify-center my-4">
+      <div class="flex justify-center my-4 text-white">
         <va-pagination
           v-model="currentPage"
           :pages="pages"

@@ -113,10 +113,13 @@
 
   <ManagementBase>
     <template #header>
+      <p class="uppercase text-sm pb-1 text-slate-400 font-semibold">
+        Select Role
+      </p>
       <input
         v-model="searchValue"
         type="text"
-        placeholder="Search Role..."
+        placeholder="Ex: Admin"
         class="border border-slate-300 px-3 py-1.5 rounded-xl w-full"
       />
     </template>
