@@ -3,11 +3,13 @@
     <div class="px-4 py-1 flex items-center">
       <!-- Breadcumbs -->
       <Breadcumbs />
-
       <div class="mt-2 ml-auto mr-3">
         <select
           v-model="semesterFilter"
           class="border rounded-lg py-1.5 px-2 w-fit cursor-pointer border-slate-300"
+          :class="{
+            hidden: route.name != 'dashboard',
+          }"
         >
           <option disabled value="">Semester</option>
           <option
@@ -52,6 +54,28 @@
             <i class="fa fa-bell"></i>
           </a>
         </li>
+        <li
+          class="drop-item relative"
+          @click="onMenuExpanded = !onMenuExpanded"
+        >
+          <a href="#">
+            <i class="fa fa-bars"></i>
+          </a>
+
+          <ul
+            class="absolute right-0 mt-5 bg-white rounded-br-xl rounded-bl-xl rounded-tl-xl text-black shadow-lg overflow-hidden transition-all cursor-pointer opacity-90"
+            :class="{ hidden: onMenuExpanded }"
+          >
+            <li class="itemDropdown">
+              <i class="fa-solid fa-user-gear mr-2"></i>
+              <span>Profile</span>
+            </li>
+            <li class="itemDropdown" @click="handleSignOut">
+              <i class="fa-solid fa-right-from-bracket mr-2"></i>
+              <span>Logout</span>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
@@ -62,12 +86,23 @@
   import type { SemesterModel } from '@/views/admin/management/manageModel'
   import axios from 'axios'
   import { ref, onMounted, watch } from 'vue'
+  import { useRouter, useRoute } from 'vue-router'
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut,
+    type Auth,
+  } from 'firebase/auth'
 
   const userStore = useUserStore()
 
   const user = ref({ name: '', img: '' })
   const semesterFilter = ref('')
   const semesterOptions = ref<Array<SemesterModel>>([])
+  const onMenuExpanded = ref(!false)
+  let auth: Auth = getAuth()
+  const router = useRouter()
+  const route = useRoute()
 
   onMounted(() => {
     user.value = {
@@ -75,6 +110,11 @@
       img: userStore.user?.photoURL as string,
     }
     fetchSemester()
+
+    auth = getAuth()
+    onAuthStateChanged(auth, (user) => {
+      console.log(user)
+    })
   })
 
   watch(semesterFilter, () => {
@@ -102,10 +142,21 @@
       console.log(error)
     }
   }
+
+  function handleSignOut() {
+    signOut(auth).then(() => {
+      console.log('User SignOut')
+      router.push({ name: 'signin' })
+    })
+  }
 </script>
 
 <style scoped lang="scss">
   .drop-item {
     @apply px-2;
+  }
+
+  .itemDropdown {
+    @apply border-b border-slate-300 w-full px-10 py-3 flex items-center justify-center hover:bg-slate-100 duration-200;
   }
 </style>

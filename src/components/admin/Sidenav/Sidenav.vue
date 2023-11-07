@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-[18.75rem] absolute w-full bg-[#2dce89] -z-50" />
   <aside
-    class="sidenav max-w-[15.625rem] block fixed top-0 bottom-0 left-0 translate-x-0 my-4 ml-4 bg-white rounded-tl-3xl"
+    class="sidenav max-w-[15.625rem] block fixed top-0 bottom-0 left-0 translate-x-0 my-4 ml-4 bg-white rounded-tl-3xl overflow-y-auto"
   >
     <div class="sidenav-header">
       <RouterLink class="sidenav-brand" to="/">
