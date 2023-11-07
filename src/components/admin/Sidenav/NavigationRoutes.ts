@@ -21,7 +21,7 @@ export default {
       },
     },
     {
-      name: 'task',
+      name: 'taskList',
       displayName: 'Task',
       meta: {
         icon: 'fa-solid fa-list-check',

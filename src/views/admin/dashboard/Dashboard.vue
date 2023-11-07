@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-  import TaskStatusStatistic from './Charts/TaskStatusStatistic.vue'
-  import GradientLineChart from './Charts/GradientLineChart.vue'
-  import DoughnutTaskStatus from './Charts/DoughnutTaskStatus.vue'
+  import TaskStatusStatistic from './ChartComponent/TaskStatusStatistic.vue'
+  import GradientLineChart from './ChartComponent/GradientLineChart.vue'
+  import DoughnutTaskStatus from './ChartComponent/DoughnutTaskStatus.vue'
 </script>

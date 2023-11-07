@@ -39,6 +39,7 @@
     <template #header_add>
       <button
         class="border border-slate-300 w-[11.375rem] flex items-center justify-center text-sm text-white font-bold bg-[#2dce89] py-2 px-4 rounded-xl transition-all hover:scale-110 duration-300"
+        @click="handleCreateClick"
       >
         <i class="block fa-solid fa-plus"></i>
         <span class="block ml-2">Add Task</span>
@@ -175,9 +176,9 @@
       const response = await axios.get('/api/tasks?page=1&quantity=50')
       const json = response.data
       items.value = (json as Array<TaskModel>).map((item) => {
-        item.startDate = item.startDate.toLocaleString().slice(0, 10)
-        item.endDate = item.endDate.toLocaleString().slice(0, 10)
-        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        item.startDate = new Date(item.startDate).toISOString()
+        item.endDate = new Date(item.endDate).toISOString()
+        item.createdAt = new Date(item.createdAt).toISOString()
         return item
       })
       console.log('API Department:')
@@ -192,9 +193,9 @@
       const response = await axios.get('/api/semesters?page=1&quantity=50')
       const json = response.data
       semesterOptions.value = (json as Array<SemesterModel>).map((item) => {
-        item.startDate = item.startDate.toLocaleString().slice(0, 10)
-        item.endDate = item.endDate.toLocaleString().slice(0, 10)
-        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        item.startDate = new Date(item.startDate).toISOString()
+        item.endDate = new Date(item.endDate).toISOString()
+        item.createdAt = new Date(item.createdAt).toISOString()
         return item
       })
       console.log('API Department:')
@@ -206,7 +207,7 @@
 
   const router = useRouter()
 
-  const items = ref<TaskModel[]>(taskList)
+  const items = ref<Array<TaskModel>>(taskList)
   const searchValue = ref('')
   const perPage = ref(10)
   const currentPage = ref(1)
@@ -243,9 +244,9 @@
       )
       const json = response.data
       items.value = (json as Array<TaskModel>).map((item) => {
-        item.startDate = item.startDate.toLocaleString().slice(0, 10)
-        item.endDate = item.endDate.toLocaleString().slice(0, 10)
-        item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
+        item.startDate = new Date(item.startDate).toISOString()
+        item.endDate = new Date(item.endDate).toISOString()
+        item.createdAt = new Date(item.createdAt).toISOString()
         return item
       })
       console.log('API Department:')
@@ -253,5 +254,9 @@
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function handleCreateClick() {
+    router.push({ name: 'taskCreate' })
   }
 </script>

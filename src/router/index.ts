@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import AdminLayout from '@/layout/AdminLayout.vue'
 import AuthLayout from '@/layout/AuthLayout.vue'
+import RouterByPass from '@/layout/RouterByPass.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -42,13 +43,25 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'task',
         path: 'task',
-        component: () => import('../views/admin/management/ManageTask.vue'),
-      },
-      {
-        name: 'taskDetail',
-        path: 'taskDetail/:task_id',
-        component: () =>
-          import('../views/admin/management/ManageTaskDetail.vue'),
+        component: RouterByPass,
+        children: [
+          {
+            name: 'taskList',
+            path: 'taskList',
+            component: () => import('../views/admin/management/ManageTask.vue'),
+          },
+          {
+            name: 'taskDetail',
+            path: 'taskDetail/:task_id',
+            component: () =>
+              import('../views/admin/management/ManageTaskDetail.vue'),
+          },
+          {
+            name: 'taskCreate',
+            path: 'taskCreate',
+            component: () => import('../views/admin/management/TaskCreate.vue'),
+          },
+        ],
       },
       {
         name: 'manageLecturer',

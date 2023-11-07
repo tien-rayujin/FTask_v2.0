@@ -570,9 +570,15 @@
       const json = response.data
       item.value = (await json) as TaskModel
 
-      item.value.startDate = item.value.startDate.toLocaleString().slice(0, 10)
-      item.value.endDate = item.value.endDate.toLocaleString().slice(0, 10)
-      item.value.createdAt = item.value.createdAt.toLocaleString().slice(0, 10)
+      item.value.startDate = new Date(item.value.startDate)
+        .toISOString()
+        .slice(0, 10)
+      item.value.endDate = new Date(item.value.endDate)
+        .toISOString()
+        .slice(0, 10)
+      item.value.createdAt = new Date(item.value.createdAt)
+        .toISOString()
+        .slice(0, 10)
 
       itemLecturer.value = item.value.taskLecturers
 
@@ -602,7 +608,7 @@
         `/api/task-activities/${activity.taskActivityId}`,
       )
       const json = (await response.data) as TaskActivityModel
-      json.deadline = json.deadline.toLocaleString().slice(0, 10)
+      json.deadline = new Date().toISOString().slice(0, 10)
       json.taskLecturer = taskLecturer // hack
 
       itemActivities.value.push(json)
