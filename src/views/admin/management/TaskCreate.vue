@@ -51,7 +51,6 @@
           <span
             class="absolute -top-3 right-3 font-semibold rounded-xl text-white bg-[#2dce89] w-fit flex items-center justify-center cursor-pointer py-2 px-3"
             @click="createTaskActivityModal = !createTaskActivityModal"
-            ><i class="fa-solid fa-plus"></i
             ><i class="fa-solid fa-plus me-2"></i>Add</span
           >
           <div
