@@ -112,7 +112,7 @@
       <va-button class="ml-5" text-color="#fff" color="#2dce89">
         Add
       </va-button>
-      <p>{{ arrTaskLecturer }}</p>
+      <!-- <p>{{ arrTaskLecturer }}</p> -->
     </template>
   </va-modal>
 
@@ -209,26 +209,31 @@
                 >Title</span
               >
               <input
+                v-model="taskItem.taskTitle"
                 type="text"
                 placeholder="Ex: Prepare for seminar"
                 class="border border-slate-300 p-3 w-full"
               />
             </div>
-            <div class="relative col-span-3">
+            <div class="relative col-span-6">
               <span
                 class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
                 >Start Date</span
               >
-              <input type="date" class="border border-slate-300 p-3 w-full" />
+              <input
+                v-model="taskItem.startDate"
+                type="datetime-local"
+                class="border border-slate-300 p-3 w-full"
+              />
             </div>
 
-            <div class="relative col-span-3">
+            <!-- <div class="relative col-span-3">
               <span
                 class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
                 >Due Date</span
               >
               <input type="date" class="border border-slate-300 p-3 w-full" />
-            </div>
+            </div> -->
 
             <div class="relative col-span-6">
               <span
@@ -242,20 +247,15 @@
               />
             </div>
 
-            <div class="relative col-span-3">
+            <div class="relative col-span-6">
               <span
                 class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
-                >Start Time</span
+                >Due Date</span
               >
-              <input type="time" class="border border-slate-300 p-3 w-full" />
-            </div>
-
-            <div class="relative col-span-3">
-              <span
-                class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
-                >Due Time</span
-              >
-              <input type="time" class="border border-slate-300 p-3 w-full" />
+              <input
+                type="datetime-local"
+                class="border border-slate-300 p-3 w-full"
+              />
             </div>
 
             <div class="relative col-span-6">
@@ -368,7 +368,12 @@
     <template #header_add>
       <button
         class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-300 to-green-400 p-3 text-white font-semibold rounded-xl hover:scale-105 transition-all duration-200"
-        @click="createTaskLecturerModal = !createTaskLecturerModal"
+        @click="
+          () => {
+            arrTaskLecturer.push({ ...emptyTaskLecturer })
+            createTaskLecturerModal = !createTaskLecturerModal
+          }
+        "
       >
         <i class="fa-solid fa-plus me-2"></i>
         Add New Activity
@@ -466,16 +471,32 @@
 
 <script setup lang="ts">
   import ManagementBaseVue from '@/components/admin/ManagementBase.vue'
-  import type { LecturerModel } from './manageModel'
+  import type {
+    DepartmentModel,
+    LecturerModel,
+    SubjectModel,
+  } from './manageModel'
   import { ref, onMounted, computed } from 'vue'
   import axios from 'axios'
 
   const arrImgReview = ref<
     Array<{ imgUrl: string; name: string; type: string }>
   >([])
-  // const arrTaskActivity = ref<Array<TaskActivityRequestModel>>([])
+  const taskItem = ref<TaskRequestModel>({
+    taskTitle: '',
+    taskContent: '',
+    startDate: '',
+    endDate: '',
+    departmentId: '',
+    subjectId: '',
+
+    taskLecturers: [],
+    filePath: [],
+  })
   const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
   const lecturerOptions = ref<Array<LecturerModel>>([])
+  const subjectOptions = ref<Array<SubjectModel>>([])
+  const departmentOptions = ref<Array<DepartmentModel>>([])
   const emptyActivity: TaskActivityRequestModel = {
     activityTitle: '',
     activityDescription: '',
@@ -487,13 +508,16 @@
     note: '',
     TaskActivities: [],
   }
+
   const createTaskLecturerModal = ref(false)
   const createTaskActivityModal = ref(false)
 
   onMounted(() => {
     fetchLecturers()
+    fetchSubjects()
+    fetchDepartment()
     // arrTaskActivity.value.push({ ...emptyActivity })
-    arrTaskLecturer.value.push({ ...emptyTaskLecturer })
+    // arrTaskLecturer.value.push({ ...emptyTaskLecturer })
     // console.log('State length array activity: ')
     // console.log(arrTaskActivity.value)
   })
@@ -511,28 +535,9 @@
   function onFileSelect(e: any) {
     for (const file of e.files) {
       const imgUrl = URL.createObjectURL(file)
-      // console.log('files: ')
-      // console.log(file)
-      // console.log('img URL:')
-      // console.log(imgUrl)
       arrImgReview.value.push({ imgUrl, name: file.name, type: file.type })
     }
   }
-
-  // function handleAddTaskActivity() {
-  //   arrTaskActivity.value.push({ ...emptyActivity })
-  // }
-
-  // function handleRemoveTaskActivity(idx: number) {
-  //   arrTaskActivity.value.splice(idx, 1)
-  //   console.log(arrTaskActivity.value)
-  // }
-
-  // function getDateTime(date: string, time: string): Date {
-  //   return new Date(date + 'T' + time)
-  // }
-
-  // console.log(getDateTime('2002-02-02', '18:20'))
 
   async function fetchLecturers() {
     try {
@@ -550,16 +555,57 @@
     }
   }
 
-  // interface TaskRequestModel {
-  //   [key: string]: any
+  async function fetchSubjects() {
+    try {
+      const response = await axios.get('/api/lecturers?page=1&quantity=50')
+      const json = response.data
+      lecturerOptions.value = (json as Array<LecturerModel>).map((item) => {
+        item.createdAt = new Date(item.createdAt).toISOString().slice(0, 10)
+        return item
+      })
 
-  //   taskTitle: string
-  //   taskContent: string
-  //   startDate: Date | string
-  //   endDate: Date | string
-  //   departmentId: string
-  //   subjectId: string
-  // }
+      console.log('API Lecturer:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function fetchDepartment() {
+    try {
+      const response = await axios.get('/api/lecturers?page=1&quantity=50')
+      const json = response.data
+      lecturerOptions.value = (json as Array<LecturerModel>).map((item) => {
+        item.createdAt = new Date(item.createdAt).toISOString().slice(0, 10)
+        return item
+      })
+
+      console.log('API Lecturer:')
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  interface TaskRequestModel {
+    [key: string]: any
+
+    taskTitle: string
+    taskContent: string
+    startDate: Date | string
+    endDate: Date | string
+    departmentId: string
+    subjectId: string
+
+    taskLecturers: Array<TaskLecturerRequestModel>
+    filePath: Array<AttachmentRequestModel>
+  }
+
+  interface AttachmentRequestModel {
+    [key: string]: any
+
+    fileName: string
+    URL: string
+  }
 
   interface TaskActivityRequestModel {
     [key: string]: any
