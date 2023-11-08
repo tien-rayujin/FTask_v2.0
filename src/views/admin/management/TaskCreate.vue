@@ -464,7 +464,7 @@
     Array<{ imgUrl: string; name: string; type: string }>
   >([])
   const arrTaskActivity = ref<Array<TaskActivityRequestModel>>([])
-  const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
+  // const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
   const lecturerOptions = ref<Array<LecturerModel>>([])
   const emptyActivity = {
     activityTitle: '',
@@ -543,10 +543,10 @@
     deadline: Date | string
   }
 
-  interface TaskLecturerRequestModel {
-    [key: string]: any
+  // interface TaskLecturerRequestModel {
+  //   [key: string]: any
 
-    LecturerId: string
-    TaskActivities: Array<TaskActivityRequestModel>
-  }
+  //   LecturerId: string
+  //   TaskActivities: Array<TaskActivityRequestModel>
+  // }
 </script>
