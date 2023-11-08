@@ -1,5 +1,189 @@
 <template>
   <!-- <span>{{ arrTaskActivity }}</span> -->
+  <!-- modal add task lecturer -->
+  <va-modal
+    v-model="createTaskLecturerModal"
+    hide-default-actions
+    overlay-opacity="0.2"
+    size="large"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400 w-[900px]"
+      >
+        <h2 class="uppercase font-semibold">Assign Task</h2>
+      </div>
+    </template>
+    <template #default>
+      <div class="grid grid-cols-12 gap-5 mb-5 bg-white w-full h-fit p-6">
+        <div class="relative col-span-12">
+          <span
+            class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+            >Assignee</span
+          >
+          <select class="border border-slate-300 p-3 w-full">
+            <option value="" disabled selected>Select Assignee</option>
+            <option
+              v-for="lecturer in lecturerOptions"
+              :key="lecturer.id"
+              :value="lecturer.id"
+            >
+              {{ lecturer.email }}
+            </option>
+          </select>
+        </div>
+        <div class="relative col-span-12">
+          <span
+            class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+            >Note</span
+          >
+          <input
+            type="text"
+            placeholder="Ex: Prepare for seminar..."
+            class="border border-slate-300 p-3 w-full"
+          />
+        </div>
+        <div class="relative col-span-12 border border-slate-300 p-3">
+          <span
+            class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+            >Activities</span
+          >
+          <span
+            class="absolute -top-3 right-3 font-semibold rounded-full text-white bg-[#2dce89] w-6 h-6 flex items-center justify-center cursor-pointer"
+            @click="createTaskActivityModal = !createTaskActivityModal"
+            ><i class="fa-solid fa-plus"></i
+          ></span>
+
+          <div
+            class="grid grid-cols-12 gap-5 p-6 w-full h-fit border border-slate-300"
+          >
+            <div class="relative col-span-12">
+              <va-data-table
+                :items="[
+                  {
+                    title:
+                      'ABC create an pdf and pptx file prepare for the seminar',
+                    description: 'none',
+                    deadline: '2002-02-02 14:30',
+                    action: '',
+                  },
+                  {
+                    title: 'ABC',
+                    description: 'none',
+                    deadline: 'ABC',
+                    action: 'ABC',
+                  },
+                ]"
+                :columns="[
+                  { key: 'title' },
+                  { key: 'description' },
+                  { key: 'deadline' },
+                  { key: 'action' },
+                ]"
+                striped
+                :style="{ '--va-data-table-thead-color': '#8392ab' }"
+              >
+                <template #cell(title)="{ value }">
+                  <span class="text-sm">{{ value }}</span>
+                </template>
+                <template #cell(description)="{ value }">
+                  <span class="text-sm">{{ value }}</span>
+                </template>
+                <template #cell(deadline)="{ value }">
+                  <span class="text-sm">{{ value }}</span>
+                </template>
+                <template #cell(action)="">
+                  <button class="text-sm text-yellow-400 me-2">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="text-sm text-rose-400">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </template>
+              </va-data-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="createTaskLecturerModal = !createTaskLecturerModal"
+      >
+        Cancel
+      </va-button>
+      <va-button class="ml-5" text-color="#fff" color="#2dce89">
+        Add
+      </va-button>
+    </template>
+  </va-modal>
+
+  <!-- modal add activities -->
+  <va-modal
+    v-model="createTaskActivityModal"
+    hide-default-actions
+    overlay-opacity="0.2"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400 w-[400px]"
+      >
+        <h2 class="uppercase font-semibold">Assign Task Activities</h2>
+      </div>
+    </template>
+    <template #default>
+      <div class="grid grid-cols-12 gap-5 mb-5 bg-white w-full h-fit p-6">
+        <div class="relative col-span-12">
+          <span
+            class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+            >Title</span
+          >
+          <input
+            type="text"
+            placeholder="Ex: Prepare for seminar..."
+            class="border border-slate-300 p-3 w-full"
+          />
+        </div>
+        <div class="relative col-span-12">
+          <span
+            class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+            >Content</span
+          >
+          <input
+            type="text"
+            placeholder="Ex: Prepare for seminar..."
+            class="border border-slate-300 p-3 w-full"
+          />
+        </div>
+        <div class="relative col-span-12">
+          <span
+            class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+            >Deadline</span
+          >
+          <input
+            type="datetime-local"
+            placeholder="Ex: Prepare for seminar..."
+            class="border border-slate-300 p-3 w-full"
+          />
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="createTaskActivityModal = !createTaskActivityModal"
+      >
+        Cancel
+      </va-button>
+      <va-button class="ml-5" text-color="#fff" color="#2dce89">
+        Add
+      </va-button>
+    </template>
+  </va-modal>
+
   <ManagementBaseVue>
     <template #detail>
       <div class="w-full h-fit">
@@ -174,7 +358,7 @@
     <template #header_add>
       <button
         class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-300 to-green-400 p-3 text-white font-semibold rounded-xl hover:scale-105 transition-all duration-200"
-        @click="handleAddTaskActivity"
+        @click="createTaskLecturerModal = !createTaskLecturerModal"
       >
         <i class="fa-solid fa-plus me-2"></i>
         Add New Activity
@@ -279,15 +463,17 @@
   const arrImgReview = ref<
     Array<{ imgUrl: string; name: string; type: string }>
   >([])
-  const arrTaskActivity = ref<Array<ActivityRequestModel>>([])
+  const arrTaskActivity = ref<Array<TaskActivityRequestModel>>([])
+  const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
+  const lecturerOptions = ref<Array<LecturerModel>>([])
   const emptyActivity = {
     activityTitle: '',
     activityDescription: '',
     deadline: new Date().toISOString(),
     TaskLecturerId: '',
   }
-
-  const lecturerOptions = ref<Array<LecturerModel>>([])
+  const createTaskLecturerModal = ref(false)
+  const createTaskActivityModal = ref(false)
 
   onMounted(() => {
     fetchLecturers()
@@ -307,9 +493,9 @@
     }
   }
 
-  function handleAddTaskActivity() {
-    arrTaskActivity.value.push({ ...emptyActivity })
-  }
+  // function handleAddTaskActivity() {
+  //   arrTaskActivity.value.push({ ...emptyActivity })
+  // }
 
   function handleRemoveTaskActivity(idx: number) {
     arrTaskActivity.value.splice(idx, 1)
@@ -347,14 +533,20 @@
   //   endDate: Date | string
   //   departmentId: string
   //   subjectId: string
-  // }s
+  // }
 
-  interface ActivityRequestModel {
+  interface TaskActivityRequestModel {
     [key: string]: any
 
     activityTitle: string
     activityDescription: string
     deadline: Date | string
-    TaskLecturerId: string
+  }
+
+  interface TaskLecturerRequestModel {
+    [key: string]: any
+
+    LecturerId: string
+    TaskActivities: Array<TaskActivityRequestModel>
   }
 </script>
