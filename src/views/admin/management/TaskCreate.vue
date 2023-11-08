@@ -542,10 +542,10 @@
     deadline: Date | string
   }
 
-  interface TaskLecturerRequestModel {
-    [key: string]: any
+  // interface TaskLecturerRequestModel {
+  //   [key: string]: any
 
-    LecturerId: string
-    TaskActivities: Array<TaskActivityRequestModel>
-  }
+  //   LecturerId: string
+  //   TaskActivities: Array<TaskActivityRequestModel>
+  // }
 </script>

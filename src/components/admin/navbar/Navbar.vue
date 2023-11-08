@@ -1,4 +1,102 @@
 <template>
+  <va-modal
+    v-model="showProfileModal"
+    hide-default-actions
+    overlay-opacity="0.2"
+  >
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">User Profile</h2>
+        <div class="text-right w-fit">
+          <span class="text-sm text-slate-400 inline-block -translate-y-1/3"
+            >View Profile</span
+          >
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <div class="w-full h-fit">
+        <h1 class="text-2xl font-bold mb-3 text-white">Create Task</h1>
+        <div class="grid grid-cols-12 gap-5">
+          <div
+            class="col-span-5 bg-white rounded-xl border border-slate-300 m-6"
+          >
+            <img
+              class="w-full h-full rounded"
+              :src="userObj.photoURL"
+              alt="Avatar Preview"
+            />
+          </div>
+          <div
+            class="col-span-7 bg-white rounded-xl p-6 grid grid-cols-12 gap-5"
+          >
+            <div class="relative col-span-12">
+              <span
+                class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+                >Email</span
+              >
+              <input
+                v-model="userObj.email"
+                type="text"
+                placeholder="User Email"
+                class="border border-slate-300 p-3 w-full"
+              />
+            </div>
+            <div class="relative col-span-12">
+              <span
+                class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+                >Phone Number</span
+              >
+              <input
+                v-model="userObj.phoneNumber"
+                type="number"
+                class="border border-slate-300 p-3 w-full"
+                placeholder="User Phone Number"
+                readonly
+              />
+            </div>
+            <div class="relative col-span-12">
+              <span
+                class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+                >Display Name</span
+              >
+              <input
+                v-model="userObj.displayName"
+                type="text"
+                class="border border-slate-300 p-3 w-full"
+                placeholder="User Display Name"
+                readonly
+              />
+            </div>
+            <div class="relative col-span-12">
+              <span
+                class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
+                >Role</span
+              >
+              <input
+                v-model="userObj.role"
+                type="text"
+                placeholder="User Role"
+                class="border border-slate-300 p-3 w-full"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <va-button
+        color="#fcfcfc"
+        text-color="#797f8a"
+        @click="showProfileModal = false"
+      >
+        Cancel
+      </va-button>
+    </template>
+  </va-modal>
   <div class="py-2 mx-6">
     <div class="px-4 py-1 flex items-center">
       <!-- Breadcumbs -->
@@ -66,7 +164,10 @@
             class="absolute right-0 mt-5 bg-white rounded-br-xl rounded-bl-xl rounded-tl-xl text-black shadow-lg overflow-hidden transition-all cursor-pointer opacity-90"
             :class="{ hidden: onMenuExpanded }"
           >
-            <li class="itemDropdown">
+            <li
+              class="itemDropdown"
+              @click="showProfileModal = !showProfileModal"
+            >
               <i class="fa-solid fa-user-gear mr-2"></i>
               <span>Profile</span>
             </li>
@@ -100,9 +201,11 @@
   const semesterFilter = ref('')
   const semesterOptions = ref<Array<SemesterModel>>([])
   const onMenuExpanded = ref(!false)
+  const showProfileModal = ref(false)
   let auth: Auth = getAuth()
   const router = useRouter()
   const route = useRoute()
+  const userObj = userStore.user
 
   onMounted(() => {
     user.value = {

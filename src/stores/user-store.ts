@@ -4,7 +4,7 @@ export interface UserObj {
   email: string | undefined
   accessToken: string | undefined
   refreshToken: string | undefined
-  phonenNumber: string | undefined
+  phoneNumber: string | undefined
   displayName: string | undefined
   photoURL: string | undefined
   role: string | undefined

@@ -63,7 +63,7 @@
           email: user.email as string,
           accessToken: undefined, // user
           refreshToken: user.refreshToken as string,
-          phonenNumber: user.phoneNumber as string,
+          phoneNumber: user.phoneNumber as string,
           displayName: user.displayName as string,
           photoURL: user.photoURL as string,
           role: 'admin' as string,
