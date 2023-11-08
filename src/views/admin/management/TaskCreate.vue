@@ -1,5 +1,6 @@
 <template>
   <!-- <span>{{ arrTaskActivity }}</span> -->
+  <!-- <span>{{ arrTaskLecturer }}</span> -->
   <!-- modal add task lecturer -->
   <va-modal
     v-model="createTaskLecturerModal"
@@ -21,7 +22,10 @@
             class="absolute -top-3 left-3 bg-white font-semibold text-slate-400"
             >Assignee</span
           >
-          <select class="border border-slate-300 p-3 w-full">
+          <select
+            v-model="lastTaskLecturer.LecturerId"
+            class="border border-slate-300 p-3 w-full"
+          >
             <option value="" disabled selected>Select Assignee</option>
             <option
               v-for="lecturer in lecturerOptions"
@@ -38,6 +42,7 @@
             >Note</span
           >
           <input
+            v-model="lastTaskLecturer.note"
             type="text"
             placeholder="Ex: Prepare for seminar..."
             class="border border-slate-300 p-3 w-full"
@@ -50,7 +55,12 @@
           >
           <span
             class="absolute -top-3 right-3 font-semibold rounded-xl text-white bg-[#2dce89] w-fit flex items-center justify-center cursor-pointer py-2 px-3"
-            @click="createTaskActivityModal = !createTaskActivityModal"
+            @click="
+              () => {
+                lastTaskLecturer.TaskActivities.push({ ...emptyActivity })
+                createTaskActivityModal = !createTaskActivityModal
+              }
+            "
             ><i class="fa-solid fa-plus me-2"></i>Add</span
           >
           <div
@@ -58,24 +68,10 @@
           >
             <div class="relative col-span-12">
               <va-data-table
-                :items="[
-                  {
-                    title:
-                      'ABC create an pdf and pptx file prepare for the seminar',
-                    description: 'none',
-                    deadline: '2002-02-02 14:30',
-                    action: '',
-                  },
-                  {
-                    title: 'ABC',
-                    description: 'none',
-                    deadline: 'ABC',
-                    action: 'ABC',
-                  },
-                ]"
+                :items="lastTaskLecturer.TaskActivities"
                 :columns="[
-                  { key: 'title' },
-                  { key: 'description' },
+                  { key: 'activityTitle' },
+                  { key: 'activityDescription' },
                   { key: 'deadline' },
                   { key: 'action' },
                 ]"
@@ -116,6 +112,7 @@
       <va-button class="ml-5" text-color="#fff" color="#2dce89">
         Add
       </va-button>
+      <p>{{ arrTaskLecturer }}</p>
     </template>
   </va-modal>
 
@@ -140,6 +137,7 @@
             >Title</span
           >
           <input
+            v-model="lastTaskActivity.activityTitle"
             type="text"
             placeholder="Ex: Prepare for seminar..."
             class="border border-slate-300 p-3 w-full"
@@ -151,6 +149,7 @@
             >Content</span
           >
           <input
+            v-model="lastTaskActivity.activityDescription"
             type="text"
             placeholder="Ex: Prepare for seminar..."
             class="border border-slate-300 p-3 w-full"
@@ -162,6 +161,7 @@
             >Deadline</span
           >
           <input
+            v-model="lastTaskActivity.deadline"
             type="datetime-local"
             placeholder="Ex: Prepare for seminar..."
             class="border border-slate-300 p-3 w-full"
@@ -173,13 +173,24 @@
       <va-button
         color="#fcfcfc"
         text-color="#797f8a"
-        @click="createTaskActivityModal = !createTaskActivityModal"
+        @click="
+          () => {
+            lastTaskLecturer.TaskActivities.pop()
+            createTaskActivityModal = !createTaskActivityModal
+          }
+        "
       >
         Cancel
       </va-button>
-      <va-button class="ml-5" text-color="#fff" color="#2dce89">
+      <va-button
+        class="ml-5"
+        text-color="#fff"
+        color="#2dce89"
+        @click="createTaskActivityModal = !createTaskActivityModal"
+      >
         Add
       </va-button>
+      <!-- <p>{{ lastTaskLecturer.TaskActivities }}</p> -->
     </template>
   </va-modal>
 
@@ -366,11 +377,11 @@
 
     <template #main>
       <div class="w-full h-full">
-        <div v-if="!arrTaskActivity.length" class="text-center">
+        <!-- <div v-if="!arrTaskActivity.length" class="text-center">
           There is no added activity
-        </div>
+        </div> -->
         <!-- Activity List -->
-        <div
+        <!-- <div
           v-for="(activity, idx) in arrTaskActivity"
           :key="idx"
           class="grid grid-cols-12 gap-5 mb-5 border border-slate-300 rounded-xl bg-white w-full h-fit p-6"
@@ -447,7 +458,7 @@
               Remove
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </template>
   </ManagementBaseVue>
@@ -456,29 +467,45 @@
 <script setup lang="ts">
   import ManagementBaseVue from '@/components/admin/ManagementBase.vue'
   import type { LecturerModel } from './manageModel'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import axios from 'axios'
 
   const arrImgReview = ref<
     Array<{ imgUrl: string; name: string; type: string }>
   >([])
-  const arrTaskActivity = ref<Array<TaskActivityRequestModel>>([])
-  // const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
+  // const arrTaskActivity = ref<Array<TaskActivityRequestModel>>([])
+  const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
   const lecturerOptions = ref<Array<LecturerModel>>([])
-  const emptyActivity = {
+  const emptyActivity: TaskActivityRequestModel = {
     activityTitle: '',
     activityDescription: '',
     deadline: new Date().toISOString(),
-    TaskLecturerId: '',
+  }
+
+  const emptyTaskLecturer: TaskLecturerRequestModel = {
+    LecturerId: '',
+    note: '',
+    TaskActivities: [],
   }
   const createTaskLecturerModal = ref(false)
   const createTaskActivityModal = ref(false)
 
   onMounted(() => {
     fetchLecturers()
-    arrTaskActivity.value.push({ ...emptyActivity })
+    // arrTaskActivity.value.push({ ...emptyActivity })
+    arrTaskLecturer.value.push({ ...emptyTaskLecturer })
     // console.log('State length array activity: ')
     // console.log(arrTaskActivity.value)
+  })
+
+  const lastTaskLecturer = computed(() => {
+    return arrTaskLecturer.value[arrTaskLecturer.value.length - 1]
+  })
+
+  const lastTaskActivity = computed(() => {
+    return lastTaskLecturer.value.TaskActivities[
+      lastTaskLecturer.value.TaskActivities.length - 1
+    ]
   })
 
   function onFileSelect(e: any) {
@@ -496,10 +523,10 @@
   //   arrTaskActivity.value.push({ ...emptyActivity })
   // }
 
-  function handleRemoveTaskActivity(idx: number) {
-    arrTaskActivity.value.splice(idx, 1)
-    console.log(arrTaskActivity.value)
-  }
+  // function handleRemoveTaskActivity(idx: number) {
+  //   arrTaskActivity.value.splice(idx, 1)
+  //   console.log(arrTaskActivity.value)
+  // }
 
   // function getDateTime(date: string, time: string): Date {
   //   return new Date(date + 'T' + time)
@@ -542,10 +569,11 @@
     deadline: Date | string
   }
 
-  // interface TaskLecturerRequestModel {
-  //   [key: string]: any
+  interface TaskLecturerRequestModel {
+    [key: string]: any
 
-  //   LecturerId: string
-  //   TaskActivities: Array<TaskActivityRequestModel>
-  // }
+    LecturerId: string
+    note: string
+    TaskActivities: Array<TaskActivityRequestModel>
+  }
 </script>
