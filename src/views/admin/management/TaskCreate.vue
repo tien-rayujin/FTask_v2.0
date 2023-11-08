@@ -49,11 +49,11 @@
             >Activities</span
           >
           <span
-            class="absolute -top-3 right-3 font-semibold rounded-full text-white bg-[#2dce89] w-6 h-6 flex items-center justify-center cursor-pointer"
+            class="absolute -top-3 right-3 font-semibold rounded-xl text-white bg-[#2dce89] w-fit flex items-center justify-center cursor-pointer py-2 px-3"
             @click="createTaskActivityModal = !createTaskActivityModal"
             ><i class="fa-solid fa-plus"></i
-          ></span>
-
+            ><i class="fa-solid fa-plus me-2"></i>Add</span
+          >
           <div
             class="grid grid-cols-12 gap-5 p-6 w-full h-fit border border-slate-300"
           >
@@ -464,7 +464,7 @@
     Array<{ imgUrl: string; name: string; type: string }>
   >([])
   const arrTaskActivity = ref<Array<TaskActivityRequestModel>>([])
-  const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
+  // const arrTaskLecturer = ref<Array<TaskLecturerRequestModel>>([])
   const lecturerOptions = ref<Array<LecturerModel>>([])
   const emptyActivity = {
     activityTitle: '',
