@@ -233,7 +233,7 @@
     username: '',
     password: '',
     phoneNumber: '',
-    lockoutEnabled: true,
+    lockoutEnabled: false,
     lockoutEnd: new Date().toISOString().slice(0, 10),
     email: '',
     roleId: 0,

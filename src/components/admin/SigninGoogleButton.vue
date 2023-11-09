@@ -34,7 +34,8 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/stores/user-store'
-  import { type UserObj } from '@/stores/user-store'
+  import { type UserObj, type UserInfo } from '@/stores/user-store'
+  import axios from 'axios'
   import {
     getAuth,
     GoogleAuthProvider,
@@ -59,6 +60,14 @@
         console.log('userAccount:')
         console.log(user)
 
+        const response = await axios.post(
+          'https://ftask-api.azurewebsites.net/api/auth/login-google-user?idToken=' +
+            idToken.token,
+        )
+        const json = response.data
+        const userInfo: UserInfo = json['UserInformation']
+        console.log(json)
+
         const UserLogin: UserObj = {
           email: user.email as string,
           idToken: idToken.token as string, // user
@@ -68,11 +77,36 @@
           photoURL: user.photoURL as string,
           role: 'admin' as string,
         }
+        const UserInfo: UserInfo = {
+          CreatedBy: userInfo.CreatedBy as string,
+          CreatedAt: userInfo.CreatedAt as string,
+          Id: userInfo.Id as string,
+          Email: userInfo.Email as string,
+          NormalizedEmail: userInfo.NormalizedEmail as string,
+          EmailConfirmed: userInfo.EmailConfirmed as boolean,
+          PhoneNumber: userInfo.PhoneNumber as string,
+          PhoneNumberConfirmed: userInfo.PhoneNumberConfirmed as boolean,
+          TwoFactorEnabled: userInfo.TwoFactorEnabled as boolean,
+          LockoutEnd: userInfo.LockoutEnd as string,
+          LockoutEnabled: userInfo.LockoutEnabled as boolean,
+          FilePath: userInfo.FilePath as string,
+          DisplayName: userInfo.DisplayName as string,
+          Roles: [
+            {
+              id: '82d85e76-2c04-460f-5785-08dbc25fd2ea',
+              name: 'Admin',
+              createdBy: 'Undefined',
+              createdAt: '0001-01-01T00:00:00',
+            },
+          ],
+        }
+        console.log('UserInfo: ')
+        console.log(UserInfo)
         console.log('UserLogin: ')
         console.log(UserLogin)
 
         // store UserLogin to pinia
-        userStore.setUser(UserLogin)
+        userStore.setData(UserLogin, idToken, UserInfo)
 
         router.push({ name: 'dashboard' })
       })
