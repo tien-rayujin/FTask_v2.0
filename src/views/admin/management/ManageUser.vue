@@ -1,6 +1,152 @@
 <template>
   <!-- {{ items }} -->
   <!-- {{ createItem }} -->
+  {{ editItem }}
+  {{ selectedItem }}
+  <va-modal v-model="showEditModel" hide-default-actions overlay-opacity="0.2">
+    <template #header>
+      <div
+        class="h-12 flex items-center justify-between border-b-2 border-slate-400"
+      >
+        <h2 class="uppercase font-semibold">Lecturer Detail</h2>
+        <div class="text-right w-fit">
+          <span class="text-sm text-slate-400 inline-block -translate-y-1/3"
+            >View / Edit mode</span
+          >
+          <va-switch
+            v-model="isEditMode"
+            class="mx-3 inline-block"
+            size="small"
+            color="#2dce89"
+            :style="{
+              '--va-switch-checker-background-color': '#FFF',
+            }"
+          />
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <div
+        class="w-[650px] h-[350px] relative flex items-center justify-center overflow-hidden border-b-2 border-slate-200"
+      >
+        <div class="h-full w-1/2 flex items-center justify-center">
+          <div class="w-full h-full p-5">
+            <div v-if="isEditMode">
+              <!-- <va-file-upload
+                v-model="edittedItem.Avatar"
+                undo
+                type="single"
+                :on-file-added="uploadImgFireBase()"
+                :undo-duration="5000"
+                :undo-button-text="'Cancel'"
+                :deleted-file-message="'File exterminated'"
+              /> -->
+              <input type="file" @change="uploadImgFireBase" />
+            </div>
+            <img
+              v-else
+              class="w-full h-[300px] object-cover rounded-xl shadow-sm shadow-slate-500"
+              :src="selectedItem?.filePath"
+              alt="user profile image"
+            />
+          </div>
+        </div>
+        <div class="h-full w-1/2 flex items-center justify-center pt-3">
+          <div class="w-full h-fit p-5">
+            <span class="block text-sm text-slate-400 mt-3">Display Name</span>
+            <input
+              v-model="editItem.displayName"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              :disabled="!isEditMode"
+            />
+            <span class="block text-sm text-slate-400">Phone Number</span>
+            <input
+              v-model="editItem.phoneNumber"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              :disabled="!isEditMode"
+            />
+            <span class="block text-sm text-slate-400 mt-3">Email</span>
+            <input
+              v-model="editItem.email"
+              class="w-full border px-3 py-1 rounded-xl"
+              type="text"
+              :disabled="!isEditMode"
+            />
+            <!-- <span class="block text-sm text-slate-400 mt-3">Role</span>
+            <va-select
+              v-model="editItem.roleId"
+              :options="roleOptions"
+              class="w-full"
+              text-by="name"
+              value-by="id"
+            /> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- filed that blocked to edittion -->
+      <div class="w-[650px] flex items-center justify-center flex-wrap">
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Created At</span>
+          <input
+            :value="selectedItem?.createdAt"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Created By</span>
+          <input
+            :value="selectedItem?.createdBy"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Lockout Enabled</span>
+          <input
+            :value="selectedItem?.lockoutEnabled"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+        <div class="w-1/2 px-3 py-1">
+          <span class="block text-sm text-slate-400 mt-3">Lockout End</span>
+          <input
+            :value="selectedItem?.lockoutEnd"
+            class="w-full border px-3 py-1 rounded-xl"
+            type="text"
+            disabled
+          />
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <div v-if="isEditMode">
+        <va-button
+          color="#fcfcfc"
+          text-color="#797f8a"
+          @click="showEditModel = false"
+        >
+          Cancel
+        </va-button>
+        <va-button
+          class="ml-5"
+          text-color="#fff"
+          color="#2dce89"
+          @click="handleUpdateClick()"
+        >
+          Update
+        </va-button>
+      </div>
+    </template>
+  </va-modal>
+
   <va-modal
     v-model="showCreateModel"
     hide-default-actions
@@ -166,10 +312,26 @@
               <ActionButtonBase
                 icon="fa-solid fa-circle-info"
                 color="text-blue-400"
+                @click="
+                  () => {
+                    isEditMode = false
+                    showEditModel = !showEditModel
+                    selectedItem = rowData
+                    mapEdditedItem(selectedItem as UserModel)
+                  }
+                "
               />
               <ActionButtonBase
                 icon="fa-solid fa-pen"
                 color="text-yellow-400"
+                @click="
+                  () => {
+                    isEditMode = true
+                    showEditModel = !showEditModel
+                    selectedItem = rowData
+                    mapEdditedItem(selectedItem as UserModel)
+                  }
+                "
               />
               <ActionButtonBase
                 icon="fa-solid fa-ban"
@@ -224,10 +386,29 @@
   const roleOptions = ref<RoleModel[]>()
   const statusOptions = ref<Array<boolean>>([true, false])
   const showCreateModel = ref(false)
+  const showEditModel = ref(false)
+  const isEditMode = ref(false)
   const selectedItem = ref<UserModel>()
+
+  import { ref as fref, uploadBytes } from 'firebase/storage'
+  import { storage as fireStorage } from '@/firebase'
+  import { getDownloadURL } from 'firebase/storage'
 
   const { confirm } = useModal()
   const { init } = useToast()
+
+  function uploadImgFireBase(event: any) {
+    const fileUpload = event.target.files[0]
+
+    const storageRef = fref(fireStorage, `user_assets/${fileUpload?.name}`)
+    uploadBytes(storageRef, fileUpload).then(async (snapshot) => {
+      // console.log(snapshot)
+      // alert(snapshot.ref.fullPath)
+      // alert(await getDownloadURL(snapshot.ref))
+      createItem.value.filePath = await getDownloadURL(snapshot.ref)
+      editItem.value.filePath = await getDownloadURL(snapshot.ref)
+    })
+  }
 
   const createItem = ref<UserCreateRequestModel>({
     username: '',
@@ -236,7 +417,17 @@
     lockoutEnabled: false,
     lockoutEnd: new Date().toISOString().slice(0, 10),
     email: '',
-    roleId: 0,
+    roleId: '',
+    Avatar: undefined,
+  })
+  const editItem = ref<UserEditRequestModel>({
+    username: '',
+    password: '',
+    phoneNumber: '',
+    lockoutEnabled: false,
+    lockoutEnd: new Date().toISOString().slice(0, 10),
+    email: '',
+    roleId: '',
     Avatar: undefined,
   })
 
@@ -274,6 +465,19 @@
       console.log(error)
     }
   }
+  // async function fetchUserById(id: string) {
+  //   try {
+  //     const response = await axios.get(`/api/users/${id}`)
+  //     const json = response.data
+  //     selectedItem.value = json as UserModel
+  //     mapEdditedItem(selectedItem.value)
+  //     console.log('API User:')
+  //     console.log(response)
+  //   } catch (error) {
+  //     console.log('Erorr: ')
+  //     console.log(error)
+  //   }
+  // }
 
   async function handleCreateClick() {
     // const ResponseModel = ref<LecturerResponseModel>()
@@ -311,6 +515,45 @@
       alert(error)
     }
   }
+  async function handleUpdateClick() {
+    // const ResponseModel = ref<LecturerResponseModel>()
+    // fetchUserById(selectedItem.value?.id as string)
+    showEditModel.value = false
+    editItem.value.filePath = ''
+    try {
+      const response = await axios.put(
+        `/api/users/${selectedItem.value?.id}`,
+        handleEditContentForm(),
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      const responseData = response.data as UserResponseModel
+      // TODO: response data have value of subjectModel as create successful but not yet handle error occur during request || ErrorModel
+
+      // close modal
+      showCreateModel.value = false
+
+      if (responseData) {
+        // toast message
+        init({
+          title: 'User Update Message',
+          message: `Update User: "${editItem.value.email}" successfully!`,
+          color: '#2dd4bf',
+        })
+
+        // clear Input
+        clearInputCreateModel()
+
+        // delete successful && load data
+        fetchUsers()
+      }
+    } catch (error) {
+      alert(error)
+    }
+  }
 
   function handleCreateContentForm() {
     const formData = new FormData()
@@ -329,6 +572,39 @@
 
     formData.append('RoleId', createItem.value.roleId as string)
     formData.append('Avatar', createItem.value.Avatar as File)
+    return formData
+  }
+  function handleEditContentForm() {
+    const formData = new FormData()
+    const item = editItem.value
+    const selected = selectedItem.value
+
+    // formData.append('UserName', editItem.value.username)
+    // formData.append('Password', editItem.value.password)
+    if (item.displayName != selected?.displayName) {
+      formData.append('DisplayName', editItem.value.displayName as string)
+    }
+    if (item.phoneNumber != selected?.phoneNumber) {
+      formData.append('PhoneNumber', editItem.value.phoneNumber as string)
+    }
+    if (item.email != selected?.email) {
+      formData.append('Email', editItem.value.email as string)
+    }
+    if (item.lockoutEnabled != selected?.lockoutEnabled) {
+      formData.append(
+        'LockoutEnabled',
+        Boolean(editItem.value.lockoutEnabled).toString(),
+      )
+    }
+    // formData.append(
+    //   'LockoutEnd',
+    //   new Date(createItem.value.lockoutEnd).toISOString(),
+    // )
+
+    if (item.roleId != selected?.roleId) {
+      formData.append('RoleId', editItem.value.roleId as string)
+    }
+    // formData.append('Avatar', editItem.value.Avatar as File)
     return formData
   }
   async function handleDeleteClick(rowData: UserModel) {
@@ -366,15 +642,29 @@
     }
   }
 
+  function mapEdditedItem(data: UserModel) {
+    const item = editItem.value
+    item.username = data.username as string
+    item.password = data.password as string
+    item.phoneNumber = data.phoneNumber as string
+    item.displayName = data.displayName as string
+    item.roleId = data.roleId as string
+    item.email = data.email as string
+    item.lockoutEnabled = data.lockoutEnabled
+    item.lockoutEnd = new Date().toISOString().slice(0, 10)
+    // item.Avatar = data.filePath as string
+    item.phoneNumber = data.phoneNumber as string
+  }
+
   function clearInputCreateModel() {
     const item = createItem.value
     item.username = ''
     item.password = ''
     item.phoneNumber = ''
-    item.lockoutEnabled = true
+    item.lockoutEnabled = false
     item.lockoutEnd = new Date().toISOString().slice(0, 10)
     item.email = ''
-    item.roleId = 0
+    item.roleId = ''
     item.Avatar = undefined
   }
 
@@ -392,7 +682,19 @@
     lockoutEnabled?: boolean
     lockoutEnd?: Date | string
     email?: string
-    roleId?: number | string
+    roleId?: string
+    Avatar?: VaFile
+  }
+  interface UserEditRequestModel {
+    [key: string]: any
+
+    username: string
+    password: string
+    phoneNumber?: string
+    lockoutEnabled?: boolean
+    lockoutEnd?: Date | string
+    email?: string
+    roleId?: string
     Avatar?: VaFile
   }
 </script>
