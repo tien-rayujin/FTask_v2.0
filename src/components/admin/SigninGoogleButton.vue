@@ -61,7 +61,7 @@
 
         const UserLogin: UserObj = {
           email: user.email as string,
-          accessToken: undefined, // user
+          idToken: idToken.token as string, // user
           refreshToken: user.refreshToken as string,
           phoneNumber: user.phoneNumber as string,
           displayName: user.displayName as string,

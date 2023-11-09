@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export interface UserObj {
   email: string | undefined
-  accessToken: string | undefined
+  idToken: string | undefined
   refreshToken: string | undefined
   phoneNumber: string | undefined
   displayName: string | undefined
