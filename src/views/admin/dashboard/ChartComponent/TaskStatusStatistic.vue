@@ -101,9 +101,7 @@
 
   async function fetchTaskStatistic() {
     try {
-      const response = await axios.get(
-        `/api/statistics/task-status?from=${from}&to=${end}`,
-      )
+      const response = await axios.get(`/api/statistics/task-status`)
       const res = (await response.data) as TaskStatusResponseModel
 
       data.value = res

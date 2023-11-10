@@ -1,5 +1,5 @@
 <template>
-  <!-- <p>taskItem: {{ taskItem }}</p> -->
+  <p>taskItem: {{ taskItem }}</p>
   <!-- <p>lastTLec: {{ lastTaskLecturer }}</p> -->
   <!-- <p>lastTAc: {{ lastTaskActivity }}</p> -->
   <!-- <p>emptyTaskLecturer {{ emptyTaskLecturer }}</p> -->
@@ -670,15 +670,15 @@
   import { useRouter } from 'vue-router'
   import { useToast, useModal } from 'vuestic-ui'
   import ActionButtonBase from '@/components/admin/ActionButtonBase.vue'
-  // import { ref as fref, uploadBytes } from 'firebase/storage'
-  // import { storage as fireStorage } from '@/firebase'
+  import { ref as fref, getDownloadURL, uploadBytes } from 'firebase/storage'
+  import { storage as fireStorage } from '@/firebase'
 
   const router = useRouter()
   const { init } = useToast()
   const { confirm } = useModal()
 
   const arrImgReview = ref<
-    Array<{ imgUrl: string; name: string; type: string }>
+    Array<{ imgUrl: string; name: string; type: string; original: Blob }>
   >([])
 
   const taskItem = ref<TaskRequestModel>({
@@ -726,7 +726,12 @@
     arrImgReview.value = []
     for (const file of e.files) {
       const imgUrl = URL.createObjectURL(file)
-      arrImgReview.value.push({ imgUrl, name: file.name, type: file.type })
+      arrImgReview.value.push({
+        imgUrl,
+        name: file.name,
+        type: file.type,
+        original: file,
+      })
     }
   }
 
@@ -800,13 +805,41 @@
     //   )
     // }
 
-    payload.append('filePath', JSON.stringify(item.filePath) as string)
+    payload.append('filePaths', JSON.stringify(item.filePath) as string)
 
     return payload
   })
 
+  async function uploadImgFireBase() {
+    const fileUpload = [...arrImgReview.value].map((e) => {
+      return {
+        original: e.original,
+        name: e.name,
+      }
+    })
+    taskItem.value.filePath = []
+
+    for (let i = 0; i < fileUpload.length; i++) {
+      const storeRef = fref(
+        fireStorage,
+        `tasks/${taskItem.value.taskTitle}/${fileUpload[i].name}`,
+      )
+      await uploadBytes(storeRef, fileUpload[i].original).then(
+        async (snapshot) => {
+          const fireBaseImgUrl = await getDownloadURL(snapshot.ref)
+          taskItem.value.filePath.push({
+            fileName: fileUpload[i].name,
+            URL: fireBaseImgUrl,
+          })
+        },
+      )
+    }
+  }
+
   async function handleCreateTask() {
     try {
+      await uploadImgFireBase()
+
       axios
         .post(`/api/tasks`, formDataContent.value, {
           headers: {

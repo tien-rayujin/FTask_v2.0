@@ -71,9 +71,12 @@
         )
         const json = response.data
         const userInfo: UserInfo = json['userInformation']
+        const responseToken = json['token']
 
         console.log('Response UserInformation')
         console.log(json)
+        console.log('Response Token')
+        console.log(responseToken)
 
         const UserLogin: UserObj = {
           email: user.email as string,
@@ -116,7 +119,7 @@
         userStore.setData(UserLogin, idToken, UserInfo)
 
         // setToken to localStorage
-        localStorage.setItem('token', UserLogin.idToken as string)
+        localStorage.setItem('token', responseToken as string)
 
         router.push({ name: 'dashboard' })
       })
