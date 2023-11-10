@@ -103,15 +103,17 @@
 
         <template #cell(taskStatus)="{ value }">
           <span
-            class="text-sm border px-3 py-1 w-24 rounded-lg bg-white text-center inline-block"
-            :class="{
-              'text-slate-400 border-slate-400': value == 0 || value == 'None',
-              'text-blue-400 border-blue-400': value == 1 || value == 'Todo',
-              'text-yellow-400 border-yellow-400':
-                value == 2 || value == 'InProgress',
-              'text-green-400 border-green-400': value == 3 || value == 'Done',
-            }"
-            >{{
+            class="text-sm px-3 py-1 w-28 font-semibold rounded-lg text-center inline-block"
+            ><i
+              class="fa-solid fa-circle me-2"
+              :class="{
+                'text-slate-400': value == 0 || value == 'None',
+                'text-blue-400': value == 1 || value == 'Todo',
+                'text-yellow-400': value == 2 || value == 'InProgress',
+                'text-green-400': value == 3 || value == 'Done',
+              }"
+            ></i>
+            {{
               value == 0
                 ? 'None'
                 : value == 1

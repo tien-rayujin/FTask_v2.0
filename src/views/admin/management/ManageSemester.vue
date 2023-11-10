@@ -307,37 +307,55 @@
 
   async function handleCreateClick() {
     try {
-      const response = await axios.post(
-        `/api/semesters`,
-        JSON.stringify(createItem.value),
-        {
+      await axios
+        .post(`/api/semesters`, JSON.stringify(createItem.value), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
-        },
-      )
-
-      const responseData = response.data as SemesterModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModal.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Semester Create Message',
-          message: `Create Semester: "${createItem.value.semesterCode}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as SemesterModel
+          // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
 
-        // clear input
-        clearInputCreateModel()
+          // close modal
+          showCreateModal.value = false
 
-        // delete successful && load data
-        fetchSemesters()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Semester Create Message',
+              message: `Create Semester: "${createItem.value.semesterCode}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchSemesters()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Create Semester Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -369,34 +387,56 @@
     updateEdited(eddited, selected)
 
     try {
-      const response = await axios.put(
-        `/api/semesters/${selectedItem.value?.semesterId}`,
-        JSON.stringify(edittedItem.value),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
+      await axios
+        .put(
+          `/api/semesters/${selectedItem.value?.semesterId}`,
+          JSON.stringify(edittedItem.value),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           },
-        },
-      )
+        )
+        .then((response) => {
+          const responseData = response.data as SemesterModel
+          // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
 
-      const responseData = response.data as SemesterModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+          // close modal
+          showEditModal.value = false
 
-      // close modal
-      showEditModal.value = false
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Semester Update Message',
+              message: `Update Semester: "${createItem.value.semesterCode}" successfully!`,
+              color: '#facc15',
+            })
 
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Semester Update Message',
-          message: `Update Semester: "${createItem.value.semesterCode}" successfully!`,
-          color: '#facc15',
+            // delete successful && load data
+            fetchSemesters()
+          }
         })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
 
-        // delete successful && load data
-        fetchSemesters()
-      }
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Update Semester Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -414,32 +454,43 @@
     if (result) {
       try {
         // user confirm delete
-        const response = await axios.delete(
-          `/api/semesters?id=${selectedItem.value?.semesterId}`,
-          {
+        await axios
+          .delete(`/api/semesters?id=${selectedItem.value?.semesterId}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
-          },
-        )
-        const responseData: SemesterErrorResponseModel = response.data
-        if (responseData.isSuccess) {
-          // toast message
-          init({
-            title: 'Semester Delete Message',
-            message: `Delete Semester: "${selectedItem.value?.semesterCode}" successfully!`,
-            color: '#f43f5e',
           })
+          .then(() => {
+            // toast message
+            init({
+              title: 'Semester Delete Message',
+              message: `Delete Semester: "${selectedItem.value?.semesterCode}" successfully!`,
+              color: '#f43f5e',
+            })
 
-          // delete successful && load data
-          fetchSemesters()
-        } else {
-          console.log(`Error from Response(origin): ${response}`)
-          console.log(
-            `Request to delete Failed with message: ${responseData.message}`,
-          )
-          console.log(`Error Detail: ${responseData.errors}`)
-        }
+            // delete successful && load data
+            fetchSemesters()
+          })
+          .catch((reason) => {
+            const errorResponse = reason.response.data as ErrorResponseModel
+            let message = ''
+            // Loop through all errors
+            Object.keys(errorResponse.errors).forEach((field) => {
+              const errors = errorResponse.errors[field]
+
+              // Add each error to the message
+              errors.forEach((error: any) => {
+                message += `${field}: ${error}\n`
+              })
+            })
+
+            init({
+              title: 'Delete Semester Failed!',
+              message,
+              color: '#f43f5e',
+            })
+            console.log(errorResponse)
+          })
       } catch (error) {
         alert(error)
       }
@@ -460,10 +511,12 @@
     item.endDate = ''
   }
 
-  interface SemesterErrorResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
 
   interface SemesterRequestModel {

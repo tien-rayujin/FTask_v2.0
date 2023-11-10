@@ -41,7 +41,31 @@
                 :undo-button-text="'Cancel'"
                 :deleted-file-message="'File exterminated'"
               /> -->
-              <input type="file" @change="uploadImgFireBase" />
+              <!-- <input type="file" @change="uploadImgFireBase" /> -->
+              <input
+                type="file"
+                multiple
+                placeholder="Ex: Prepare for seminar"
+                class="border border-slate-300 p-3 w-full"
+                @change="
+                  (e) => {
+                    onFileSelect(e.target)
+                    uploadImgFireBase
+                  }
+                "
+              />
+
+              <div
+                class="flex flex-col items-center justify-center w-full relative"
+              >
+                <img
+                  v-if="imgReview.type.includes('image')"
+                  :src="imgReview.imgUrl"
+                  class="w-full h-full object-cover p-2"
+                  :title="imgReview.name"
+                />
+                <div class="text-sm font-semibold">{{ imgReview.name }}</div>
+              </div>
             </div>
             <img
               v-else
@@ -401,6 +425,7 @@
   const showEditModel = ref(false)
   const showCreateModel = ref(false)
   const isEditMode = ref(false)
+  const imgReview = ref()
 
   const edittedItem = ref<LecturerEditRequestModel>({
     displayName: '',
@@ -473,6 +498,13 @@
   const { confirm } = useModal()
   const { init } = useToast()
 
+  function onFileSelect(e: any) {
+    for (const file of e.files) {
+      const imgUrl = URL.createObjectURL(file)
+      imgReview.value = { imgUrl, name: file.name, type: file.type }
+    }
+  }
+
   function uploadImgFireBase(event: any) {
     const fileUpload = event.target.files[0]
 
@@ -489,44 +521,62 @@
   async function handleCreateClick() {
     // const ResponseModel = ref<LecturerResponseModel>()
     try {
-      const response = await axios.post(
-        `/api/lecturers`,
-        handleCreateContentForm(),
-        {
+      await axios
+        .post(`/api/lecturers`, handleCreateContentForm(), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data',
           },
-        },
-      )
-      const responseData = response.data as LecturerResponseModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModel.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Subject Create Message',
-          message: `Create Lecturer: "${createItem.value.username}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as LecturerModel
 
-        // clear Input
-        clearInputCreateModel()
+          // close modal
+          showCreateModel.value = false
 
-        // delete successful && load data
-        fetchLecturers()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Subject Create Message',
+              message: `Create Lecturer: "${createItem.value.username}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear Input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchLecturers()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Create Lecturer Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
   }
 
   async function handleUpdateClick() {
-    showEditModel.value = false
     edittedItem.value.filePath = ''
+
     try {
       axios
         .put(
@@ -541,6 +591,9 @@
         .then((res) => {
           const response = res.data as LecturerModel
 
+          // close modal
+          showCreateModel.value = false
+
           if (response) {
             // toast message
             init({
@@ -554,11 +607,21 @@
           }
         })
         .catch((reason) => {
-          const errorResponse = reason.response.data as LecturerResponseModel
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
           init({
-            title: 'Lecturer Update Message',
-            message: `Update Lecturer: "${edittedItem.value.displayName}" Failed! \n
-            ${errorResponse.errors}`,
+            title: 'Update Lecturer Failed!',
+            message,
             color: '#f43f5e',
           })
           console.log(errorResponse)
@@ -580,31 +643,44 @@
 
     if (result) {
       // user confirm delete
-      const response = await axios.delete(
-        `/api/lecturers?id=${selectedItem.value.id}`,
-        {
+      await axios
+        .delete(`/api/lecturers?id=${selectedItem.value.id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        },
-      )
-      const responseData: LecturerResponseModel = response.data
-      if (responseData.isSuccess) {
-        // delete successful && load data
-        fetchLecturers()
-
-        // toast message
-        init({
-          title: 'Lecturer Delete Message',
-          message: `Delete Lecturer: "${rowData.displayName}" successfully!`,
-          color: '#f43f5e',
         })
-      } else {
-        console.log(
-          `Request to delete Failed with message: ${responseData.message}`,
-        )
-        console.log(`Error Detail: ${responseData.errors}`)
-      }
+        .then(() => {
+          // delete successful && load data
+          fetchLecturers()
+
+          // toast message
+          init({
+            title: 'Lecturer Delete Message',
+            message: `Delete Lecturer: "${rowData.displayName}" successfully!`,
+            color: '#f43f5e',
+          })
+        })
+
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Delete Lecturer Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     }
   }
 
@@ -669,10 +745,12 @@
     item.Avatar = undefined
   }
 
-  interface LecturerResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
 
   interface LecturerCreateRequestModel {

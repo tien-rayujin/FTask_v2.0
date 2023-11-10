@@ -259,33 +259,27 @@
                   >Status:</span
                 >
                 <div class="text-base inline-block ml-3">
-                  <i
-                    class="text-sm fa-solid fa-circle"
-                    :class="{
-                      'text-slate-400': item?.taskStatus == 0,
-                      'text-blue-400': item?.taskStatus == 1,
-                      'text-yellow-400': item?.taskStatus == 2,
-                      'text-green-400': item?.taskStatus == 3,
-                    }"
-                  ></i>
                   <span
-                    class="ml-3"
-                    :class="{
-                      'text-slate-400': item?.taskStatus == 0,
-                      'text-blue-400': item?.taskStatus == 1,
-                      'text-yellow-400': item?.taskStatus == 2,
-                      'text-green-400': item?.taskStatus == 3,
-                    }"
-                    >{{
+                    class="px-3 py-1 w-28 font-semibold rounded-lg flex items-center justify-center"
+                    ><i
+                      class="fa-solid fa-circle me-2"
+                      :class="{
+                        'text-slate-400': item?.taskStatus == 0,
+                        'text-blue-400': item?.taskStatus == 1,
+                        'text-yellow-400': item?.taskStatus == 2,
+                        'text-green-400': item?.taskStatus == 3,
+                      }"
+                    ></i>
+                    {{
                       item?.taskStatus == 0
-                        ? 'Undefined'
+                        ? 'None'
                         : item?.taskStatus == 1
                         ? 'Todo'
                         : item?.taskStatus == 2
-                        ? 'In Progress'
-                        : 'End'
-                    }}</span
-                  >
+                        ? 'InProgress'
+                        : 'Done'
+                    }}
+                  </span>
                 </div>
               </div>
               <div class="w-full py-1">
@@ -391,15 +385,17 @@
       >
         <template #cell(taskActivityStatus)="{ value }">
           <span
-            class="text-sm border px-3 py-1 w-24 rounded-lg bg-white text-center inline-block"
-            :class="{
-              'text-slate-400 border-slate-400': value == 0 || value == 'None',
-              'text-blue-400 border-blue-400': value == 1 || value == 'Todo',
-              'text-yellow-400 border-yellow-400':
-                value == 2 || value == 'InProgress',
-              'text-green-400 border-green-400': value == 3 || value == 'Done',
-            }"
-            >{{
+            class="text-sm px-3 py-1 w-28 font-semibold rounded-lg text-center inline-block"
+            ><i
+              class="fa-solid fa-circle me-2"
+              :class="{
+                'text-slate-400': value == 0 || value == 'None',
+                'text-blue-400': value == 1 || value == 'Todo',
+                'text-yellow-400': value == 2 || value == 'InProgress',
+                'text-green-400': value == 3 || value == 'Done',
+              }"
+            ></i>
+            {{
               value == 0
                 ? 'None'
                 : value == 1
@@ -626,36 +622,54 @@
 
   async function handleCreateClick() {
     try {
-      const response = await axios.post(
-        `/api/task-activities`,
-        JSON.stringify(createItem.value),
-        {
+      await axios
+        .post(`/api/task-activities`, JSON.stringify(createItem.value), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
-        },
-      )
-      const responseData = (await response.data) as TaskActivityModel
-      // TODO: response data have value of TaskActivityModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModal.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Task Activity Create Message',
-          message: `Create Task Activity: "${createItem.value.ActivityTitle}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as TaskActivityModel
 
-        // clear Input
-        clearInputCreateModel()
+          // close modal
+          showCreateModal.value = false
 
-        // delete successful && load data
-        fetchTask()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Task Activity Create Message',
+              message: `Create Task Activity: "${createItem.value.ActivityTitle}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear Input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchTask()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Create Task Activity Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -687,33 +701,55 @@
     updateEdited(editted, selected)
 
     try {
-      const response = await axios.put(
-        `/api/task-activities/${selectedItem.value?.taskActivityId}`,
-        JSON.stringify(edittedItem.value),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
+      await axios
+        .put(
+          `/api/task-activities/${selectedItem.value?.taskActivityId}`,
+          JSON.stringify(edittedItem.value),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           },
-        },
-      )
-      const responseData = (await response.data) as TaskActivityModel
-      // TODO: response data have value of TaskActivityModel as create successfull but not yet handle error occur during request || ErrorModel
+        )
+        .then((response) => {
+          const responseData = response.data as TaskActivityModel
 
-      // close modal
-      showEditModal.value = false
+          // close modal
+          showEditModal.value = false
 
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Task Activity Update Message',
-          message: `Update Task Activity: "${edittedItem.value.ActivityTitle}" successfully!`,
-          color: '#facc15',
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Task Activity Update Message',
+              message: `Update Task Activity: "${edittedItem.value.ActivityTitle}" successfully!`,
+              color: '#facc15',
+            })
+
+            // delete successful && load data
+            fetchTask()
+          }
         })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
 
-        // delete successful && load data
-        fetchTask()
-      }
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Update Task Activity Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -731,32 +767,46 @@
     if (result) {
       try {
         // user confirm delete
-        const response = await axios.delete(
-          `/api/task-activities?id=${selectedItem.value?.taskActivityId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+        await axios
+          .delete(
+            `/api/task-activities?id=${selectedItem.value?.taskActivityId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
             },
-          },
-        )
-        const responseData: TaskActivityErrorResponseModel = response.data
-        if (responseData.isSuccess) {
-          // toast message
-          init({
-            title: 'Task Activity Delete Message',
-            message: `Delete Task Activity: "${selectedItem.value?.activityTitle}" successfully!`,
-            color: '#f43f5e',
-          })
-
-          // delete successful && load data
-          fetchTask()
-        } else {
-          console.log(`Error from Response(origin): ${response}`)
-          console.log(
-            `Request to delete Failed with message: ${responseData.message}`,
           )
-          console.log(`Error Detail: ${responseData.errors}`)
-        }
+          .then(() => {
+            // toast message
+            init({
+              title: 'Task Activity Delete Message',
+              message: `Delete Task Activity: "${selectedItem.value?.activityTitle}" successfully!`,
+              color: '#f43f5e',
+            })
+
+            // delete successful && load data
+            fetchTask()
+          })
+          .catch((reason) => {
+            const errorResponse = reason.response.data as ErrorResponseModel
+            let message = ''
+            // Loop through all errors
+            Object.keys(errorResponse.errors).forEach((field) => {
+              const errors = errorResponse.errors[field]
+
+              // Add each error to the message
+              errors.forEach((error: any) => {
+                message += `${field}: ${error}\n`
+              })
+            })
+
+            init({
+              title: 'Delete Task Activity Failed!',
+              message,
+              color: '#f43f5e',
+            })
+            console.log(errorResponse)
+          })
       } catch (error) {
         alert(error)
       }
@@ -779,10 +829,12 @@
     item.taskLecturerId = 0
   }
 
-  interface TaskActivityErrorResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
 
   interface TaskActivityRequestmodel {

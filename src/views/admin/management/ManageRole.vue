@@ -278,36 +278,55 @@
 
   async function handleCreateClick() {
     try {
-      const response = await axios.post(
-        `/api/Roles`,
-        JSON.stringify(createItem.value),
-        {
+      await axios
+        .post(`/api/Roles`, JSON.stringify(createItem.value), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
-        },
-      )
-      const responseData = response.data as RoleModel
-      // TODO: response data have value of RoleModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModal.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Role Create Message',
-          message: `Create Role: "${createItem.value.RoleName}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as RoleModel
+          // TODO: response data have value of RoleModel as create successfull but not yet handle error occur during request || ErrorModel
 
-        // clear Input
-        clearInputCreateModel()
+          // close modal
+          showCreateModal.value = false
 
-        // delete successful && load data
-        fetchRoles()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Role Create Message',
+              message: `Create Role: "${createItem.value.RoleName}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear Input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchRoles()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Create Role Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -337,34 +356,56 @@
 
     // currently error
     try {
-      const response = await axios.put(
-        `/api/Roles/${selectedItem.value?.id}`,
-        JSON.stringify(edittedItem.value),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
+      await axios
+        .put(
+          `/api/Roles/${selectedItem.value?.id}`,
+          JSON.stringify(edittedItem.value),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           },
-        },
-      )
+        )
+        .then((response) => {
+          const responseData = response.data as RoleModel
+          // TODO: response data have value of RoleModel as create successfull but not yet handle error occur during request || ErrorModel
 
-      const responseData = response.data as RoleModel
-      // TODO: response data have value of RoleModel as create successfull but not yet handle error occur during request || ErrorModel
+          // close modal
+          showEditModal.value = false
 
-      // close modal
-      showEditModal.value = false
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Role Update Message',
+              message: `Update Role: "${edittedItem.value.RoleName}" successfully!`,
+              color: '#facc15',
+            })
 
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Role Update Message',
-          message: `Update Role: "${edittedItem.value.RoleName}" successfully!`,
-          color: '#facc15',
+            // delete successful && load data
+            fetchRoles()
+          }
         })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
 
-        // delete successful && load data
-        fetchRoles()
-      }
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Update Role Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -382,32 +423,43 @@
     if (result) {
       try {
         // user confirm delete
-        const response = await axios.delete(
-          `/api/Roles?id=${selectedItem.value?.id}`,
-          {
+        await axios
+          .delete(`/api/Roles?id=${selectedItem.value?.id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
-          },
-        )
-        const responseData: RoleErrorResponseModel = response.data
-        if (responseData.isSuccess) {
-          // toast message
-          init({
-            title: 'Role Delete Message',
-            message: `Delete Role: "${selectedItem.value?.RoleName}" successfully!`,
-            color: '#f43f5e',
           })
+          .then(() => {
+            // toast message
+            init({
+              title: 'Role Delete Message',
+              message: `Delete Role: "${selectedItem.value?.RoleName}" successfully!`,
+              color: '#f43f5e',
+            })
 
-          // delete successful && load data
-          fetchRoles()
-        } else {
-          console.log(`Error from Response(origin): ${response}`)
-          console.log(
-            `Request to delete Failed with message: ${responseData.message}`,
-          )
-          console.log(`Error Detail: ${responseData.errors}`)
-        }
+            // delete successful && load data
+            fetchRoles()
+          })
+          .catch((reason) => {
+            const errorResponse = reason.response.data as ErrorResponseModel
+            let message = ''
+            // Loop through all errors
+            Object.keys(errorResponse.errors).forEach((field) => {
+              const errors = errorResponse.errors[field]
+
+              // Add each error to the message
+              errors.forEach((error: any) => {
+                message += `${field}: ${error}\n`
+              })
+            })
+
+            init({
+              title: 'Delete Role Failed!',
+              message,
+              color: '#f43f5e',
+            })
+            console.log(errorResponse)
+          })
       } catch (error) {
         alert(error)
       }
@@ -424,10 +476,12 @@
     item.RoleName = ''
   }
 
-  interface RoleErrorResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
 
   interface RoleRequestModel {

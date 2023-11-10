@@ -349,36 +349,55 @@
 
   async function handleCreateClick() {
     try {
-      const response = await axios.post(
-        `/api/subjects`,
-        JSON.stringify(createItem.value),
-        {
+      await axios
+        .post(`/api/subjects`, JSON.stringify(createItem.value), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
-        },
-      )
-      const responseData = response.data as SubjectModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModal.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Subject Create Message',
-          message: `Create Subject: "${createItem.value.subjectName}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as SubjectModel
+          // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
 
-        // clear Input
-        clearInputCreateModel()
+          // close modal
+          showCreateModal.value = false
 
-        // delete successful && load data
-        fetchSubjects()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Subject Create Message',
+              message: `Create Subject: "${createItem.value.subjectName}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear Input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchSubjects()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Create Subject Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -408,34 +427,55 @@
 
     // currently error
     try {
-      const response = await axios.put(
-        `/api/subjects/${selectedItem.value?.subjectId}`,
-        JSON.stringify(edittedItem.value),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
+      await axios
+        .put(
+          `/api/subjects/${selectedItem.value?.subjectId}`,
+          JSON.stringify(edittedItem.value),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           },
-        },
-      )
+        )
+        .then((response) => {
+          const responseData = response.data as SubjectModel
 
-      const responseData = response.data as SubjectModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
+          // close modal
+          showEditModal.value = false
 
-      // close modal
-      showEditModal.value = false
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Subject Update Message',
+              message: `Update Subject: "${edittedItem.value.subjectName}" successfully!`,
+              color: '#facc15',
+            })
 
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Subject Update Message',
-          message: `Update Subject: "${edittedItem.value.subjectName}" successfully!`,
-          color: '#facc15',
+            // delete successful && load data
+            fetchSubjects()
+          }
         })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
 
-        // delete successful && load data
-        fetchSubjects()
-      }
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Update Subject Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -453,32 +493,43 @@
     if (result) {
       try {
         // user confirm delete
-        const response = await axios.delete(
-          `/api/subjects?id=${selectedItem.value?.subjectId}`,
-          {
+        await axios
+          .delete(`/api/subjects?id=${selectedItem.value?.subjectId}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
-          },
-        )
-        const responseData: SubjectErrorResponseModel = response.data
-        if (responseData.isSuccess) {
-          // toast message
-          init({
-            title: 'Subject Delete Message',
-            message: `Delete Subject: "${selectedItem.value?.subjectName}" successfully!`,
-            color: '#f43f5e',
           })
+          .then(() => {
+            // toast message
+            init({
+              title: 'Subject Delete Message',
+              message: `Delete Subject: "${selectedItem.value?.subjectName}" successfully!`,
+              color: '#f43f5e',
+            })
 
-          // delete successful && load data
-          fetchSubjects()
-        } else {
-          console.log(`Error from Response(origin): ${response}`)
-          console.log(
-            `Request to delete Failed with message: ${responseData.message}`,
-          )
-          console.log(`Error Detail: ${responseData.errors}`)
-        }
+            // delete successful && load data
+            fetchSubjects()
+          })
+          .catch((reason) => {
+            const errorResponse = reason.response.data as ErrorResponseModel
+            let message = ''
+            // Loop through all errors
+            Object.keys(errorResponse.errors).forEach((field) => {
+              const errors = errorResponse.errors[field]
+
+              // Add each error to the message
+              errors.forEach((error: any) => {
+                message += `${field}: ${error}\n`
+              })
+            })
+
+            init({
+              title: 'Delete Subject Failed!',
+              message,
+              color: '#f43f5e',
+            })
+            console.log(errorResponse)
+          })
       } catch (error) {
         alert(error)
       }
@@ -501,10 +552,12 @@
     item.departmentId = departmentOptions.value[0].departmentId
   }
 
-  interface SubjectErrorResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
 
   interface SubjectRequestModel {

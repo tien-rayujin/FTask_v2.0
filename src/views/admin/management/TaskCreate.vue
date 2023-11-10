@@ -807,41 +807,72 @@
 
   async function handleCreateTask() {
     try {
-      const response = await axios.post(`/api/tasks`, formDataContent.value, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      const responseData = response.data as TaskModel
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Task Publish Message',
-          message: `Publish Task: "${taskItem.value.taskTitle}" successfully!`,
-          color: '#2dd4bf',
+      axios
+        .post(`/api/tasks`, formDataContent.value, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          },
         })
+        .then((response) => {
+          const responseData = response.data as TaskModel
 
-        // clear Input
-        taskItem.value = {
-          taskTitle: '',
-          taskContent: '',
-          startDate: '',
-          endDate: '',
-          departmentId: '',
-          subjectId: '',
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Task Publish Message',
+              message: `Publish Task: "${taskItem.value.taskTitle}" successfully!`,
+              color: '#2dd4bf',
+            })
 
-          taskLecturers: [],
-          filePath: [],
-        }
+            // clear Input
+            taskItem.value = {
+              taskTitle: '',
+              taskContent: '',
+              startDate: '',
+              endDate: '',
+              departmentId: '',
+              subjectId: '',
 
-        router.push({ name: 'taskList' })
-      }
+              taskLecturers: [],
+              filePath: [],
+            }
+
+            router.push({ name: 'taskList' })
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Asign Task Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       console.log(error)
       alert(error)
     }
+  }
+
+  interface ErrorResponseModel {
+    [key: string]: any
+
+    isSuccess: boolean
+    message: string
+    errors: { [key: string]: any }
   }
 
   interface TaskRequestModel {

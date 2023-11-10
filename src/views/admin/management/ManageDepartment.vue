@@ -334,36 +334,54 @@
 
   async function handleCreateClick() {
     try {
-      const response = await axios.post(
-        `/api/departments`,
-        JSON.stringify(createItem.value),
-        {
+      await axios
+        .post(`/api/departments`, JSON.stringify(createItem.value), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
-        },
-      )
-      const responseData = response.data as DepartmentModel
-      // TODO: response data have value of departmentModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModal.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Department Create Message',
-          message: `Create Department: "${createItem.value.departmentName}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as DepartmentModel
 
-        // clear input
-        clearInputCreateModel()
+          // close modal
+          showCreateModal.value = false
 
-        // delete successful && load data
-        fetchDepartments()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Department Create Message',
+              message: `Create Department: "${createItem.value.departmentName}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchDepartments()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Asign Task Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -401,33 +419,55 @@
     }
 
     try {
-      const response = await axios.put(
-        `/api/departments/${selectedItem.value?.departmentId}`,
-        JSON.stringify(edittedItem.value),
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
+      await axios
+        .put(
+          `/api/departments/${selectedItem.value?.departmentId}`,
+          JSON.stringify(edittedItem.value),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
           },
-        },
-      )
-      const responseData = response.data as DepartmentModel
-      // TODO: response data have value of departmentModel as create successfull but not yet handle error occur during request || ErrorModel
+        )
+        .then((response) => {
+          const responseData = response.data as DepartmentModel
 
-      // close modal
-      showEditModal.value = false
+          // close modal
+          showEditModal.value = false
 
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Department Update Message',
-          message: `Update Department: "${createItem.value.departmentName}" successfully!`,
-          color: '#facc15',
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Department Update Message',
+              message: `Update Department: "${createItem.value.departmentName}" successfully!`,
+              color: '#facc15',
+            })
+
+            // delete successful && load data
+            fetchDepartments()
+          }
         })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
 
-        // delete successful && load data
-        fetchDepartments()
-      }
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Asign Task Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -445,32 +485,43 @@
     if (result) {
       try {
         // user confirm delete
-        const response = await axios.delete(
-          `/api/departments?id=${selectedItem.value?.departmentId}`,
-          {
+        await axios
+          .delete(`/api/departments?id=${selectedItem.value?.departmentId}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
-          },
-        )
-        const responseData: DepartmentErrorResponseModel = response.data
-        if (responseData.isSuccess) {
-          // toast message
-          init({
-            title: 'Department Delete Message',
-            message: `Delete Department: "${selectedItem.value?.departmentName}" successfully!`,
-            color: '#f43f5e',
           })
+          .then(() => {
+            // delete successful && load data
+            fetchDepartments()
 
-          // delete successful && load data
-          fetchDepartments()
-        } else {
-          console.log(`Error from Response(origin): ${response}`)
-          console.log(
-            `Request to delete Failed with message: ${responseData.message}`,
-          )
-          console.log(`Error Detail: ${responseData.errors}`)
-        }
+            // toast message
+            init({
+              title: 'Department Delete Message',
+              message: `Delete Department: "${selectedItem.value?.departmentName}" successfully!`,
+              color: '#f43f5e',
+            })
+          })
+          .catch((reason) => {
+            const errorResponse = reason.response.data as ErrorResponseModel
+            let message = ''
+            // Loop through all errors
+            Object.keys(errorResponse.errors).forEach((field) => {
+              const errors = errorResponse.errors[field]
+
+              // Add each error to the message
+              errors.forEach((error: any) => {
+                message += `${field}: ${error}\n`
+              })
+            })
+
+            init({
+              title: 'Asign Task Failed!',
+              message,
+              color: '#f43f5e',
+            })
+            console.log(errorResponse)
+          })
       } catch (error) {
         alert(error)
       }
@@ -491,10 +542,12 @@
     item.departmentName = ''
   }
 
-  interface DepartmentErrorResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
 
   interface DepartmentRequestModel {

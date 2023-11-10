@@ -482,36 +482,55 @@
   async function handleCreateClick() {
     // const ResponseModel = ref<LecturerResponseModel>()
     try {
-      const response = await axios.post(
-        `/api/users`,
-        handleCreateContentForm(),
-        {
+      await axios
+        .post(`/api/users`, handleCreateContentForm(), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data',
           },
-        },
-      )
-      const responseData = response.data as UserResponseModel
-      // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModel.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'Subject Create Message',
-          message: `Create Lecturer: "${createItem.value.username}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as UserModel
+          // TODO: response data have value of subjectModel as create successfull but not yet handle error occur during request || ErrorModel
 
-        // clear Input
-        clearInputCreateModel()
+          // close modal
+          showCreateModel.value = false
 
-        // delete successful && load data
-        fetchUsers()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'Subject Create Message',
+              message: `Create Lecturer: "${createItem.value.username}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear Input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchUsers()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Create User Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -522,36 +541,54 @@
     showEditModel.value = false
     editItem.value.filePath = ''
     try {
-      const response = await axios.put(
-        `/api/users/${selectedItem.value?.id}`,
-        handleEditContentForm(),
-        {
+      await axios
+        .put(`/api/users/${selectedItem.value?.id}`, handleEditContentForm(), {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data',
           },
-        },
-      )
-      const responseData = response.data as UserResponseModel
-      // TODO: response data have value of subjectModel as create successful but not yet handle error occur during request || ErrorModel
-
-      // close modal
-      showCreateModel.value = false
-
-      if (responseData) {
-        // toast message
-        init({
-          title: 'User Update Message',
-          message: `Update User: "${editItem.value.email}" successfully!`,
-          color: '#2dd4bf',
         })
+        .then((response) => {
+          const responseData = response.data as UserModel
 
-        // clear Input
-        clearInputCreateModel()
+          // close modal
+          showCreateModel.value = false
 
-        // delete successful && load data
-        fetchUsers()
-      }
+          if (responseData) {
+            // toast message
+            init({
+              title: 'User Update Message',
+              message: `Update User: "${editItem.value.email}" successfully!`,
+              color: '#2dd4bf',
+            })
+
+            // clear Input
+            clearInputCreateModel()
+
+            // delete successful && load data
+            fetchUsers()
+          }
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Update User Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     } catch (error) {
       alert(error)
     }
@@ -621,31 +658,43 @@
 
     if (result) {
       // user confirm delete
-      const response = await axios.delete(
-        `/api/users?id=${selectedItem.value.id}`,
-        {
+      await axios
+        .delete(`/api/users?id=${selectedItem.value.id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        },
-      )
-      const responseData: UserResponseModel = response.data
-      if (responseData.isSuccess) {
-        // delete successful && load data
-        fetchUsers()
-
-        // toast message
-        init({
-          title: 'User Delete Message',
-          message: `Delete User: "${rowData.email}" successfully!`,
-          color: '#f43f5e',
         })
-      } else {
-        console.log(
-          `Request to delete Failed with message: ${responseData.message}`,
-        )
-        console.log(`Error Detail: ${responseData.errors}`)
-      }
+        .then(() => {
+          // delete successful && load data
+          fetchUsers()
+
+          // toast message
+          init({
+            title: 'User Delete Message',
+            message: `Delete User: "${rowData.email}" successfully!`,
+            color: '#f43f5e',
+          })
+        })
+        .catch((reason) => {
+          const errorResponse = reason.response.data as ErrorResponseModel
+          let message = ''
+          // Loop through all errors
+          Object.keys(errorResponse.errors).forEach((field) => {
+            const errors = errorResponse.errors[field]
+
+            // Add each error to the message
+            errors.forEach((error: any) => {
+              message += `${field}: ${error}\n`
+            })
+          })
+
+          init({
+            title: 'Delete User Failed!',
+            message,
+            color: '#f43f5e',
+          })
+          console.log(errorResponse)
+        })
     }
   }
 
@@ -675,11 +724,14 @@
     item.Avatar = undefined
   }
 
-  interface UserResponseModel {
+  interface ErrorResponseModel {
+    [key: string]: any
+
     isSuccess: boolean
     message: string
-    errors: Array<string>
+    errors: { [key: string]: any }
   }
+
   interface UserCreateRequestModel {
     [key: string]: any
 
