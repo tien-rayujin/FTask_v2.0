@@ -1,16 +1,27 @@
 <template>
   <div>
-    <Doughnut v-if="loaded" :data="chartData" :options="chartOption" />
+    <Doughnut
+      v-if="loaded"
+      :key="JSON.stringify(props.semesterId)"
+      :data="chartData"
+      :options="chartOption"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
   import { Doughnut } from 'vue-chartjs'
-  import { Chart as ChartJS, Legend, Tooltip, Title } from 'chart.js'
-  import { onMounted, ref } from 'vue'
+  import {
+    Chart as ChartJS,
+    Legend,
+    Tooltip,
+    Title,
+    ArcElement,
+  } from 'chart.js'
+  import { onMounted, ref, watch } from 'vue'
   import axios from 'axios'
 
-  ChartJS.register(Title, Tooltip, Legend)
+  ChartJS.register(Title, Tooltip, Legend, ArcElement)
 
   const CHART_COLORS = {
     red: 'rgb(255, 99, 132)',
@@ -38,24 +49,47 @@
     responsive: true,
   }
 
+  const props = defineProps({
+    from: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    to: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    semesterId: {
+      type: String,
+      required: true,
+      default: '2',
+    },
+  })
+
+  watch(props, () => {
+    loaded.value = false
+
+    fetchData()
+  })
+
   onMounted(() => {
     fetchData()
   })
 
-  const from = '2023-01-01'
-  const end = '2023-10-27'
   const loaded = ref(false)
 
   async function fetchData() {
     try {
       const response = await axios.get(
-        `/api/statistics/task-status?from=${from}&to=${end}`,
+        `/api/statistics/task-status?from=${props.from}&to=${props.to}&semesterId=${props.semesterId}`,
       )
       const res = (await response.data) as TaskStatusResponseModel
 
       const data = [res.toDo.percent, res.inProgress.percent, res.end.percent]
 
       chartData.datasets[0].data = data
+
       loaded.value = true
     } catch (reason) {
       console.log(reason)

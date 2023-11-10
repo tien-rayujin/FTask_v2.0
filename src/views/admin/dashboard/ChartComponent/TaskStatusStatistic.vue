@@ -56,7 +56,7 @@
           </p>
           <h5 class="font-black text-2xl">{{ data.totalParticipant }}</h5>
           <span class="text-sm text-green-600 pt-3 font-semibold block"
-            >From {{ from }} To {{ end }}</span
+            >From {{ from }} To {{ to }}</span
           >
         </div>
         <div
@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
   import axios from 'axios'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
 
   const data = ref<TaskStatusResponseModel>({
     toDo: {
@@ -92,8 +92,27 @@
     totalParticipant: 0,
   })
 
-  const from = '2023-01-01'
-  const end = '2023-10-27'
+  const props = defineProps({
+    from: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    to: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    semesterId: {
+      type: String,
+      required: true,
+      default: '',
+    },
+  })
+
+  watch(props, () => {
+    fetchTaskStatistic()
+  })
 
   onMounted(() => {
     fetchTaskStatistic()
@@ -101,7 +120,9 @@
 
   async function fetchTaskStatistic() {
     try {
-      const response = await axios.get(`/api/statistics/task-status`)
+      const response = await axios.get(
+        `/api/statistics/task-status?from=${props.from}&to=${props.to}&semesterId=${props.semesterId}`,
+      )
       const res = (await response.data) as TaskStatusResponseModel
 
       data.value = res

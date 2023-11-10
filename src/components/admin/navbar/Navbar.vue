@@ -1,4 +1,6 @@
 <template>
+  <!-- {{ semesterFilter }}
+  {{ statisticStore.semesterId }} -->
   <va-modal
     v-model="showProfileModal"
     hide-default-actions
@@ -184,6 +186,7 @@
 <script setup lang="ts">
   import Breadcumbs from './Breadcumbs.vue'
   import { useUserStore } from '@/stores/user-store'
+  import { useStatisticStore } from '@/stores/statistic-store'
   import type { SemesterModel } from '@/views/admin/management/manageModel'
   import axios from 'axios'
   import { ref, onMounted, watch } from 'vue'
@@ -196,6 +199,7 @@
   } from 'firebase/auth'
 
   const userStore = useUserStore()
+  const statisticStore = useStatisticStore()
 
   const user = ref({ name: '', img: '' })
   const semesterFilter = ref('')
@@ -222,6 +226,7 @@
 
   watch(semesterFilter, () => {
     console.log('Update dashboard based on semester filter selected!')
+    statisticStore.setState('', '', semesterFilter.value + '')
   })
 
   async function fetchSemester() {
