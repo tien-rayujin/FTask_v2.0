@@ -494,6 +494,7 @@
         handleCreateContentForm(),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'multipart/form-data',
           },
         },
@@ -581,6 +582,11 @@
       // user confirm delete
       const response = await axios.delete(
         `/api/lecturers?id=${selectedItem.value.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
       )
       const responseData: LecturerResponseModel = response.data
       if (responseData.isSuccess) {

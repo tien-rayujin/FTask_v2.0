@@ -12,19 +12,19 @@ export interface UserObj {
   role: string | undefined
 }
 export interface UserInfo {
-  CreatedBy: string | undefined
-  CreatedAt: string | undefined
-  Id: string | undefined
-  Email: string | undefined
-  NormalizedEmail: string | undefined
-  EmailConfirmed: boolean | undefined
-  PhoneNumber: string | undefined
-  PhoneNumberConfirmed: boolean | undefined
-  TwoFactorEnabled: boolean | undefined
-  LockoutEnd: string | undefined
-  LockoutEnabled: boolean | undefined
-  FilePath: string | undefined
-  DisplayName: string | undefined
+  createdBy: string | undefined
+  createdAt: string | undefined
+  id: string | undefined
+  email: string | undefined
+  normalizedEmail: string | undefined
+  emailConfirmed: boolean | undefined
+  phoneNumber: string | undefined
+  phoneNumberConfirmed: boolean | undefined
+  twoFactorEnabled: boolean | undefined
+  lockoutEnd: string | undefined
+  lockoutEnabled: boolean | undefined
+  filePath: string | undefined
+  displayName: string | undefined
   Roles: RoleModel[] | undefined
 }
 

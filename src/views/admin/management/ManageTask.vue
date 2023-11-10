@@ -93,7 +93,12 @@
         </template>
 
         <template #cell(createdBy)="{ value }">
-          <span class="text-sm">{{ value }}</span>
+          <span class="text-sm"
+            ><span v-if="value == '422a6948-9868-4a69-e375-08dbc25fd71b'"
+              >Admin</span
+            >
+            <span v-else>teredew@gmail.com</span>
+          </span>
         </template>
 
         <template #cell(taskStatus)="{ value }">

@@ -283,6 +283,7 @@
         JSON.stringify(createItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -341,6 +342,7 @@
         JSON.stringify(edittedItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -382,6 +384,11 @@
         // user confirm delete
         const response = await axios.delete(
           `/api/Roles?id=${selectedItem.value?.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
         )
         const responseData: RoleErrorResponseModel = response.data
         if (responseData.isSuccess) {

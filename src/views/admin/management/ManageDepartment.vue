@@ -339,6 +339,7 @@
         JSON.stringify(createItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -405,6 +406,7 @@
         JSON.stringify(edittedItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -445,6 +447,11 @@
         // user confirm delete
         const response = await axios.delete(
           `/api/departments?id=${selectedItem.value?.departmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
         )
         const responseData: DepartmentErrorResponseModel = response.data
         if (responseData.isSuccess) {

@@ -354,6 +354,7 @@
         JSON.stringify(createItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -412,6 +413,7 @@
         JSON.stringify(edittedItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -453,6 +455,11 @@
         // user confirm delete
         const response = await axios.delete(
           `/api/subjects?id=${selectedItem.value?.subjectId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
         )
         const responseData: SubjectErrorResponseModel = response.data
         if (responseData.isSuccess) {

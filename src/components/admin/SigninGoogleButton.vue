@@ -55,17 +55,24 @@
         const user: User = result.user
         const idToken = await user.getIdTokenResult()
         console.log('Id token from user: ')
-        console.log(idToken.token)
+        console.log({ token: idToken.token })
         console.log('SignIn with google account')
-        console.log('userAccount:')
-        console.log(user)
+        // console.log('userAccount:')
+        // console.log(user)
 
         const response = await axios.post(
-          'https://ftask-api.azurewebsites.net/api/auth/login-google-user?idToken=' +
-            idToken.token,
+          `https://ftask-api.azurewebsites.net/api/auth/login-google-user?idToken=${idToken.token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          },
         )
         const json = response.data
-        const userInfo: UserInfo = json['UserInformation']
+        const userInfo: UserInfo = json['userInformation']
+
+        console.log('Response UserInformation')
         console.log(json)
 
         const UserLogin: UserObj = {
@@ -78,19 +85,19 @@
           role: 'admin' as string,
         }
         const UserInfo: UserInfo = {
-          CreatedBy: userInfo.CreatedBy as string,
-          CreatedAt: userInfo.CreatedAt as string,
-          Id: userInfo.Id as string,
-          Email: userInfo.Email as string,
-          NormalizedEmail: userInfo.NormalizedEmail as string,
-          EmailConfirmed: userInfo.EmailConfirmed as boolean,
-          PhoneNumber: userInfo.PhoneNumber as string,
-          PhoneNumberConfirmed: userInfo.PhoneNumberConfirmed as boolean,
-          TwoFactorEnabled: userInfo.TwoFactorEnabled as boolean,
-          LockoutEnd: userInfo.LockoutEnd as string,
-          LockoutEnabled: userInfo.LockoutEnabled as boolean,
-          FilePath: userInfo.FilePath as string,
-          DisplayName: userInfo.DisplayName as string,
+          createdBy: userInfo?.createdBy as string,
+          createdAt: userInfo?.createdAt as string,
+          id: userInfo?.id as string,
+          email: userInfo?.email as string,
+          normalizedEmail: userInfo?.normalizedEmail as string,
+          emailConfirmed: userInfo?.emailConfirmed as boolean,
+          phoneNumber: userInfo?.phoneNumber as string,
+          phoneNumberConfirmed: userInfo?.phoneNumberConfirmed as boolean,
+          twoFactorEnabled: userInfo?.twoFactorEnabled as boolean,
+          lockoutEnd: userInfo?.lockoutEnd as string,
+          lockoutEnabled: userInfo?.lockoutEnabled as boolean,
+          filePath: userInfo?.filePath as string,
+          displayName: userInfo?.displayName as string,
           Roles: [
             {
               id: '82d85e76-2c04-460f-5785-08dbc25fd2ea',
@@ -107,6 +114,9 @@
 
         // store UserLogin to pinia
         userStore.setData(UserLogin, idToken, UserInfo)
+
+        // setToken to localStorage
+        localStorage.setItem('token', UserLogin.idToken as string)
 
         router.push({ name: 'dashboard' })
       })

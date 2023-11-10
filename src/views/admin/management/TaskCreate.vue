@@ -788,17 +788,17 @@
     payload.append('departmentId', item.departmentId)
     payload.append('subjectId', item.subjectId)
 
-    // payload.append(
-    //   'taskLecturers',
-    //   JSON.stringify(item.taskLecturers) as string,
-    // )
+    payload.append(
+      'taskLecturers',
+      JSON.stringify(item.taskLecturers) as string,
+    )
 
-    for (let i = 0; i < item.taskLecturers.length; i++) {
-      payload.append(
-        'taskLecturers',
-        JSON.stringify(item.taskLecturers[i]) as string,
-      )
-    }
+    // for (let i = 0; i < item.taskLecturers.length; i++) {
+    //   payload.append(
+    //     'taskLecturers',
+    //     JSON.stringify(item.taskLecturers[i]) as string,
+    //   )
+    // }
 
     payload.append('filePath', JSON.stringify(item.filePath) as string)
 
@@ -809,6 +809,7 @@
     try {
       const response = await axios.post(`/api/tasks`, formDataContent.value, {
         headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data',
         },
       })

@@ -631,6 +631,7 @@
         JSON.stringify(createItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -691,6 +692,7 @@
         JSON.stringify(edittedItem.value),
         {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         },
@@ -731,6 +733,11 @@
         // user confirm delete
         const response = await axios.delete(
           `/api/task-activities?id=${selectedItem.value?.taskActivityId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          },
         )
         const responseData: TaskActivityErrorResponseModel = response.data
         if (responseData.isSuccess) {
