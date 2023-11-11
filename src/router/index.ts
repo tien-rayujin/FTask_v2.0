@@ -7,7 +7,7 @@ import RouterByPass from '@/layout/RouterByPass.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/:catchAll(.*)',
-    redirect: { name: 'dashboard' },
+    redirect: { name: 'login' },
   },
   {
     path: '/auth',

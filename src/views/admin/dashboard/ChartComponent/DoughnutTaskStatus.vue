@@ -3,6 +3,7 @@
     <Doughnut
       v-if="loaded"
       :key="JSON.stringify(props.semesterId)"
+      class="w-full h-full"
       :data="chartData"
       :options="chartOption"
     />
@@ -47,6 +48,15 @@
   const chartOption = {
     type: Object,
     responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+      },
+      title: {
+        display: true,
+        text: 'Task Status',
+      },
+    },
   }
 
   const props = defineProps({

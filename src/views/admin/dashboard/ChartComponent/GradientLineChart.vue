@@ -1,136 +1,209 @@
 <template>
-  <div class="card">
-    <div class="pb-0 card-header mb-0">
-      <h6>{{ title }}</h6>
-      <p class="text-sm">
-        <i class="fa fa-arrow-up text-green-500"></i>
-        <span class="font-weight-bold">{{ detail1 }}</span>
-        {{ detail2 }}
-      </p>
-    </div>
-    <div class="p-3 card-body">
-      <div class="chart">
-        <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
-      </div>
-    </div>
+  <div class="w-full h-full">
+    <Bar
+      v-if="loaded"
+      :key="JSON.stringify(props.semesterId)"
+      class="w-full h-full"
+      :data="chartData"
+      :options="chartOption"
+    />
   </div>
 </template>
+cls
+<script setup lang="ts">
+  import { Bar } from 'vue-chartjs'
+  import {
+    Chart as ChartJS,
+    Legend,
+    Tooltip,
+    Title,
+    ArcElement,
+    CategoryScale,
+    LinearScale,
+    LineElement,
+    PointElement,
+    BarElement,
+  } from 'chart.js'
+  import { onMounted, ref, watch } from 'vue'
+  import axios from 'axios'
 
-<script>
-  import Chart from 'chart.js/auto'
+  ChartJS.register(
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement,
+    CategoryScale,
+    LinearScale,
+    LineElement,
+    PointElement,
+    BarElement,
+  )
 
-  export default {
-    name: 'GradientLineChart',
+  // const CHART_COLORS = {
+  //   red: 'rgb(255, 99, 132)',
+  //   orange: 'rgb(255, 159, 64)',
+  //   yellow: 'rgb(255, 205, 86)',
+  //   green: 'rgb(75, 192, 192)',
+  //   blue: 'rgb(54, 162, 235)',
+  //   purple: 'rgb(153, 102, 255)',
+  //   grey: 'rgb(201, 203, 207)',
+  // }
 
-    props: {
+  const chartData: ChartData = {
+    labels: [],
+    datasets: [
+      {
+        label: 'Completion Rate',
+        backgroundColor: ['rgb(75, 192, 192)'],
+        // backgroundColor: ['#2dce89', '#8e5ea2'],
+        borderColor: ['#2dce89'],
+        pointRadius: 5,
+        pointHoverRadius: 10,
+        pointHitRadius: 20,
+        data: [],
+        tension: 0.3,
+      },
+    ],
+  }
+
+  const chartOption = {
+    type: Object,
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+      },
       title: {
-        type: String,
-        default: 'Task Completion Rate',
-      },
-      detail1: {
-        type: String,
-        default: '30% from last week',
-      },
-      detail2: {
-        type: String,
-        default: '',
+        display: true,
+        text: 'Task Completion Rate',
       },
     },
-
-    mounted() {
-      const ctx1 = document.getElementById('chart-line').getContext('2d')
-
-      const gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50)
-
-      gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)')
-      gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)')
-      gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)')
-      new Chart(ctx1, {
-        type: 'line',
-        data: {
-          labels: [
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-          ],
-          datasets: [
-            {
-              label: 'Mobile apps',
-              tension: 0.4,
-              borderWidth: 0,
-              pointRadius: 0,
-              borderColor: '#4BB543 ',
-              backgroundColor: gradientStroke1,
-              // eslint-disable-next-line no-dupe-keys
-              borderWidth: 3,
-              fill: true,
-              data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-              maxBarThickness: 6,
-            },
-          ],
+    interaction: {
+      intersect: false,
+      mode: 'index',
+    },
+    scales: {
+      y: {
+        grid: {
+          drawBorder: false,
+          display: true,
+          drawOnChartArea: true,
+          drawTicks: false,
+          borderDash: [5, 5],
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false,
-            },
+        ticks: {
+          callback: function (value: any) {
+            return value + '%'
           },
-          interaction: {
-            intersect: false,
-            mode: 'index',
-          },
-          scales: {
-            y: {
-              grid: {
-                drawBorder: false,
-                display: true,
-                drawOnChartArea: true,
-                drawTicks: false,
-                borderDash: [5, 5],
-              },
-              ticks: {
-                display: true,
-                padding: 10,
-                color: '#fbfbfb',
-                font: {
-                  size: 11,
-                  family: 'Open Sans',
-                  style: 'normal',
-                  lineHeight: 2,
-                },
-              },
-            },
-            x: {
-              grid: {
-                drawBorder: false,
-                display: false,
-                drawOnChartArea: false,
-                drawTicks: false,
-                borderDash: [5, 5],
-              },
-              ticks: {
-                display: true,
-                color: '#ccc',
-                padding: 20,
-                font: {
-                  size: 11,
-                  family: 'Open Sans',
-                  style: 'normal',
-                  lineHeight: 2,
-                },
-              },
-            },
+          display: true,
+          padding: 10,
+          color: 'black',
+          font: {
+            size: 12,
+            family: 'Open Sans',
+            style: 'normal',
+            lineHeight: 2,
           },
         },
+      },
+      x: {
+        grid: {
+          drawBorder: false,
+          display: false,
+          drawOnChartArea: false,
+          drawTicks: false,
+          borderDash: [5, 5],
+        },
+        ticks: {
+          display: true,
+          color: 'black',
+          padding: 20,
+          font: {
+            size: 12,
+            family: 'Open Sans',
+            style: 'normal',
+            lineHeight: 2,
+          },
+        },
+      },
+    },
+  }
+
+  const props = defineProps({
+    from: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    to: {
+      type: String,
+      required: true,
+      default: '',
+    },
+    semesterId: {
+      type: String,
+      required: true,
+      default: '2',
+    },
+  })
+
+  watch(props, () => {
+    loaded.value = false
+
+    fetchData()
+  })
+
+  onMounted(() => {
+    fetchData()
+  })
+
+  const loaded = ref(false)
+
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `/api/statistics/task-completion-rate?from=${props.from}&to=${props.to}&semesterId=${props.semesterId}`,
+      )
+      const res = await response.data
+
+      const data: number[] = []
+      const labels: string[] = []
+
+      res.forEach((e: any) => {
+        data.push(e.completionRate)
+        labels.push(`${e.task.taskId}`)
       })
-    },
+
+      // console.log('res')
+      // console.log(res)
+      // console.log('data')
+      // console.log(data)
+      // console.log('labels')
+      // console.log(labels)
+
+      chartData.datasets[0].data = data
+      chartData.labels = labels
+
+      loaded.value = true
+    } catch (reason) {
+      console.log(reason)
+    }
+  }
+
+  interface ChartData {
+    labels: string[]
+    datasets: Dataset[]
+  }
+
+  interface Dataset {
+    label: string
+    backgroundColor: string[]
+    borderColor: string[]
+    pointRadius: number
+    pointHoverRadius: number
+    pointHitRadius: number
+    data: number[]
+    tension: number
   }
 </script>
