@@ -1,8 +1,8 @@
 <template>
   <!-- {{ items }} -->
   <!-- {{ createItem }} -->
-  {{ editItem }}
-  {{ selectedItem }}
+  <!-- {{ editItem }}
+  {{ selectedItem }} -->
   <va-modal v-model="showEditModel" hide-default-actions overlay-opacity="0.2">
     <template #header>
       <div

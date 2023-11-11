@@ -1,5 +1,5 @@
 <template>
-  <p>taskItem: {{ taskItem }}</p>
+  <!-- <p>taskItem: {{ taskItem }}</p> -->
   <!-- <p>lastTLec: {{ lastTaskLecturer }}</p> -->
   <!-- <p>lastTAc: {{ lastTaskActivity }}</p> -->
   <!-- <p>emptyTaskLecturer {{ emptyTaskLecturer }}</p> -->
