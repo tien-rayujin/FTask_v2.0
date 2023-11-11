@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <Doughnut
+  <div class="w-full h-full">
+    <Pie
       v-if="loaded"
       :key="JSON.stringify(props.semesterId)"
       class="w-full h-full"
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-  import { Doughnut } from 'vue-chartjs'
+  import { Pie } from 'vue-chartjs'
   import {
     Chart as ChartJS,
     Legend,

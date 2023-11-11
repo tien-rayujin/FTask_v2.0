@@ -225,7 +225,7 @@
   })
 
   watch(semesterFilter, () => {
-    console.log('Update dashboard based on semester filter selected!')
+    // console.log('Update dashboard based on semester filter selected!')
     statisticStore.setState('', '', semesterFilter.value + '')
   })
 

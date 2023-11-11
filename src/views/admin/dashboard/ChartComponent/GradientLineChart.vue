@@ -9,7 +9,7 @@
     />
   </div>
 </template>
-cls
+
 <script setup lang="ts">
   import { Bar } from 'vue-chartjs'
   import {
@@ -54,7 +54,7 @@ cls
     datasets: [
       {
         label: 'Completion Rate',
-        backgroundColor: ['rgb(75, 192, 192)'],
+        backgroundColor: ['#2dce89'],
         // backgroundColor: ['#2dce89', '#8e5ea2'],
         borderColor: ['#2dce89'],
         pointRadius: 5,
@@ -78,52 +78,48 @@ cls
         display: true,
         text: 'Task Completion Rate',
       },
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index',
-    },
-    scales: {
-      y: {
-        grid: {
-          drawBorder: false,
-          display: true,
-          drawOnChartArea: true,
-          drawTicks: false,
-          borderDash: [5, 5],
-        },
-        ticks: {
-          callback: function (value: any) {
-            return value + '%'
+      scales: {
+        y: {
+          grid: {
+            drawBorder: false,
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: false,
+            borderDash: [5, 5],
           },
-          display: true,
-          padding: 10,
-          color: 'black',
-          font: {
-            size: 12,
-            family: 'Open Sans',
-            style: 'normal',
-            lineHeight: 2,
+          ticks: {
+            callback: function (value: any) {
+              return value + '%'
+            },
+            display: true,
+            padding: 10,
+            color: 'black',
+            font: {
+              size: 12,
+              family: 'Open Sans',
+              style: 'normal',
+              lineHeight: 2,
+            },
           },
         },
-      },
-      x: {
-        grid: {
-          drawBorder: false,
-          display: false,
-          drawOnChartArea: false,
-          drawTicks: false,
-          borderDash: [5, 5],
-        },
-        ticks: {
-          display: true,
-          color: 'black',
-          padding: 20,
-          font: {
-            size: 12,
-            family: 'Open Sans',
-            style: 'normal',
-            lineHeight: 2,
+        x: {
+          grid: {
+            drawBorder: false,
+            display: false,
+            drawOnChartArea: false,
+            drawTicks: false,
+            borderDash: [5, 5],
+          },
+          ticks: {
+            display: true,
+            color: 'black',
+            padding: 20,
+            font: {
+              size: 12,
+              family: 'Open Sans',
+              style: 'normal',
+              lineHeight: 2,
+            },
           },
         },
       },
