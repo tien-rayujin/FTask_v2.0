@@ -287,7 +287,7 @@
 
   async function fetchSemesters() {
     try {
-      const response = await axios.get('/api/semesters?page=1&quantity=10')
+      const response = await axios.get('/api/semesters?page=1&quantity=100')
       const json = response.data
       items.value = (json as Array<SemesterModel>).map((item) => {
         item.createdAt = item.createdAt.toLocaleString().slice(0, 10)

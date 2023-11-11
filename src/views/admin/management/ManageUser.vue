@@ -444,7 +444,7 @@
 
   async function fetchRoles() {
     try {
-      const response = await axios.get('/api/roles?page=1&quantity=99')
+      const response = await axios.get('/api/roles?page=1&quantity=100')
       const json = response.data
       roleOptions.value = json as Array<RoleModel>
       console.log(json)
@@ -455,7 +455,7 @@
   }
   async function fetchUsers() {
     try {
-      const response = await axios.get('/api/users?page=1&quantity=10')
+      const response = await axios.get('/api/users?page=1&quantity=100')
       const json = response.data
       items.value = json as Array<UserModel>
       console.log('API User:')

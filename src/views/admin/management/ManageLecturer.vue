@@ -464,7 +464,7 @@
 
   async function fetchLecturers() {
     try {
-      const response = await axios.get('/api/lecturers?page=1&quantity=50')
+      const response = await axios.get('/api/lecturers?page=1&quantity=100')
       const json = response.data
       items.value = (json as Array<LecturerModel>).map((item) => {
         item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
@@ -480,7 +480,7 @@
 
   async function fetchDepartment() {
     try {
-      const response = await axios.get('/api/departments?page=1&amount=50')
+      const response = await axios.get('/api/departments?page=1&amount=100')
       const json = response.data
       departmentOptions.value = json as Array<DepartmentModel>
 

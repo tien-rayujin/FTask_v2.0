@@ -737,7 +737,7 @@
 
   async function fetchLecturers() {
     try {
-      const response = await axios.get('/api/lecturers?page=1&quantity=50')
+      const response = await axios.get('/api/lecturers?page=1&quantity=100')
       const json = response.data
       lecturerOptions.value = (json as Array<LecturerModel>).map((item) => {
         item.createdAt = new Date(item.createdAt).toISOString().slice(0, 10)
@@ -753,7 +753,7 @@
 
   async function fetchSubjects() {
     try {
-      const response = await axios.get('/api/subjects?page=1&quantity=50')
+      const response = await axios.get('/api/subjects?page=1&quantity=100')
       const json = response.data
       subjectOptions.value = (json as Array<SubjectModel>).map((item) => {
         item.createdAt = new Date(item.createdAt).toISOString().slice(0, 10)
@@ -769,7 +769,7 @@
 
   async function fetchDepartment() {
     try {
-      const response = await axios.get('/api/departments?page=1&quantity=50')
+      const response = await axios.get('/api/departments?page=1&quantity=100')
       const json = response.data
       departmentOptions.value = (json as Array<DepartmentModel>).map((item) => {
         item.createdAt = new Date(item.createdAt).toISOString().slice(0, 10)

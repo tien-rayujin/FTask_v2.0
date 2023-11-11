@@ -180,7 +180,7 @@
 
   async function fetchTasks() {
     try {
-      const response = await axios.get('/api/tasks?page=1&quantity=50')
+      const response = await axios.get('/api/tasks?page=1&quantity=100')
       const json = response.data
       items.value = (json as Array<TaskModel>).map((item) => {
         item.startDate = new Date(item.startDate).toISOString()
@@ -197,7 +197,7 @@
 
   async function fetchSemester() {
     try {
-      const response = await axios.get('/api/semesters?page=1&quantity=50')
+      const response = await axios.get('/api/semesters?page=1&quantity=100')
       const json = response.data
       semesterOptions.value = (json as Array<SemesterModel>).map((item) => {
         item.startDate = new Date(item.startDate).toISOString()
@@ -247,7 +247,7 @@
     console.log('Called')
     try {
       const response = await axios.get(
-        `/api/tasks?semsesterId=${semesterFilter.value}&page=1&quantity=50`,
+        `/api/tasks?semsesterId=${semesterFilter.value}&page=1&quantity=100`,
       )
       const json = response.data
       items.value = (json as Array<TaskModel>).map((item) => {

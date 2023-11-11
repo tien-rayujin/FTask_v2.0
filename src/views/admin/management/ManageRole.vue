@@ -260,7 +260,7 @@
 
   async function fetchRoles() {
     try {
-      const response = await axios.get('/api/Roles?page=1&amount=50')
+      const response = await axios.get('/api/Roles?page=1&amount=100')
       const json = response.data
       items.value = (json as Array<RoleModel>).map((item) => {
         item.createdAt = item.createdAt.toLocaleString().slice(0, 10)
